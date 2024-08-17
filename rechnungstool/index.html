@@ -8,7 +8,7 @@
     </head>
     <body>
         <div id="invoiceForm">
-        <form method="post">
+        <form method="post" action="saveinvoice.php">
             <h1>Rechnung erstellen</h1>
             <div class="flex">
                 <div>
@@ -16,7 +16,7 @@
                     <select id="costumerSelect" required>
                         <option value="">-- Bitte einen Kunden auswählen --</option>
                         <option value="blockpark">Blockpark</option>
-                        <option value="blockpark">Holy</option>
+                        <option value="holy">Holy</option>
                     </select>
                 </div>
                 <div>
@@ -86,10 +86,6 @@
 
 <!--
 TODO
-
-zusätzliche Felder (reverse Charge, Kleinunternehmerregel, Zahlungsziel)
-
-Buttons zum Aus und Einklappen der Menüs belegen
 
 PHP-Scripte zum Erzeugen von Kunden und Produkten
 
