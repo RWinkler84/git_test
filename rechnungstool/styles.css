@@ -3,12 +3,22 @@
     font-size: 17px;
 }
 
+body {
+    background-color: aliceblue;
+}
+
 h1 {
-    font-size: 20px;
+    font-size: 22px;
+    text-decoration: underline;
 }
 
 h2 {
     margin: 5px 0px;
+    font-size: 19px;
+}
+
+h3 {
+    margin-bottom: 0px;
 }
 
 label {
@@ -49,18 +59,26 @@ button {
 }
 
 #invoiceForm {
+    position: relative;
     margin: 0px auto;
     background-color:rgb(224, 224, 224);
     min-width: 300px;
     max-width: 700px;
     padding: 25px;
+    border: solid 1px black;
+    border-radius: 10px;
 }
 
 .subFormWrapper {
-    padding: 10px 30px;
+    position: absolute;
+    top: 80px;
+    left: 100px;
+    padding: 20px 40px;
     margin: 10px;
     width: fit-content;
-    background-color:rgb(205, 205, 207)
+    background-color:rgb(240, 240, 240);
+    border-radius: 10px;
+    box-shadow: 5px 5px 10px #8f8f8f;
 }
 
 .flex {
@@ -71,7 +89,7 @@ button {
 .blue {border: solid 1px blue;}
 
 .green {border: solid 1px green;}
-
-/* .hidden {
+ 
+.hidden {
     display: none;
 }
