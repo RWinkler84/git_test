@@ -16,7 +16,7 @@ const forms = [
                     <label for="salesTaxId">Umsatzsteuer-ID</label>
                     <input type="text" id="salesTaxId" name="salesTaxId" placeholder="Die Umsatzsteuer-ID eingeben">
                     <div class="marginTop">
-                        <button type="button" id="sendNewCostumer" onclick="">Kunden anlegen</button>
+                        <button type="submit" id="sendNewCostumer" formaction="createcostumer.php">Kunden anlegen</button>
                         <button type="button" id="cancelNewCostumer" onclick="hideSubForm()">Abbrechen</button>
                     </div>    
                     </form>
@@ -53,8 +53,8 @@ const forms = [
                     <label for="productDescription">Beschreibung (optional)</label>
                     <textarea id="productDescription" name="productDescription" placeholder="Wichtige Infos zum Produkt..."></textarea>
                      <div>                       
-                        <button type="button" id="sendNewCostumer" onclick="">Produkt anlegen</button>
-                        <button type="button" cancelNewCostumer" onclick="hideSubForm()">Abbrechen</button>
+                        <button type="submit" id="sendNewProduct" formaction="createproduct.php">Produkt anlegen</button>
+                        <button type="button" id="cancelNewProduct" onclick="hideSubForm()">Abbrechen</button>
                     </div>
                 </form>
         `,

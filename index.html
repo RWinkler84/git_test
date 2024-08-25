@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="utf-8">
         <link rel="stylesheet" type="text/css" href="styles.css">
         <script src="./functions.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
@@ -8,15 +9,15 @@
     </head>
     <body>
         <div id="invoiceForm">
-        <form method="post" action="saveinvoice.php">
+        <form method="post" action="createinvoice.php">
             <h1>Rechnung erstellen</h1>
             <div class="flex">
                 <div>
                     <label for="costumerSelect">Kunden auswählen</label>
-                    <select id="costumerSelect" required>
-                        <option value="">-- Bitte einen Kunden auswählen --</option>
-                        <option value="blockpark">Blockpark</option>
-                        <option value="holy">Holy</option>
+                    <select id="costumerSelect" name="costumerSelect" required>
+                        <option name="costumerSelect" value="">-- Bitte einen Kunden auswählen --</option>
+                        <option name="costumerSelect" value="blockpark">Blockpark</option>
+                        <option name="costumerSelect" value="holy">Holy</option>
                     </select>
                 </div>
                 <div>
@@ -78,8 +79,8 @@
                 <textarea id="invoiceComment" name="invoiceComment" placeholder="zusätzliche Kommentare auf der Rechnung..."></textarea>
             </div>
             <button type="submit">Rechnung erstellen</button>
-            <div id="subFormWrapper" class="subFormWrapper hidden"></div>
         </form>
+        <div id="subFormWrapper" class="subFormWrapper hidden"></div>
         </div>
     </body>
 </html>
