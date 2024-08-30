@@ -1,22 +1,31 @@
+<html>
+  </head>
+  </head>
+<body>
+<form method="get" action="php-lernen.php">
+  <div>
+    <input type="email" id="email" name="email">
+    <label for="email">E-Mail-Adresse</label>
+  </div>
+  <div>
+    <input type="text" id="name" name="name">
+    <label for="name">Name</label>
+  </div>
+  <div>
+    <button type="submit">Speichern</button>
+  </div>
+</form>
+
+
 <?php
+$file = fopen("besucher.txt", "a");
 
-$vorname = "Axel";
-$nachname = "Pratzner";
+fwrite($file, $_GET['name']);
+fwrite($file,' | ');
+fwrite($file, $_GET['email']);
 
-echo "<p align=\"center\">Herzlich willkommen $vorname $nachname<br />zum [\"PHP-Kurs.com\"]</p>";
-
-echo "<pre>";
-print_r($_SERVER);
-
-echo 5/3;
-
-/*Herzlich willkommen Axel Pratzner
-zum ["PHP-Kurs.com"]
-
-nur 1-mal echo
-Text zentriert
-zwei Zeilen
-2 Variablen, eine für Vornamen, eine für Nachnamen
-Ausgabe von Anführungszeichen beim Kurstitel */
+fclose($file);
 
 ?>
+</body>
+</html>
