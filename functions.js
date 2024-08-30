@@ -6,9 +6,12 @@ const forms = [
         content: `
                 <form method="post">
                     <h2>Neuen Kunden anlegen</h2>
+
+                    <label for="name">Kundenname</label>
+                    <input type="text" name="name" id="name" placeholder="Kundennamen eingeben">
                         
                     <label for="adress">Kundenadresse</label>
-                    <textarea id="adress" name="adress" placeholder="Adresse eingeben" rows="6" cols="30" required></textarea>
+                    <textarea id="adress" name="address" placeholder="Adresse eingeben" rows="6" cols="30" required></textarea>
                         
                     <label for="taxId">Steuernummer</label>
                     <input type="text" id="taxId" name="taxId" placeholder="Die Steuernummer eingeben" required>
