@@ -1,12 +1,11 @@
 <?php 
 require 'db.php';
-$fetchdata = $db->query("SELECT id, name FROM costumer");
-$costumer = $fetchdata->fetch_all(MYSQLI_ASSOC); 
 
-echo "<pre>";
-print_r ($costumer);
-echo "</pre>";
+  $fetchCostumer = $conn->query("SELECT id, name FROM costumer");
+  $costumer = $fetchCostumer->fetch_all(MYSQLI_ASSOC);
+  usort($costumer, function($a, $b){
+    return strcmp($a['name'], $b['name']);
+  });
 
-echo $costumer[0]["name"];
 
 ?>

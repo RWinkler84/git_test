@@ -4,20 +4,20 @@ const forms = [
     {
         id: "newCostumerFormWrapper",
         content: `
-                <form method="post">
+                <form method="post" id="newCostumerForm">
                     <h2>Neuen Kunden anlegen</h2>
 
                     <label for="name">Kundenname</label>
-                    <input type="text" name="name" id="name" placeholder="Kundennamen eingeben">
+                    <input type="text" name="name" id="name" placeholder="Kundennamen eingeben" autocomplete="off" required>
                         
                     <label for="adress">Kundenadresse</label>
                     <textarea id="adress" name="address" placeholder="Adresse eingeben" rows="6" cols="30" required></textarea>
                         
                     <label for="taxId">Steuernummer</label>
-                    <input type="text" id="taxId" name="taxId" placeholder="Die Steuernummer eingeben" required>
+                    <input type="text" id="taxId" name="taxId" placeholder="Die Steuernummer eingeben" autocomplete="off">
                         
                     <label for="salesTaxId">Umsatzsteuer-ID</label>
-                    <input type="text" id="salesTaxId" name="salesTaxId" placeholder="Die Umsatzsteuer-ID eingeben">
+                    <input type="text" id="salesTaxId" name="salesTaxId" placeholder="Die Umsatzsteuer-ID eingeben" autocomplete="off">
                     <div class="marginTop">
                         <button type="submit" id="sendNewCostumer" formaction="createcostumer.php">Kunden anlegen</button>
                         <button type="button" id="cancelNewCostumer" onclick="hideSubForm()">Abbrechen</button>
@@ -89,7 +89,19 @@ function showSubForm(formId){
     $(costumerForm).html(forms[formId].content).removeClass("hidden");
 }
 
+// TODO: FORM Validierung: Entweder Steuernummer oder Umsatzsteuernummer sind Pflicht
+
 function hideSubForm(){
     const costumerForm = document.getElementById("subFormWrapper");
     $(costumerForm).html("").addClass("hidden");
 }
+
+    $(document).on("submit", "#newCostumerForm", function (event){
+        console.log($("#newCostumerForm"));
+        if (!$("#taxId").val() && !$("#salesTaxId").val()){
+            alert("Umsatzsteuernummer oder Steuernummer eingeben!");
+            return false;
+        } else {
+            event.target.submit();
+        }
+    });

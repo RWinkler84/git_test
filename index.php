@@ -3,9 +3,10 @@
     <head>
         <meta charset="utf-8">
         <link rel="stylesheet" type="text/css" href="styles.css">
-        <script src="./functions.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script src="./functions.js"></script>
         <title>Rechungsformular</title>
+        <?php require 'fetchdata.php'; ?>
     </head>
     <body>
         <div id="invoiceForm">
@@ -16,8 +17,11 @@
                     <label for="costumerSelect">Kunden auswählen</label>
                     <select id="costumerSelect" name="costumerSelect" required>
                         <option name="costumerSelect" value="">-- Bitte einen Kunden auswählen --</option>
-                        <option name="costumerSelect" value="blockpark">Blockpark</option>
-                        <option name="costumerSelect" value="holy">Holy</option>
+                        <?php
+                            foreach ($costumer as $item){
+                                echo "<option name='costumerSelect' value='" . $item['name'] . "'>" . $item['name'] . "</option>";
+                            };
+                        ?>
                     </select>
                 </div>
                 <div>
