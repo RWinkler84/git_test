@@ -19,7 +19,7 @@
                         <option name="costumerSelect" value="">-- Bitte einen Kunden auswählen --</option>
                         <?php
                             foreach ($costumer as $item){
-                                echo "<option name='costumerSelect' value='" . $item['name'] . "'>" . $item['name'] . "</option>";
+                                echo "<option name='costumerSelect' value='" . $item['id'] . "'>" . $item['name'] . "</option>";
                             };
                         ?>
                     </select>
@@ -37,6 +37,11 @@
                             <label for="productSelect_0">Leistungen hinzufügen</label>
                             <select id="productSelect_0" name="productSelect_0">
                                 <option value="">-- Bitte ein Produkt auswählen --</option>
+                                <?php
+                                    foreach ($product as $item){
+                                        echo "<option name='productSelect' value='" . $item['id'] . "'>" . $item['productTitle'] . "</option>";
+                                    };
+                                ?>
                                 <option value="productId1">Das erste Produkt</option>
                                 <option value="productId2">Unerhörter Service</option>
                             </select>

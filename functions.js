@@ -72,8 +72,11 @@ function addProduct(){
             <div>
                 <select id="productSelect_${productCount}" name="productSelect_${productCount}">
                     <option value="">-- Bitte ein Produkt auswählen --</option>
-                    <option value="productId1">Das erste Produkt</option>
-                    <option value="productId2">Unerhörter Service</option>
+                    <?php
+                        foreach ($product as $item){
+                            echo "<option name='productSelect' value='" . $item['id'] . "'>" . $item['productTitle'] . "</option>";
+                        };
+                    ?>
                 </select>
             </div>
                 <input type="number" id="productAmount_${productCount}" name="productAmount_${productCount}" min="0" placeholder="0" required>

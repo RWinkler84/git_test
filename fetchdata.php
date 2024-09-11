@@ -7,5 +7,10 @@ require 'db.php';
     return strcmp($a['name'], $b['name']);
   });
 
+  $fetchProduct= $conn->query("SELECT id, productTitle FROM products");
+  $product = $fetchProduct->fetch_all(MYSQLI_ASSOC);
+  usort($product, function($a, $b){
+    return strcmp($b['id'], $a['id']);
+  });
 
 ?>
