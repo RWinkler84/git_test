@@ -1,0 +1,1 @@
+<h2>Temperatur in Budapest: <?php echo e($weather->temperature); ?>°C.</h2>

@@ -1,0 +1,36 @@
+.gallery-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.gallery-item {
+    display: block;
+    width: 175px;
+    margin: 10px;
+    border: 1px solid rgb(175, 175, 175);
+    text-decoration: none;
+    border-radius: 6px;
+}
+
+.gallery-item h4 {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 12px;
+    color: rgb(50, 50, 50);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.gallery-item img {
+    display: block;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    width: 175;
+    height: 133px;
+    object-fit: cover;
+}

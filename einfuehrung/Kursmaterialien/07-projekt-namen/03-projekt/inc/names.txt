@@ -1,0 +1,10 @@
+Wo kommt die names.filtered.csv her?
+
+Die Daten kommen ursprünglich von Kaggle:
+https://www.kaggle.com/kaggle/us-baby-names?select=NationalNames.csv
+
+Da die Daten aber so recht groß sind (ca. 45MB), habe ich sie wie folgt
+gefiltert:
+
+- Die Spalte "Geschlecht" wurde entfernt
+- Und nur die Top 1000 Namen sind in der names.filtered.csv enthalten

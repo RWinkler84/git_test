@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName "Das ist der top-secret-Bereich"
+AuthUserFile /Applications/XAMPP/xamppfiles/htdocs/php-kurs/22-htaccess/03-Teil-03/.htpasswd
+Require valid-user

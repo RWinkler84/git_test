@@ -1,0 +1,55 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    background-color: #fffcf7;
+}
+
+.container {
+    max-width: 45rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.guestbook-heading {
+    color: #e97200;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 3rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    letter-spacing: 0.1em;
+}
+
+.guestbook-entry-label {
+    display: block;
+    color: #4c5866;
+    font-size: 1rem;
+}
+
+.guestbook-entry-input {
+    -webkit-appearance: none;
+    appearance: none;
+    display: block;
+    width: 100%;
+    background-color: white;
+    color: #4c5866;
+    border: 0.0625rem solid #4c5866;
+    font-family: inherit;
+    line-height: 1.5em;
+    font-size: 1rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.guestbook-entry-input:focus {
+    outline: none;
+    border: 0.0625rem solid #e97200;
+}

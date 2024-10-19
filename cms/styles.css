@@ -1,0 +1,4 @@
+.menuContainer {
+  display: flex;
+  gap: 20px;
+}
