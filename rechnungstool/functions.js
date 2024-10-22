@@ -128,7 +128,7 @@ function createProduct(event) {
 
 // validiert Costumer-Form on submit - muss ersetzt und in eine createCostumer-Funktion eingebaut werden
 $(document).on("submit", "#newCostumerForm", function (event) {
-    console.log($("#newCostumerForm"));
+    
     if (!$("#taxId").val() && !$("#salesTaxId").val()) {
         alert("Umsatzsteuernummer oder Steuernummer eingeben!");
         return false;

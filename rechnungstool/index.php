@@ -25,7 +25,7 @@
                     </select>
                 </div>
                 <div>
-                    <button type="button" class="noMarginTop" onclick="showSubForm(0)">Kunden erstellen</button>
+                    <button type="button" class="noMarginTop" onclick="showSubForm('createCostumer')">Kunden erstellen</button>
                 </div>
             </div>
 
@@ -51,7 +51,7 @@
                     </div>
                 </div>
                 <div>
-                    <button type="button" class="noMarginTop" style="min-width:max-content;" onclick="showSubForm(1)">Produkt erstellen</button>
+                    <button type="button" class="noMarginTop" style="min-width:max-content;" onclick="showSubForm('createProduct')">Produkt erstellen</button>
                 </div>
             </div>    
             <button type="button" onclick="addProduct()">Produkt hinzufügen</button>
