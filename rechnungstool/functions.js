@@ -4,6 +4,13 @@ const forms = {
     createCostumer: {
         id: "newCostumerFormWrapper",
         content: `
+                <div id="toast">
+                    <p></p>
+                    <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
+                        <button id="confirmButton" onclick=""></button>
+                        <button id="cancelButton" style="display: none">Abbrechen</button>
+                    </div>
+                </div>
                 <form method="post" id="newCostumerForm">
                     <h2>Neuen Kunden anlegen</h2>
 
@@ -19,7 +26,7 @@ const forms = {
                     <label for="salesTaxId">Umsatzsteuer-ID</label>
                     <input type="text" id="salesTaxId" name="salesTaxId" placeholder="Die Umsatzsteuer-ID eingeben" autocomplete="off">
                     <div class="marginTop">
-                        <button type="submit" id="sendNewCostumer" onclick="createCostumer">Kunden anlegen</button>
+                        <button type="submit" id="sendNewCostumer" onclick="createCostumer(event)">Kunden anlegen</button>
                         <button type="button" id="cancelNewCostumer" onclick="hideSubForm()">Abbrechen</button>
                     </div>    
                     </form>
@@ -28,14 +35,22 @@ const forms = {
     createProduct: {
         id: "newProductFormWrapper",
         content: `
-                <form method="post">
+                <div id="toast">
+                    <p></p>
+                    <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
+                        <button id="confirmButton" onclick=""></button>
+                        <button id="cancelButton" style="display: none">Abbrechen</button>
+                    </div>
+                </div>
+                <form method="post" id="newProductForm" onsubmit="createProduct(event)">
                     <h2>Neues Produkt anlegen</h2>
 
                     <label for="productTitle">Titel</label>
                     <input type="text" id="productTitle" name="productTitle" placeholder="Eine Bezeichnung vergeben" required>
                     
-                    <label for="productPrice">Netto-Preis</label>
+                    <div class="marginTop"><label for="productPrice" style="display: inline">Netto-Preis</label><span class="info" onclick="netPriceInfo()">?</span></div>
                     <input type="text" id="productPrice" name="productPrice" placeholder="Format: 10.99" required>
+                    <button type="button" class="noMarginTop" onclick="netPriceCalculator()">berechnen</button>
                     
                     <div class="marginTop">
                         <label>Mehrwertsteuer</label>
@@ -44,11 +59,11 @@ const forms = {
                             <label for="tax0" style="display: inline;">0 %</label>
                         </div>
                         <div>
-                            <input type="radio" id="tax7" name="taxRate" value="7">
+                            <input type="radio" id="tax7" name="taxRate" value="7" required>
                             <label for="tax7" style="display: inline;">7 %</label>
                         </div>
                         <div>
-                            <input type="radio" id="tax19" name="taxRate" value="19">
+                            <input type="radio" id="tax19" name="taxRate" value="19" required>
                             <label for="tax19" style="display: inline;">19 %</label>
                         </div>
                     </div>
@@ -56,7 +71,7 @@ const forms = {
                     <label for="productDescription">Beschreibung (optional)</label>
                     <textarea id="productDescription" name="productDescription" placeholder="Wichtige Infos zum Produkt..."></textarea>
                      <div>                       
-                        <button type="submit" id="sendNewProduct" onclick="createProduct">Produkt anlegen</button>
+                        <button type="submit" id="sendNewProduct">Produkt anlegen</button>
                         <button type="button" id="cancelNewProduct" onclick="hideSubForm()">Abbrechen</button>
                     </div>
                 </form>
@@ -64,10 +79,10 @@ const forms = {
     }
 };
 
-function addProduct() {
+function addProductSelect() {
 
     let options = ``;
-    data = {action: 'addProduct'};
+    data = { action: 'addProductSelect' };
     let items = makeAjaxRequest(data);
     items.then(function (result) {
 
@@ -82,7 +97,7 @@ function addProduct() {
             <div>
                 <select id="productSelect_${productCount}" name="productSelect_${productCount}">
                     <option value="">-- Bitte ein Produkt auswählen --</option>
-                    ${options}                     
+                    ${options}     
                 </select>
             </div>
                 <input type="number" id="productAmount_${productCount}" name="productAmount_${productCount}" min="0" placeholder="0" required>
@@ -103,11 +118,11 @@ function makeAjaxRequest(data) {
             url: 'ajax.php',
             data: data
         })
-            .done(function (data, jqXHR) {
-                resolve({ 'statusCode': jqXHR.status, 'data': data });
+            .done(function (data) {
+                resolve({ 'status': 'success', 'data': data });
             })
-            .fail(function (jqXHR) {
-                reject({ 'statusCode': jqXHR.status });
+            .fail(function () {
+                reject({ 'status': 'failed' });
             })
     });
 }
@@ -115,30 +130,104 @@ function makeAjaxRequest(data) {
 function createCostumer(event) { }
 
 
+//Logik des createProduct-Fensters
 function createProduct(event) {
     event.preventDefault();
     data = {
-        formData,
+        productTitle: $('#newProductForm input[name=productTitle]').val(),
+        productPrice: $('#newProductForm input[name=productPrice]').val(),
+        taxRate: $('#newProductForm input[type=radio]:checked').val(),
+        productDescription: $('#newProductForm textarea').val(),
         action: 'createProduct'
     };
-    makeAjaxRequest(data);
 
+    let response = makeAjaxRequest(data);
+    response
+        .then(function (result) {
+            $('#toastMain p').text('Rechnung erfolgreich angelegt.');
+            $('#confirmButton').on('click', function(){$('#toastMain').css('display','none')}).text('Okay');
+            $('#cancelButton').css('display', 'none');
+            $('#toast').css('display', 'flex');
+        })
+        .catch(function (result) {
+            $('#toast p').text('Da ist etwas schief gelaufen!');
+            $('#confirmButton').attr('onclick', 'createInvoice(event)').text('Erneut versuchen');
+            $('#cancelButton').css('display', 'block');
+            $('#toast').css('display', 'flex');
+
+            $('#cancelButton').on('click', function () {
+                $('#toastMain').css('display', 'none')
+            });
+        });
 
 }
 
-// validiert Costumer-Form on submit - muss ersetzt und in eine createCostumer-Funktion eingebaut werden
-$(document).on("submit", "#newCostumerForm", function (event) {
-    
-    if (!$("#taxId").val() && !$("#salesTaxId").val()) {
-        alert("Umsatzsteuernummer oder Steuernummer eingeben!");
-        return false;
-    } else {
-        event.target.submit();
+function netPriceInfo() {
+    $('#toast p').text('Ist dir nur der Brutto-Preis bekannst, kannst du diesen eingeben und den Netto-Preis abhängig von der Mehrwertsteuer berechnen lassen. Wähle dafür einen Mehrwertsteuersatz aus und klicke "berechnen".');
+    $('#confirmButton').on('click', function(){$('#toast').css('display','none')}).text('Okay');
+    $('#cancelButton').css('display', 'none');
+    $('#toast').css('display', 'flex');
+}
+
+function netPriceCalculator(){
+    let grossPrice = $('#productPrice').val();
+    let taxRate = $('input[name=taxRate]:checked').val()
+    switch (taxRate){
+        case '0':
+        break;
+        
+        case '7':
+        $('#productPrice').val((grossPrice/1.07).toFixed(2));
+        break;
+
+        case '19':
+        $('#productPrice').val((grossPrice/1.19).toFixed(2));
+        break;
+    };
+
+}
+
+//Erzeugt die Rechnung
+function createInvoice(event){
+    event.preventDefault();
+    let invoiceData = preprocessFormData($('#invoiceForm').serializeArray());
+    data = {action: 'createInvoice',
+            invoiceData
+    };
+
+    let response = makeAjaxRequest(data);
+    response
+        .then(function (result) {
+            console.log(result);
+            $('#toast p').text('Produkt erfolgreich angelegt.');
+            $('#confirmButton').attr('onclick', 'hideSubForm()').text('Okay');
+            $('#cancelButton').css('display', 'none');
+            $('#toast').css('display', 'flex');
+        })
+        .catch(function (result) {
+            $('#toast p').text('Da ist etwas schief gelaufen!');
+            $('#confirmButton').attr('onclick', 'createProduct(event)').text('Erneut versuchen');
+            $('#cancelButton').css('display', 'block');
+            $('#toast').css('display', 'flex');
+
+            $('#cancelButton').on('click', function () {
+                $('#toast').css('display', 'none')
+            });
+        });
+   
+}
+
+function preprocessFormData(formData){
+    let processedData = {};
+    for (let i = 0; i < formData.length; i++){
+        let key = formData[i]['name'];
+        let value = formData[i]['value'];
+        processedData[key] = value;
     }
-});
+    return processedData;
+}
 
 //Öffnen und Schließen der newCostumer und newProduct-Formulare
-
 function showSubForm(requestedForm) {
 
     switch (requestedForm) {
@@ -155,3 +244,5 @@ function showSubForm(requestedForm) {
 function hideSubForm() {
     $('#subFormWrapper').html("").addClass("hidden");
 }
+
+// TODO: createCostumer-Funktion, createInvoice

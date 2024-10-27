@@ -1,16 +1,25 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <link rel="stylesheet" type="text/css" href="styles.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-        <script src="./functions.js"></script>
-        <title>Rechungsformular</title>
-        <?php require 'initialdata.php'; ?>
-    </head>
-    <body>
-        <div id="invoiceForm">
-        <form method="post" action="createinvoice.php">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="./functions.js"></script>
+    <title>Rechungsformular</title>
+    <?php require 'initialdata.php'; ?>
+</head>
+
+<body>
+    <div id="toastMain">
+        <p></p>
+        <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
+            <button id="confirmButton" onclick=""></button>
+            <button id="cancelButton" style="display: none">Abbrechen</button>
+        </div>
+    </div>
+    <div id="invoiceFormWrapper">
+        <form id="invoiceForm" method="post" onsubmit="createInvoice(event)">
             <h1>Rechnung erstellen</h1>
             <div class="flex">
                 <div>
@@ -18,9 +27,9 @@
                     <select id="costumerSelect" name="costumerSelect" required>
                         <option name="costumerSelect" value="">-- Bitte einen Kunden auswählen --</option>
                         <?php
-                            foreach ($costumer as $item){
-                                echo "<option name='costumerSelect' value='" . $item['id'] . "'>" . $item['name'] . "</option>";
-                            };
+                        foreach ($costumer as $item) {
+                            echo "<option name='costumerSelect' value='" . $item['id'] . "'>" . $item['name'] . "</option>";
+                        };
                         ?>
                     </select>
                 </div>
@@ -38,9 +47,9 @@
                             <select id="productSelect_0" name="productSelect_0">
                                 <option value="">-- Bitte ein Produkt auswählen --</option>
                                 <?php
-                                    foreach ($product as $item){
-                                        echo "<option name='productSelect' value='" . $item['id'] . "'>" . $item['productTitle'] . "  -  " . $item['productPrice'] . "€</option>";
-                                    };
+                                foreach ($product as $item) {
+                                    echo "<option name='productSelect' value='" . $item['id'] . "'>" . $item['productTitle'] . "  -  " . $item['productPrice'] . "€</option>";
+                                };
                                 ?>
                             </select>
                         </div>
@@ -53,8 +62,8 @@
                 <div>
                     <button type="button" class="noMarginTop" style="min-width:max-content;" onclick="showSubForm('createProduct')">Produkt erstellen</button>
                 </div>
-            </div>    
-            <button type="button" onclick="addProduct()">Produkt hinzufügen</button>
+            </div>
+            <button type="button" onclick="addProductSelect()">Produkt hinzufügen</button>
 
             <!-- zusätzliche Felder -->
             <h3>Zusätzlich Informationen</h3>
@@ -75,7 +84,7 @@
             </div>
             <div class="marginTop">
                 <input type="checkbox" id="smallBusinessTax" name="smallBusinessTax" value="1">
-                <label for="smallBusinessTax" style="display: inline;">Umatzsteuerbefreit nach Kleinunternehmerregel</label>
+                <label for="smallBusinessTax" style="display: inline;">umatzsteuerbefreit nach Kleinunternehmerregel</label>
             </div>
             <div class="marginTop">
                 <input type="checkbox" id="reverseCharge" name="reverseCharge" value="1">
@@ -88,16 +97,20 @@
             <button type="submit">Rechnung erstellen</button>
         </form>
         <div id="subFormWrapper" class="subFormWrapper hidden"></div>
-        </div>
-    </body>
+    </div>
+    <div id="invoiceData">
+
+    </div>
+</body>
+
 </html>
 
 <!--
 TODO
 
-PHP-Scripte zum Erzeugen von Kunden und Produkten
+Versteckte Felder, um alle nötigen Daten wie Kundenaddresse, Produktbeschreibung, Preis und Co fest in Rechnung zu hinterlegen. Nur das sichern der ID
+und spätere laden aus der jeweiligen Tabelle reicht nicht, weil diese geändert werden könnte und sich dann der Rechnungsinhalt rückwirkend ändert
 
 PHP-Script zum Speichern der Rechnungsdaten
 
 -->
-    

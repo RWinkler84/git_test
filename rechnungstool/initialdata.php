@@ -7,10 +7,10 @@ require 'db.php';
     return strcmp($a['name'], $b['name']);
   });
 
-  $fetchProduct = $conn->query("SELECT id, productTitle, productPrice FROM products");
+  $fetchProduct = $conn->query("SELECT id, productTitle, productPrice, lastEdited FROM products");
   $product = $fetchProduct->fetch_all(MYSQLI_ASSOC);
   usort($product, function($a, $b){
-    return strcmp($b['id'], $a['id']);
+    return strcmp($b['lastEdited'], $a['lastEdited']);
   });
 
 ?>

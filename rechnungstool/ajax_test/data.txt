@@ -1,0 +1,12 @@
+{
+   "Ronny":{
+      "status":"geiler Typ",
+      "alter":"der Alterste",
+      "faible":"große Fresse, nichts dahinter"
+   },
+   "Ronja":{
+      "status":"scharfe Schnitte",
+      "alter":"gerade alt genug",
+      "faible":"noch kurvig, bald rund"
+   }
+}
