@@ -11,14 +11,14 @@
 </head>
 
 <body>
-    <div id="toastMain">
-        <p></p>
-        <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
-            <button id="confirmButton" onclick=""></button>
-            <button id="cancelButton" style="display: none">Abbrechen</button>
-        </div>
-    </div>
     <div id="invoiceFormWrapper">
+        <div id="toastMain">
+            <p></p>
+            <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
+                <button id="confirmButton"></button>
+                <button id="cancelButton" style="display: none">Abbrechen</button>
+            </div>
+        </div>
         <form id="invoiceForm" method="post" onsubmit="createInvoice(event)">
             <h1>Rechnung erstellen</h1>
             <div class="flex">
@@ -48,7 +48,7 @@
                                 <option value="">-- Bitte ein Produkt auswählen --</option>
                                 <?php
                                 foreach ($product as $item) {
-                                    echo "<option name='productSelect' value='" . $item['id'] . "'>" . $item['productTitle'] . "  -  " . $item['productPrice'] . "€</option>";
+                                    echo "<option name='productSelect' value='" . $item['id'] . "' price='" . $item['productPrice'] . "'>" . $item['productTitle'] . "  -  " . $item['productPrice'] . "€</option>";
                                 };
                                 ?>
                             </select>
@@ -70,7 +70,7 @@
             <div>
                 <label>Zahlungsziel</label>
                 <div>
-                    <input type="radio" id="paymentTermsNone" name="paymentTerms" value="" checked>
+                    <input type="radio" id="paymentTermsNone" name="paymentTerms" value="0" checked>
                     <label for="paymentTermsNone" style="display: inline;">kein Zahlungsziel angeben</label>
                 </div>
                 <div>
@@ -95,11 +95,11 @@
                 <textarea id="invoiceComment" name="invoiceComment" placeholder="zusätzliche Kommentare auf der Rechnung..."></textarea>
             </div>
             <button type="submit">Rechnung erstellen</button>
+            <div style="display: none"><input type="text" name="rocknroll" value="rocknroll"></div>
         </form>
         <div id="subFormWrapper" class="subFormWrapper hidden"></div>
     </div>
     <div id="invoiceData">
-
     </div>
 </body>
 

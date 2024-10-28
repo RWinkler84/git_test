@@ -26,22 +26,71 @@ if (isset($_POST['action'])) {
             break;
 
         case 'createProduct':
-
-            $stmt = $conn->prepare("INSERT INTO products (productTitle, productPrice, taxRate, productDescription) VALUES (?,?,?,?)");
-            $stmt->bind_param('ssss', $_POST['productTitle'], $_POST['productPrice'], $_POST['taxRate'], $_POST['productDescription']);
-            $result = $stmt->execute();
+            $sqlQuery = "INSERT INTO products (productTitle, productPrice, taxRate, productDescription) VALUES (?,?,?,?)";
+            $paramType = "ssss";
+            $param = [$_POST['productTitle'], $_POST['productPrice'], $_POST['taxRate'], $_POST['productDescription']];
+            $result = fetchDataPrepStmt($sqlQuery, $paramType, $param);
             break;
         case 'createInvoice':
-            $fetchSelf = $conn->query('SELECT * FROM businessInfo');
-            $fetchcostumer = $conn->query('SELECT * FROM costumer WHERE id=\'' . $_POST('costumerSelect') . '\'');
-            
-            $costumer = $fetchCostumer->fetch_all(MYSQLI_ASSOC);
-            $self = $fetchCostumer->fetch_all(MYSQLI_ASSOC);
-            $result = [$costumer, $self];
+
+            $costumer = fetchCostumer();
+            $self = fetchSelf(); //self sind die Daten des eigenen Unternehmens
+            processInvoiceData($self, $costumer);
+
+            $result = $self;
     }
 }
 
 echo json_encode($result);
 
-// Sortierfuntion überarbeiten, Feld mit Zeitstempel für das Erstellen und Ändern von Produkten einführen, um geänderte Produkte oben in der Liste zu
-// zu haben, auch wenn sie schon vor längerer Zeit erzeugt wurden
+
+
+function fetchDataPrepStmt($sqlQuery, $paramType, $param)
+{
+    global $conn;
+
+    $stmt = $conn->prepare($sqlQuery);
+    $stmt->bind_param($paramType, ...$param);
+    $stmt->execute();
+    $fetchedData = $stmt->get_result();
+
+    return $fetchedData;
+}
+
+
+function fetchCostumer()
+{
+    $sqlQuery = "SELECT * FROM costumer WHERE id=?";
+    $param = [$_POST['invoiceData']['costumerSelect']];
+    $paramType = "i";
+    $fetchCostumer = fetchDataPrepStmt($sqlQuery, $paramType, $param);
+
+    return $fetchCostumer->fetch_all(MYSQLI_ASSOC);    
+}
+
+function fetchSelf(){
+
+    $sqlQuery = "SELECT * FROM businessInfo WHERE id=?";
+    $fetchSelf = fetchDataPrepStmt($sqlQuery, "i", [1]);
+
+    return $fetchSelf->fetch_all(MYSQLI_ASSOC);
+
+}
+
+function processInvoiceData($self, $costumer){
+    error_log(print_r($_POST, true));
+
+//erzeugt Variablen aus den Key-Value-Pairs mit dem Präfix self_ und costumer
+    extract($self[0],EXTR_PREFIX_ALL, "self"); 
+    extract($costumer[0],EXTR_PREFIX_ALL, "costumer");
+
+    $paymentTerms = $_POST['invoiceData']['paymentTerms'];
+    $smallBusinessTax = $_POST['invoiceData']['smallBusinessTax'] ?? false;
+
+}
+             
+// Methode suchen, um das Post-Array nach product-Select und Product-Ammount Keys zu durchsuchen
+// und über diese die zugehörigen Daten aus der Datenbank zu holen. Neue Funktion 
+// fetchProduct() dafür erstellen
+
+//ODER Preis aus dem Frontend holen. ein entsprechendes Costum Attribute ist angelegt. Mach dir nen Kopp!

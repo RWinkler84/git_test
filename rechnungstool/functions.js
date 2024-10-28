@@ -7,7 +7,7 @@ const forms = {
                 <div id="toast">
                     <p></p>
                     <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
-                        <button id="confirmButton" onclick=""></button>
+                        <button id="confirmButton"></button>
                         <button id="cancelButton" style="display: none">Abbrechen</button>
                     </div>
                 </div>
@@ -38,7 +38,7 @@ const forms = {
                 <div id="toast">
                     <p></p>
                     <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
-                        <button id="confirmButton" onclick=""></button>
+                        <button id="confirmButton"></button>
                         <button id="cancelButton" style="display: none">Abbrechen</button>
                     </div>
                 </div>
@@ -87,7 +87,7 @@ function addProductSelect() {
     items.then(function (result) {
 
         for (let i = 0; i < result.data.length; i++) {
-            newOption = `<option name='productSelect' value='${result.data[i]['id']}'>${result.data[i]['productTitle']}  -  ${result.data[i]['productPrice']}€</option>`;
+            newOption = `<option name='productSelect' value='${result.data[i]['id']}' price='${result.data[i]['productPrice']}'>${result.data[i]['productTitle']}  -  ${result.data[i]['productPrice']}€</option>`;
             options += newOption;
         }
 
@@ -144,19 +144,19 @@ function createProduct(event) {
     let response = makeAjaxRequest(data);
     response
         .then(function (result) {
-            $('#toastMain p').text('Rechnung erfolgreich angelegt.');
-            $('#confirmButton').on('click', function(){$('#toastMain').css('display','none')}).text('Okay');
-            $('#cancelButton').css('display', 'none');
+            $('#toast p').text('Produkt erfolgreich angelegt.');
+            $('#toast #confirmButton').on('click', hideSubForm()).text('Okay');
+            $('#toast #cancelButton').css('display', 'none');
             $('#toast').css('display', 'flex');
         })
         .catch(function (result) {
             $('#toast p').text('Da ist etwas schief gelaufen!');
-            $('#confirmButton').attr('onclick', 'createInvoice(event)').text('Erneut versuchen');
-            $('#cancelButton').css('display', 'block');
+            $('#toast #confirmButton').on('click', createProduct(event)).text('Erneut versuchen');
+            $('#toast #cancelButton').css('display', 'block');
             $('#toast').css('display', 'flex');
 
-            $('#cancelButton').on('click', function () {
-                $('#toastMain').css('display', 'none')
+            $('#toast #cancelButton').on('click', function () {
+                $('#toast').css('display', 'none')
             });
         });
 
@@ -164,8 +164,8 @@ function createProduct(event) {
 
 function netPriceInfo() {
     $('#toast p').text('Ist dir nur der Brutto-Preis bekannst, kannst du diesen eingeben und den Netto-Preis abhängig von der Mehrwertsteuer berechnen lassen. Wähle dafür einen Mehrwertsteuersatz aus und klicke "berechnen".');
-    $('#confirmButton').on('click', function(){$('#toast').css('display','none')}).text('Okay');
-    $('#cancelButton').css('display', 'none');
+    $('#toast #confirmButton').on('click', function(){$('#toast').css('display','none')}).text('Okay');
+    $('#toast #cancelButton').css('display', 'none');
     $('#toast').css('display', 'flex');
 }
 
@@ -199,19 +199,19 @@ function createInvoice(event){
     response
         .then(function (result) {
             console.log(result);
-            $('#toast p').text('Produkt erfolgreich angelegt.');
-            $('#confirmButton').attr('onclick', 'hideSubForm()').text('Okay');
-            $('#cancelButton').css('display', 'none');
-            $('#toast').css('display', 'flex');
+            $('#toastMain p').text('Rechnung erfolgreich angelegt.');
+            $('#toastMain #confirmButton').on('click', function(){$('#toastMain').css('display','none')}).text('Okay');
+            $('#toastMain #cancelButton').css('display', 'none');
+            $('#toastMain').css('display', 'flex');
         })
         .catch(function (result) {
-            $('#toast p').text('Da ist etwas schief gelaufen!');
-            $('#confirmButton').attr('onclick', 'createProduct(event)').text('Erneut versuchen');
-            $('#cancelButton').css('display', 'block');
-            $('#toast').css('display', 'flex');
+            $('#toastMain p').text('Da ist etwas schief gelaufen!');
+            $('#toastMain #confirmButton').on('click', createInvoice(event)).text('Erneut versuchen');
+            $('#toastMain #cancelButton').css('display', 'block');
+            $('#toastMain').css('display', 'flex');
 
-            $('#cancelButton').on('click', function () {
-                $('#toast').css('display', 'none')
+            $('#toastMain #cancelButton').on('click', function(){
+                $('#toastMain').css('display', 'none')
             });
         });
    

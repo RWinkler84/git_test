@@ -116,7 +116,8 @@ button {
     box-shadow: 5px 5px 10px var(--shadow);
 }
 
-#toast button {
+#toast button, 
+#toastMain button {
     background-color: var(--background-main);
     color: var(--text-dark);
     flex: 1 1 50%;
