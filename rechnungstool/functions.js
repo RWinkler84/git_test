@@ -196,62 +196,60 @@ function createProduct(event) {
 
 function netPriceInfo() {
     $('#toast p').text('Ist dir nur der Brutto-Preis bekannst, kannst du diesen eingeben und den Netto-Preis abhängig von der Mehrwertsteuer berechnen lassen. Wähle dafür einen Mehrwertsteuersatz aus und klicke "berechnen".');
-    $('#toast #confirmButton').on('click', function(){$('#toast').css('display','none')}).text('Okay');
+    $('#toast #confirmButton').on('click', function () { $('#toast').css('display', 'none') }).text('Okay');
     $('#toast #cancelButton').css('display', 'none');
     $('#toast').css('display', 'flex');
 }
 
-function netPriceCalculator(){
+function netPriceCalculator() {
     let grossPrice = $('#productPrice').val();
     let taxRate = $('input[name=taxRate]:checked').val()
-    switch (taxRate){
+    switch (taxRate) {
         case '0':
-        break;
-        
+            break;
+
         case '7':
-        $('#productPrice').val((grossPrice/1.07).toFixed(2));
-        break;
+            $('#productPrice').val((grossPrice / 1.07).toFixed(2));
+            break;
 
         case '19':
-        $('#productPrice').val((grossPrice/1.19).toFixed(2));
-        break;
+            $('#productPrice').val((grossPrice / 1.19).toFixed(2));
+            break;
     };
 
 }
 
 //Erzeugt die Rechnung
-function createInvoice(event){
+function createInvoice(event) {
     event.preventDefault();
     let invoiceData = preprocessFormData($('#invoiceForm').serializeArray());
-    data = {action: 'createInvoice',
-            invoiceData
+    data = {
+        action: 'createInvoice',
+        invoiceData
     };
 
     let response = makeAjaxRequest(data);
     response
         .then(function (result) {
-            console.log(result);
             $('#toastMain p').text('Rechnung erfolgreich angelegt.');
-            $('#toastMain #confirmButton').on('click', function(){$('#toastMain').css('display','none')}).text('Okay');
+            $('#toastMain #confirmButton').off('click').on('click', function () { $('#toastMain').css('display', 'none') }).text('Okay');
             $('#toastMain #cancelButton').css('display', 'none');
             $('#toastMain').css('display', 'flex');
         })
         .catch(function (result) {
             $('#toastMain p').text('Da ist etwas schief gelaufen!');
-            $('#toastMain #confirmButton').off('click').on('click', function(){createInvoice(event)}).text('Erneut versuchen');
+            $('#toastMain #confirmButton').off('click').on('click', function () { createInvoice(event) }).text('Erneut versuchen');
             $('#toastMain #cancelButton').css('display', 'block');
             $('#toastMain').css('display', 'flex');
 
-            $('#toastMain #cancelButton').on('click', function(){
-                $('#toastMain').css('display', 'none')
-            });
+            $('#toastMain #cancelButton').on('click', function () { $('#toastMain').css('display', 'none') });
         });
-   
+
 }
 
-function preprocessFormData(formData){
+function preprocessFormData(formData) {
     let processedData = {};
-    for (let i = 0; i < formData.length; i++){
+    for (let i = 0; i < formData.length; i++) {
         let key = formData[i]['name'];
         let value = formData[i]['value'];
         processedData[key] = value;

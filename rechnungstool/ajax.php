@@ -154,7 +154,7 @@ function processInvoiceData()
     //0 Prozent
     if (isset($products0[0])) {
         for ($i = 0; $i < count($products0); $i++) {
-            $singleProductTotalPrice0 = $products0[$i]['productPrice'] * $products0[$i]['amount'];
+            $singleProductTotalPrice0 = round($products0[$i]['productPrice'] * $products0[$i]['amount'], 2);
             $allProductsTotalPrice0 += $singleProductTotalPrice0;
             $products0[$i]['productTotalPrice'] = $singleProductTotalPrice0;
         }
@@ -163,7 +163,7 @@ function processInvoiceData()
     //7 Prozent
     if (isset($products7[0])) {
         for ($i = 0; $i < count($products7); $i++) {
-            $singleProductTotalPrice7 = $products7[$i]['productPrice'] * $products7[$i]['amount'];
+            $singleProductTotalPrice7 = round($products7[$i]['productPrice'] * $products7[$i]['amount'],2);
             $allProductsTotalPrice7 += $singleProductTotalPrice7;
             $totalTax7 = round($allProductsTotalPrice7 * 0.07, 2);
             $products7[$i]['productTotalNetPrice'] = $singleProductTotalPrice7;
@@ -174,7 +174,7 @@ function processInvoiceData()
     //19 Prozent
     if (isset($products19[0])) {
         for ($i = 0; $i < count($products19); $i++) {
-            $singleProductTotalPrice19 = $products19[$i]['productPrice'] * $products19[$i]['amount'];
+            $singleProductTotalPrice19 = round($products19[$i]['productPrice'] * $products19[$i]['amount'], 2);
             $allProductsTotalPrice19 += $singleProductTotalPrice19;
             $totalTax19 = round($allProductsTotalPrice19 * 0.19, 2);
             $products19[$i]['productTotalNetPrice'] = $singleProductTotalPrice19;
@@ -222,7 +222,7 @@ function processInvoiceData()
         $totalTax7,
         $totalTax19,
         $invoiceNetAmount,
-        $invoiceGrossAmunt_,
+        $invoiceGrossAmunt,
         $paymentTerms,
         $smallBusinessTax,
         $reverseCharge,
@@ -231,8 +231,6 @@ function processInvoiceData()
     ];
 
     dataQueryPrepStmt($sqlQuery, $paramType, $param);
-
-    error_log(print_r($totalTax7, true));
 
     return;
 }
