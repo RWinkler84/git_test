@@ -95,7 +95,6 @@
                 <textarea id="invoiceComment" name="invoiceComment" placeholder="zusätzliche Kommentare auf der Rechnung..."></textarea>
             </div>
             <button type="submit">Rechnung erstellen</button>
-            <div style="display: none"><input type="text" name="rocknroll" value="rocknroll"></div>
         </form>
         <div id="subFormWrapper" class="subFormWrapper hidden"></div>
     </div>

@@ -11,7 +11,7 @@ const forms = {
                         <button id="cancelButton" style="display: none">Abbrechen</button>
                     </div>
                 </div>
-                <form method="post" id="newCostumerForm">
+                <form method="post" onsubmit="createCostumer(event)" id="newCostumerForm">
                     <h2>Neuen Kunden anlegen</h2>
 
                     <label for="name">Kundenname</label>
@@ -26,7 +26,7 @@ const forms = {
                     <label for="salesTaxId">Umsatzsteuer-ID</label>
                     <input type="text" id="salesTaxId" name="salesTaxId" placeholder="Die Umsatzsteuer-ID eingeben" autocomplete="off">
                     <div class="marginTop">
-                        <button type="submit" id="sendNewCostumer" onclick="createCostumer(event)">Kunden anlegen</button>
+                        <button type="submit" id="sendNewCostumer">Kunden anlegen</button>
                         <button type="button" id="cancelNewCostumer" onclick="hideSubForm()">Abbrechen</button>
                     </div>    
                     </form>
@@ -127,7 +127,39 @@ function makeAjaxRequest(data) {
     });
 }
 
-function createCostumer(event) { }
+
+//Logik des createCostumer-Fensters
+function createCostumer(event) {
+    console.log(event);
+    event.preventDefault();
+    data = {
+        name: $('#newCostumerForm input[name=name]').val(),
+        address: $('#newCostumerForm textarea[name=address]').val(),
+        taxId: $('#newCostumerForm input[name=taxId]').val(),
+        salesTaxId: $('#newCostumerForm input[name=salesTaxId]').val(),
+        action: 'createCostumer'
+    };
+
+    let response = makeAjaxRequest(data);
+    response
+        .then(function (result) {
+            $('#toast p').text('Produkt erfolgreich angelegt.');
+            $('#toast #confirmButton').on('click', hideSubForm).text('Okay');
+            $('#toast #cancelButton').css('display', 'none');
+            $('#toast').css('display', 'flex');
+        })
+        .catch(function (result) {
+            $('#toast p').text('Da ist etwas schief gelaufen!');
+            $('#toast #confirmButton').on('click', createProduct).text('Erneut versuchen');
+            $('#toast #cancelButton').css('display', 'block');
+            $('#toast').css('display', 'flex');
+
+            $('#toast #cancelButton').on('click', function () {
+                $('#toast').css('display', 'none')
+            });
+        });
+
+}
 
 
 //Logik des createProduct-Fensters
@@ -145,13 +177,13 @@ function createProduct(event) {
     response
         .then(function (result) {
             $('#toast p').text('Produkt erfolgreich angelegt.');
-            $('#toast #confirmButton').on('click', hideSubForm()).text('Okay');
+            $('#toast #confirmButton').on('click', hideSubForm).text('Okay');
             $('#toast #cancelButton').css('display', 'none');
             $('#toast').css('display', 'flex');
         })
         .catch(function (result) {
             $('#toast p').text('Da ist etwas schief gelaufen!');
-            $('#toast #confirmButton').on('click', createProduct(event)).text('Erneut versuchen');
+            $('#toast #confirmButton').on('click', createProduct).text('Erneut versuchen');
             $('#toast #cancelButton').css('display', 'block');
             $('#toast').css('display', 'flex');
 
@@ -206,7 +238,7 @@ function createInvoice(event){
         })
         .catch(function (result) {
             $('#toastMain p').text('Da ist etwas schief gelaufen!');
-            $('#toastMain #confirmButton').on('click', createInvoice(event)).text('Erneut versuchen');
+            $('#toastMain #confirmButton').on('click', createInvoice).text('Erneut versuchen');
             $('#toastMain #cancelButton').css('display', 'block');
             $('#toastMain').css('display', 'flex');
 
