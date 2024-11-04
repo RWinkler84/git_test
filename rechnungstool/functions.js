@@ -238,7 +238,7 @@ function createInvoice(event){
         })
         .catch(function (result) {
             $('#toastMain p').text('Da ist etwas schief gelaufen!');
-            $('#toastMain #confirmButton').on('click', createInvoice).text('Erneut versuchen');
+            $('#toastMain #confirmButton').off('click').on('click', function(){createInvoice(event)}).text('Erneut versuchen');
             $('#toastMain #cancelButton').css('display', 'block');
             $('#toastMain').css('display', 'flex');
 
