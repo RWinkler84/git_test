@@ -1,0 +1,140 @@
+<style>
+    :root {
+        --background-body: #1e1e1e;
+        --background-main: rgb(245, 245, 245);
+        --background-submenu: rgb(232, 232, 232);
+        --text-light: rgb(228, 228, 228);
+        --text-dark: rgb(47, 47, 51);
+        --button-blue: rgb(0, 69, 111);
+        --toast-blue: rgb(41, 91, 122);
+        --shadow: #8f8f8f;
+        --border: #bababa;
+    }
+
+    div {
+        border: solid 1px black;
+    }
+
+    .flex {
+        display: flex;
+    }
+
+    .spaceBetween {
+        justify-content: space-between;
+        gap: 50px;
+    }
+
+    .multiline {
+        white-space: pre;
+    }
+
+    .marginTop {
+        margin-top: 0.5em;
+    }
+
+    .divider {
+        min-height: 20px;
+    }
+
+    .headerContainerRight {
+        min-width: 25%;
+    }
+
+    .bold {
+        font-weight: bold;
+    }
+
+    .flexEqual {
+        flex: 1 2 10%;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .flexDouble {
+        flex: 2 1 40%;
+        padding-right: 5px;
+
+    }
+
+    table {
+        border-collapse: collapse; 
+    }
+
+    td,
+    th {
+        padding: 5px;
+    }
+
+
+    th {
+        text-align: left;
+        font-size: 1.2em;
+        background-color: var(--toast-blue);
+        color: var(--text-light);
+    }
+</style>
+
+<div id="invoiceWrapper">
+    <div id="header">
+        <div class="flex">
+            <div style="flex: 1 1 50%; width: 50px;"></div>
+            <h1>Rechnung</h1>
+        </div>
+        <div class="flex">
+            <div style="flex: 1 1 50%; width: 50px;"></div>
+            <div id="selfData" class="headerContainerRight">
+                <div class="flex spaceBetween"><span></span><span class="bold">{selfName}</span></div>
+                <div class="multiline" style="text-align: right;"><span></span>{selfAddress}</div>
+                <div class="flex spaceBetween marginTop"><span>E-Mail:</span>{selfMail}</div>
+                <div class="flex spaceBetween"><span>Tel:</span>{selfPhoneNumber}</div>
+                <div class="flex spaceBetween"><span>St-Nr:</span>{selfTaxId}</div>
+                <div class="flex spaceBetween"><span>USt-IdNr:</span>{selfSalesTaxId}</div>
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div class="flex spaceBetween">
+            <div>
+                <div>{costumerName}</div>
+                <div class="multiline">{costumerAddress}</div>
+                <div class="flex spaceBetween marginTop"><span>St-Nr:</span>{costumerTaxId}</div>
+                <div class="flex spaceBetween"><span>USt-IdNr:</span>{costumerSalesTaxId}</div>
+            </div>
+            <div class="headerContainerRight" style="display: flex; flex-direction: column; justify-content: end;">
+                <div class="flex spaceBetween"><span>erstellt:</span>{invoiceDate}</div>
+                <div class="flex spaceBetween">{paymentTerms}</div>
+                <div class="flex spaceBetween"><span>Rechnungsnummer:</span>{invoiceId}</div>
+            </div>
+        </div>
+    </div>
+    <!-- invoice body -->
+    <div class="divider"></div>
+    <div id="invoiceBody">
+        <div>
+            <p>Sehr geehrte Damen und Herren,</p>
+            <p>hiermit stellen wir Ihnen folgende Leistungen in Rechnung. Bitte begleichen
+                Sie die vollständige Summe bis zum Zahlungsziel, sofern angegeben.</p>
+        </div>
+        <div class="divider"></div>
+        <div id="productContainer">
+            <table width="100%">
+                <tr>
+                    <th>Beschreibung</th>
+                    <th>Einzelpreis netto</th>
+                    <th>MwSt</th>
+                    <th>Anzahl</th>
+                    <th>Gesamt netto</th>
+                    <th>Gesamt brutto</th>
+                </tr>
+                <tbody>
+                    {products0}
+                    {products7}
+                    {products19}
+                </tbody>
+            </table>
+
+
+        </div>
+    </div>
+
+
+</div>
