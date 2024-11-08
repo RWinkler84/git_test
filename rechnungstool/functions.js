@@ -1,4 +1,6 @@
 let productCount = 0; //nummeriert zur Rechnung hinzugefügte Produkte
+let date = new Date();
+
 
 const forms = {
     createCostumer: {
@@ -130,7 +132,6 @@ function makeAjaxRequest(data) {
 
 //Logik des createCostumer-Fensters
 function createCostumer(event) {
-    console.log(event);
     event.preventDefault();
     data = {
         name: $('#newCostumerForm input[name=name]').val(),
@@ -201,6 +202,17 @@ function netPriceInfo() {
     $('#toast').css('display', 'flex');
 }
 
+function fullfillmentDateInfo(){
+    $('#toastMain p').html(
+        `<p>In jeder Rechnung muss ein konkretes Lieferdatum oder ein Lieferzeitraum angegeben werden. Wählst du kein Datum aus, wird dieser
+        automatisch auf den aktuellen Tag gesetzt.</p>Gibt es ein konkretes Lieferdatum, wähle das Datum im linken Feld aus. 
+        Um einen Lieferzeitraum anzugeben, lege links das Start- und rechts das Enddatum fest.<p>Willst du einem Produkt ein Datum zuweisen, 
+        ist das über das Kommentarfeld des jeweiligen Produkts möglich.</p>`);
+    $('#toastMain #confirmButton').on('click', function () { $('#toastMain').css('display', 'none') }).text('Okay');
+    $('#toastMain #cancelButton').css('display', 'none');
+    $('#toastMain').css('display', 'flex');
+}
+
 function netPriceCalculator() {
     let grossPrice = $('#productPrice').val();
     let taxRate = $('input[name=taxRate]:checked').val()
@@ -262,17 +274,19 @@ function showSubForm(requestedForm) {
 
     switch (requestedForm) {
         case 'createCostumer':
-            $('#subFormWrapper').html(forms.createCostumer.content).removeClass("hidden");
+            $('#subFormWrapper').html(forms.createCostumer.content).removeClass('hidden');
             break;
         case 'createProduct':
-            $('#subFormWrapper').html(forms.createProduct.content).removeClass("hidden");
+            $('#subFormWrapper').html(forms.createProduct.content).removeClass('hidden');
             break;
     }
 }
 
 
 function hideSubForm() {
-    $('#subFormWrapper').html("").addClass("hidden");
+    $('#subFormWrapper').html('').addClass('hidden');
 }
 
-// TODO: createCostumer-Funktion, createInvoice
+$('#startDate').ready(() => {
+    $('#startDate').val('' + date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0'));
+});

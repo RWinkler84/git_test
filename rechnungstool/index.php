@@ -5,7 +5,6 @@
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="styles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="./functions.js"></script>
     <title>Rechungsformular</title>
     <?php require 'initialdata.php'; ?>
 </head>
@@ -68,6 +67,11 @@
             <!-- zusätzliche Felder -->
             <h3>Zusätzlich Informationen</h3>
             <div>
+            <div class="marginTop"><label style="display: inline">Leistungsdatum /-zeitraum</label><span class="info" onclick="fullfillmentDateInfo()">?</span></div>
+            <input type="date" id="startDate" name="startDate" required>
+            <input type="date" id="endDate "name="endDate">
+            </div>
+            <div>
                 <label>Zahlungsziel</label>
                 <div>
                     <input type="radio" id="paymentTermsNone" name="paymentTerms" value="0" checked>
@@ -101,6 +105,7 @@
     <div id="invoiceData">
     </div>
 </body>
+    <script src="./functions.js"></script>
 
 </html>
 

@@ -39,10 +39,11 @@ if (isset($_POST['action'])) {
             $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
             break;
         case 'createInvoice':
-
+            error_log(print_r($_POST, true));
             processInvoiceData();
 
             $result = 'Rechnung angelegt';
+            break;
     }
 }
 
@@ -163,8 +164,8 @@ function processInvoiceData()
     //7 Prozent
     if (isset($products7[0])) {
         for ($i = 0; $i < count($products7); $i++) {
-            $singleProductTotalPrice7 = round($products7[$i]['productPrice'] * $products7[$i]['amount'],2);
-            $allProductsTotalPrice7 += $singleProductTotalPrice7;
+            $singleProductTotalPrice7 = round($products7[$i]['productPrice'] * $products7[$i]['amount'],2); //Netto-Preis aller Exemplare eines Produkts
+            $allProductsTotalPrice7 += $singleProductTotalPrice7; //Netto-Preis aller Produkte
             $totalTax7 = round($allProductsTotalPrice7 * 0.07, 2);
             $products7[$i]['productTotalNetPrice'] = $singleProductTotalPrice7;
             $products7[$i]['productTotalGrossPrice'] = round($singleProductTotalPrice7 * 1.07, 2);
@@ -174,8 +175,8 @@ function processInvoiceData()
     //19 Prozent
     if (isset($products19[0])) {
         for ($i = 0; $i < count($products19); $i++) {
-            $singleProductTotalPrice19 = round($products19[$i]['productPrice'] * $products19[$i]['amount'], 2);
-            $allProductsTotalPrice19 += $singleProductTotalPrice19;
+            $singleProductTotalPrice19 = round($products19[$i]['productPrice'] * $products19[$i]['amount'], 2); //Netto-Preis aller Exemplare eines Produkts
+            $allProductsTotalPrice19 += $singleProductTotalPrice19; //Netto-Preis aller Produkte
             $totalTax19 = round($allProductsTotalPrice19 * 0.19, 2);
             $products19[$i]['productTotalNetPrice'] = $singleProductTotalPrice19;
             $products19[$i]['productTotalGrossPrice'] = round($singleProductTotalPrice19 * 1.19, 2);
@@ -195,12 +196,14 @@ function processInvoiceData()
     $smallBusinessTax = $_POST['invoiceData']['smallBusinessTax'] ?? 0;
     $reverseCharge = $_POST['invoiceData']['reverseCharge'] ?? 0;
     $invoiceComment = $_POST['invoiceData']['invoiceComment'];
+    $fullfillmentDateStart = $_POST['invoiceData']['startDate'];
+    $fullfillmentDateEnd = $_POST['invoiceData']['endDate'];
     $paymentStatus = 0;
 
     $sqlQuery = "INSERT INTO invoices (selfName, selfAddress, selfTaxId, selfSalesTaxId, selfBankAccountNumber, selfIBAN, selfBIC, selfBankName, selfMail, selfPhoneNumber,
                  costumerName, costumerAddress, costumerTaxId, costumerSalesTaxId, products0, products7, products19, totalTax7, totalTax19, invoiceNetAmount, invoiceGrossAmount,
-                 paymentTerms, smallBusinessTax, reverseCharge, invoiceComment, paymentStatus) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-    $paramType = 'sssssssssssssssssddddiiisi';
+                 paymentTerms, smallBusinessTax, reverseCharge, invoiceComment, fullfillmentDateStart, FullfillmentDateEnd, paymentStatus) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    $paramType = 'sssssssssssssssssddddiiisssi';
     $param = [
         $self_name,
         $self_address,
@@ -227,6 +230,8 @@ function processInvoiceData()
         $smallBusinessTax,
         $reverseCharge,
         $invoiceComment,
+        $fullfillmentDateStart,
+        $fullfillmentDateEnd,
         $paymentStatus
     ];
 

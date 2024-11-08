@@ -55,6 +55,10 @@
         color: var(--shadow);
     }
 
+    .right {
+        text-align: right; 
+    }
+
     table {
         border-collapse: collapse;
     }
@@ -140,6 +144,7 @@
                 <div class="flex spaceBetween"><span>Rechnungsnummer:</span> <span class="bold">{invoiceId}</span></div>
                 <div class="flex spaceBetween"><span>erstellt:</span> <span class="bold">{invoiceDate}</span></div>
                 <div class="flex spaceBetween">{paymentTerms}</div>
+                <div class="flex spaceBetween">{fullfillmentDate}</div>
             </div>
         </div>
     </div>
