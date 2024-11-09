@@ -144,7 +144,7 @@ function createCostumer(event) {
     let response = makeAjaxRequest(data);
     response
         .then(function (result) {
-            $('#toast p').text('Produkt erfolgreich angelegt.');
+            $('#toast p').text('Kunde erfolgreich angelegt.');
             $('#toast #confirmButton').on('click', hideSubForm).text('Okay');
             $('#toast #cancelButton').css('display', 'none');
             $('#toast').css('display', 'flex');
@@ -243,6 +243,20 @@ function createInvoice(event) {
     let response = makeAjaxRequest(data);
     response
         .then(function (result) {
+            console.log(result);
+            if (result.data == 'salesTaxId not set'){ 
+            
+            let toastText = `Bei Rechnungen mit Umkehr der Umsatzsteuerschuld (Reverse Charge) muss zwingend die Umsatz-steuernummer
+            des Empfängers angegeben werden. Beim gewählten Kunden ist diese nicht hinterlegt.`;
+            
+            $('#toastMain p').text(toastText);
+            $('#toastMain #confirmButton').off('click').on('click', function () { $('#toastMain').css('display', 'none') }).text('Okay');
+            $('#toastMain #cancelButton').off('click').on('click', () => window.open('costumers.php')).css('display', 'block').text('Kunden bearbeiten');
+            $('#toastMain').css('display', 'flex');
+            
+            return;
+            }
+
             $('#toastMain p').text('Rechnung erfolgreich angelegt.');
             $('#toastMain #confirmButton').off('click').on('click', function () { $('#toastMain').css('display', 'none') }).text('Okay');
             $('#toastMain #cancelButton').css('display', 'none');
@@ -269,6 +283,7 @@ function preprocessFormData(formData) {
     return processedData;
 }
 
+
 //Öffnen und Schließen der newCostumer und newProduct-Formulare
 function showSubForm(requestedForm) {
 
@@ -290,3 +305,6 @@ function hideSubForm() {
 $('#startDate').ready(() => {
     $('#startDate').val('' + date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0'));
 });
+
+//TODO: Zu öffnenden Link anpassen, wenn bei Reverse Charge-Rechnungen keine USt-Id des Kunden angeben wurde
+//      siehe createInvoice-Funktion

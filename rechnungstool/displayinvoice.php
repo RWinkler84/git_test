@@ -180,3 +180,6 @@ function templateEngine($template, $placeholders)
 
 
 echo $invoiceHTML;
+
+
+//Todo: wenn kein St-Nr oder Ust_nummer gesetzt ist, dürfen diese Felder nicht angezeigt werden

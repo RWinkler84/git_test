@@ -39,10 +39,8 @@ if (isset($_POST['action'])) {
             $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
             break;
         case 'createInvoice':
-            error_log(print_r($_POST, true));
-            processInvoiceData();
+            $result = processInvoiceData();
 
-            $result = 'Rechnung angelegt';
             break;
     }
 }
@@ -108,7 +106,6 @@ function fetchSelectedProductData()
 //Callback-Funktion für fetchSelectedProductData(), die das $_POST nach Keys durchsucht, die productSelect enthalten
 function filterForSelectedProducts($key)
 {
-
     return str_contains($key, 'productSelect');
 }
 
@@ -132,6 +129,12 @@ function processInvoiceData()
     //erzeugt Variablen aus den Key-Value-Pairs mit dem Präfix self_ und costumer_
     extract($self[0], EXTR_PREFIX_ALL, "self");
     extract($costumer[0], EXTR_PREFIX_ALL, "costumer");
+
+    //checkt, ob beim Kunden eine UStId gesetzt ist, wenn Reverse Charge ausgewählt wurde
+    if ($_POST['invoiceData']['reverseCharge'] == 1 && empty($costumer_salesTaxId)){
+        $result = 'salesTaxId not set';
+        return $result;
+    }
 
     //erzeugt Arrays mit den gewählten Produkten je nach Steuersatz
     foreach ($selectedProductsData as $product) {
@@ -235,9 +238,9 @@ function processInvoiceData()
         $paymentStatus
     ];
 
-    dataQueryPrepStmt($sqlQuery, $paramType, $param);
+    $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
 
-    return;
+    return $result;
 }
 
 //wenn Kleinunternehmer, dann darf keine Umsatzsteuer berechnet werden
