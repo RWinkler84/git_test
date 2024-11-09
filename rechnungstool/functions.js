@@ -306,5 +306,3 @@ $('#startDate').ready(() => {
     $('#startDate').val('' + date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0'));
 });
 
-//TODO: Zu öffnenden Link anpassen, wenn bei Reverse Charge-Rechnungen keine USt-Id des Kunden angeben wurde
-//      siehe createInvoice-Funktion

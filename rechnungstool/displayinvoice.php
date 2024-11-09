@@ -25,8 +25,8 @@ $placeholders = [
     'selfPhoneNumber' => $invoiceData[0]['selfPhoneNumber'],
     'costumerName' => $invoiceData[0]['costumerName'],
     'costumerAddress' => $invoiceData[0]['costumerAddress'],
-    'costumerTaxId' => $invoiceData[0]['costumerTaxId'],
-    'costumerSalesTaxId' => $invoiceData[0]['costumerSalesTaxId'],
+    'costumerTaxId' => getCostumerTaxId($invoiceData[0]['costumerTaxId']),
+    'costumerSalesTaxId' => getCostumerSalesTaxId($invoiceData[0]['costumerSalesTaxId']),
     'tablehead' => getProductsTableHead($invoiceData),
     'products0' => getProducts($invoiceData[0]['products0']),
     'products7' => getProducts($invoiceData[0]['products7']),
@@ -38,7 +38,7 @@ $placeholders = [
     'totalAmountBlock' => getTotalAmountBlock($invoiceData)
 ];
 
-$template = file_get_contents('html_templates/invoice.html');
+$template = file_get_contents('html_templates/invoice/invoiceLayout.html');
 $invoiceHTML = templateEngine($template, $placeholders);
 
 function processDate($dateString)
@@ -57,6 +57,19 @@ function getFullfillmentDate($startDate, $endDate){
     }
 
     return $result;
+
+}
+
+
+function getCostumerTaxId($taxId){
+
+    return empty($taxId) ? "" : "<span>St-Nr:</span><span class='bold'>" . $taxId . '</span>';
+}
+
+
+function getCostumerSalesTaxId($salesTaxId){
+
+    return empty($salesTaxId) ? "" : "<span>USt-IdNr:</span><span class='bold'>" . $salesTaxId . '</span>';
 
 }
 
@@ -122,7 +135,7 @@ function getProducts($productJson)
 
             $template = file_get_contents(
                 $invoiceData[0]['smallBusinessTax'] == 1 || $invoiceData[0]['reverseCharge'] == 1 ?
-                'html_templates/productsBlockUntaxed.html' : 'html_templates/productsBlockTaxed.html');
+                'html_templates/invoice/productsBlockUntaxed.html' : 'html_templates/invoice/productsBlockTaxed.html');
             $productsHTML .= templateEngine($template, $placeholders);
         }
     }
@@ -142,7 +155,7 @@ function getTotalAmountBlock($invoiceData)
 
     $template = file_get_contents(
         $invoiceData[0]['smallBusinessTax'] == 1 || $invoiceData[0]['reverseCharge'] == 1 ?
-        'html_templates/totalAmountBlockUntaxed.html' : 'html_templates/totalAmountBlockTaxed.html'
+        'html_templates/invoice/totalAmountBlockUntaxed.html' : 'html_templates/invoice/totalAmountBlockTaxed.html'
     );
 
     return templateEngine($template, $placeholders);
@@ -181,5 +194,3 @@ function templateEngine($template, $placeholders)
 
 echo $invoiceHTML;
 
-
-//Todo: wenn kein St-Nr oder Ust_nummer gesetzt ist, dürfen diese Felder nicht angezeigt werden

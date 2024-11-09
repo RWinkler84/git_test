@@ -1,5 +1,5 @@
 <?php 
-include_once 'initialdata.php';
+include_once 'initialData.php';
 
 include_once 'html_templates/header.html';
 

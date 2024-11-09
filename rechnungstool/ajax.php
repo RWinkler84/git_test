@@ -242,6 +242,3 @@ function processInvoiceData()
 
     return $result;
 }
-
-//wenn Kleinunternehmer, dann darf keine Umsatzsteuer berechnet werden
-//wenn Umkehr der Steuerschuld ebenfalls nicht
