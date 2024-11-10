@@ -1,16 +1,21 @@
 generell:
 
-Top Menu erstellen
-Linkliste als Array, statische Links durch Variablen ersetzen
+-Top Menu erstellen
+-Linkliste als Array, statische Links durch Variablen ersetzen
 
 
 
 functions.js: 
 
-Zu öffnenden Link anpassen, wenn bei Reverse Charge-Rechnungen keine USt-Id des Kunden angeben wurde
+-Zu öffnenden Link anpassen, wenn bei Reverse Charge-Rechnungen keine USt-Id des Kunden angeben wurde
 siehe createInvoice-Funktion
 
 
 invoiceLayout.html: 
 
-CSS auslagern?
+-CSS auslagern?
+
+
+invoiceFrom.html:
+
+-PHP-Code in Platzhalter auslagern

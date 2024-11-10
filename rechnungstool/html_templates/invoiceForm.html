@@ -7,8 +7,8 @@
             </div>
         </div>
         <form id="invoiceForm" method="post" onsubmit="createInvoice(event)">
-            <h1>Rechnung erstellen</h1>
-            <div class="flex">
+            <!-- <h1>Rechnung erstellen</h1> -->
+            <div class="flex spaceBetween">
                 <div>
                     <label for="costumerSelect">Kunden auswählen</label>
                     <select id="costumerSelect" name="costumerSelect" required>
@@ -20,15 +20,15 @@
                         ?>
                     </select>
                 </div>
-                <div>
+                <div style="align-self: end;">
                     <button type="button" class="noMarginTop" onclick="showSubForm('createCostumer')">Kunden erstellen</button>
                 </div>
             </div>
 
             <!-- Leistungen hinzufügen -->
-            <div class="flex">
+            <div class="flex spaceBetween">
                 <div id="productContainer" class="flex" style="flex-wrap: wrap;">
-                    <div class="flex">
+                    <div class="flex spaceBetween">
                         <div>
                             <label for="productSelect_0">Leistungen hinzufügen</label>
                             <select id="productSelect_0" name="productSelect_0">
@@ -46,7 +46,7 @@
                         </div>
                     </div>
                 </div>
-                <div>
+                <div style="align-self: end;">
                     <button type="button" class="noMarginTop" style="min-width:max-content;" onclick="showSubForm('createProduct')">Produkt erstellen</button>
                 </div>
             </div>
