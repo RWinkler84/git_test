@@ -1,0 +1,90 @@
+    .multiline {
+        white-space: pre;
+    }
+
+    .marginTop {
+        margin-top: 0.5rem;
+    }
+
+    .divider {
+        min-height: 20px;
+    }
+
+    .headerContainerRight {
+        flex: 0 0 25%;
+    }
+
+    .bold {
+        font-weight: bold;
+    }
+
+    .grey {
+        color: var(--grey);
+    }
+
+    .right {
+        text-align: right;
+    }
+
+    table {
+        border-collapse: collapse;
+    }
+
+    td,
+    th {
+        padding: 5px;
+        text-align: center;
+        border-radius: 0;
+    }
+
+    th {
+        font-size: calc(1.2 * var(--font-size-small));
+        background-color: var(--table-blue);
+        color: var(--text-light);
+    }
+
+    #invoiceWrapper {
+        min-width: 300px;
+        max-width: 700px;
+        padding: 50px 100px 50px;
+        margin: 0 auto;
+        background-color: var(--background-main);
+        border-radius: 0;
+    }
+
+    #invoiceWrapper > * {
+        font-size: var(--font-size-small); 
+    }
+
+    #paymentInfo {
+        background-color: var(--lighter-grey);
+        padding: 5px;
+        font-size: 10px;
+        border-radius: 0;
+    }
+
+    @media print {
+
+        body {
+            background-color: white;
+        }
+
+        #paymentInfo {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        #invoiceWrapper {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            background-color: white;
+        }
+
+        button,
+        #topMenuWrapper {
+            display: none;
+        }
+    }

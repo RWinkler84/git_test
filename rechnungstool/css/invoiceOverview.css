@@ -1,0 +1,13 @@
+#invoiceOverviewTable {
+    width: 100%;
+}
+
+#invoiceOverviewTable tr {
+    padding: 0.5rem 2rem 0.5rem;
+    height: 3rem; 
+}
+
+#invoiceOverviewTable tr:nth-child(odd) {
+    background-color: var(--lighter-grey);
+    }
+
