@@ -1,5 +1,5 @@
 <?php 
-require 'db.php';
+require $path['database'];
 
   $fetchCostumer = $conn->query("SELECT id, name FROM costumer");
   $costumer = $fetchCostumer->fetch_all(MYSQLI_ASSOC);

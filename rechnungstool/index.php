@@ -1,10 +1,12 @@
 <?php 
-include_once 'initialData.php';
+include 'src/paths.php';
 
-include_once 'html_templates/header.html';
+include_once path('initialData');
 
-include_once 'html_templates/topMenu.html';
+include_once path('header');
 
-include_once 'html_templates/invoiceForm.html';
+include_once path('topMenu');
 
-include_once 'html_templates/footer.html';
+include_once path('invoiceForm');
+
+include_once path('footer');

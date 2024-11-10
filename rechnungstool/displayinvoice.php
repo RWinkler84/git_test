@@ -1,6 +1,7 @@
 <?php
-
-require 'db.php';
+require_once 'src/paths.php';
+require path('templateEngine');
+require path('database');
 
 $stmt = $conn->prepare("SELECT * FROM invoices WHERE id=?");
 $stmt->bind_param('i', $_GET['id']);
@@ -178,18 +179,6 @@ function getInvoiceComment($comment)
 {
     return !empty($comment) ? "<b>Anmerkungen:</b><br>" . $comment : '';
 }
-
-
-function templateEngine($template, $placeholders)
-{
-    foreach ($placeholders as $placeholder => $value) {
-        $placeholder = '{' . $placeholder . '}';
-        $template = str_replace($placeholder, $value, $template);
-    }
-
-    return $template;
-}
-
 
 
 echo $invoiceHTML;

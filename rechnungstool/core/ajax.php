@@ -1,5 +1,6 @@
 <?php
-require 'db.php';
+require_once '../src/paths.php';
+require path('database');
 header('Content-Type: application/json');
 $result = [];
 

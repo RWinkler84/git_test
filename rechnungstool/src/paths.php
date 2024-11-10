@@ -1,7 +1,9 @@
 <?php 
 $path = [
     'database' => 'src/db.php',
-    'initialData' => 'src/initialData.php',
+    'initialData' => 'core/initialData.php',
+    'ajax' => 'core/ajax.php',
+    'templateEngine' => 'core/templateEngine.php',
     
     // HTML Templates für das Rechnungslayout
     'invoiceLayout' => 'html_templates/invoice/invoiceLayout.html',
@@ -16,3 +18,9 @@ $path = [
     'topMenu'  => 'html_templates/topMenu.html',
     'invoiceForm' => 'html_templates/invoiceForm.html'
 ];
+
+function path($requestedSite){
+    global $path;
+    $requestedPath =  dirname(__DIR__) . '/' . $path[$requestedSite];
+    return $requestedPath;
+}

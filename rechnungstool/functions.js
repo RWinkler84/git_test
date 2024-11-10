@@ -117,7 +117,7 @@ function makeAjaxRequest(data) {
     return new Promise((resolve, reject) => {
         $.ajax({
             type: 'POST',
-            url: 'ajax.php',
+            url: 'core/ajax.php',
             data: data
         })
             .done(function (data) {
