@@ -1,6 +1,6 @@
 <?php
 require_once '../src/paths.php';
-require path('database');
+require getPath('database');
 header('Content-Type: application/json');
 $result = [];
 
@@ -132,7 +132,7 @@ function processInvoiceData()
     extract($costumer[0], EXTR_PREFIX_ALL, "costumer");
 
     //checkt, ob beim Kunden eine UStId gesetzt ist, wenn Reverse Charge ausgewählt wurde
-    if ($_POST['invoiceData']['reverseCharge'] == 1 && empty($costumer_salesTaxId)){
+    if (isset($_POST['invoiceData']['reverseCharge']) && empty($costumer_salesTaxId)){
         $result = 'salesTaxId not set';
         return $result;
     }
@@ -188,7 +188,8 @@ function processInvoiceData()
     }
 
     $invoiceNetAmount = $allProductsTotalPrice0 + $allProductsTotalPrice7 + $allProductsTotalPrice19;
-    $invoiceGrossAmunt = $invoiceNetAmount + $totalTax7 + $totalTax19;
+    $invoiceGrossAmunt = isset($_POST['invoiceData']['smallBusinessTax']) || isset($_POST['invoiceData']['reverseCharge']) ? 
+        0 : $invoiceNetAmount + $totalTax7 + $totalTax19;
 
     //bereitet Daten für Datenbank-Query vor
 

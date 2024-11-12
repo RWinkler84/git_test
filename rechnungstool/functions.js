@@ -204,7 +204,7 @@ function netPriceInfo() {
 
 function fullfillmentDateInfo(){
     $('#toastMain p').html(
-        `<p>In jeder Rechnung muss ein konkretes Lieferdatum oder ein Lieferzeitraum angegeben werden. Wählst du kein Datum aus, wird dieser
+        `<p>In jeder Rechnung muss ein konkretes Lieferdatum oder ein Lieferzeitraum angegeben werden. Wählst du kein Datum aus, wird dieses
         automatisch auf den aktuellen Tag gesetzt.</p>Gibt es ein konkretes Lieferdatum, wähle das Datum im linken Feld aus. 
         Um einen Lieferzeitraum anzugeben, lege links das Start- und rechts das Enddatum fest.<p>Willst du einem Produkt ein Datum zuweisen, 
         ist das über das Kommentarfeld des jeweiligen Produkts möglich.</p>`);
@@ -246,11 +246,13 @@ function createInvoice(event) {
             console.log(result);
             if (result.data == 'salesTaxId not set'){ 
             
-            let toastText = `Bei Rechnungen mit Umkehr der Umsatzsteuerschuld (Reverse Charge) muss zwingend die Umsatz-steuernummer
-            des Empfängers angegeben werden. Beim gewählten Kunden ist diese nicht hinterlegt.`;
+            let toastText = `Bei Rechnungen mit Umkehr der Umsatzsteuerschuld (Reverse Charge) muss zwingend die Umsatzsteuernummer
+            des Empfängers angegeben werden. Beim gewählten Kunden ist diese nicht hinterlegt.<p>Sobald die Nummer hinterlegt ist, kann
+            die Rechnung gespeichert werden. Bearbeite dafür die Information des gewählten Kunden.</p>`;
             
-            $('#toastMain p').text(toastText);
+            $('#toastMain p').html(toastText);
             $('#toastMain #confirmButton').off('click').on('click', function () { $('#toastMain').css('display', 'none') }).text('Okay');
+            // TODO: Link für Window.open anpassen, sodass die Kundenübersicht geöffnet wird
             $('#toastMain #cancelButton').off('click').on('click', () => window.open('costumers.php')).css('display', 'block').text('Kunden bearbeiten');
             $('#toastMain').css('display', 'flex');
             

@@ -13,11 +13,7 @@
                     <label for="costumerSelect">Kunden auswählen</label>
                     <select id="costumerSelect" name="costumerSelect" required>
                         <option name="costumerSelect" value="">-- Bitte einen Kunden auswählen --</option>
-                        <?php
-                        foreach ($costumer as $item) {
-                            echo "<option name='costumerSelect' value='" . $item['id'] . "'>" . $item['name'] . "</option>";
-                        };
-                        ?>
+                        {costumerOptions}
                     </select>
                 </div>
                 <div style="align-self: end;">
@@ -28,16 +24,12 @@
             <!-- Leistungen hinzufügen -->
             <div class="flex spaceBetween">
                 <div id="productContainer" class="flex" style="flex-wrap: wrap;">
-                    <div class="flex spaceBetween">
+                    <div class="flex">
                         <div>
                             <label for="productSelect_0">Leistungen hinzufügen</label>
                             <select id="productSelect_0" name="productSelect_0">
                                 <option value="">-- Bitte ein Produkt auswählen --</option>
-                                <?php
-                                foreach ($product as $item) {
-                                    echo "<option name='productSelect' value='" . $item['id'] . "' price='" . $item['productPrice'] . "'>" . $item['productTitle'] . "  -  " . $item['productPrice'] . "€</option>";
-                                };
-                                ?>
+                                {productOptions}
                             </select>
                         </div>
                         <div>
@@ -46,7 +38,7 @@
                         </div>
                     </div>
                 </div>
-                <div style="align-self: end;">
+                <div class="marginTop">
                     <button type="button" class="noMarginTop" style="min-width:max-content;" onclick="showSubForm('createProduct')">Produkt erstellen</button>
                 </div>
             </div>

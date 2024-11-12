@@ -1,7 +1,7 @@
 <?php
-require_once 'src/paths.php';
-require path('templateEngine');
-require path('database');
+// require_once 'src/paths.php';
+// require_once getPath('templateEngine');
+// require getPath('database');
 
 $stmt = $conn->prepare("SELECT * FROM invoices WHERE id=?");
 $stmt->bind_param('i', $_GET['id']);
@@ -39,7 +39,7 @@ $placeholders = [
     'totalAmountBlock' => getTotalAmountBlock($invoiceData)
 ];
 
-$template = file_get_contents('html_templates/invoice/invoiceLayout.html');
+$template = file_get_contents(getPath('invoiceLayoutHTML'));
 $invoiceHTML = templateEngine($template, $placeholders);
 
 function processDate($dateString)
@@ -77,7 +77,7 @@ function getCostumerSalesTaxId($salesTaxId){
 
 function getPaymentDate($terms, $dateString)
 {
-    global $placeholder;
+    // global $placeholder;
 
     if ($terms == 0) {
         $result = '';

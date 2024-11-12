@@ -1,8 +1,6 @@
 generell:
 
--Top Menu erstellen
--Linkliste als Array, statische Links durch Variablen ersetzen
-
+-Top Menu stylen und mit Links versehen
 
 
 functions.js: 
@@ -11,11 +9,6 @@ functions.js:
 siehe createInvoice-Funktion
 
 
-invoiceLayout.html: 
+invoiceOverview:
 
--CSS auslagern?
-
-
-invoiceFrom.html:
-
--PHP-Code in Platzhalter auslagern
+- Template mit Tabelle, die Rechnungen anzeigt (und sortiert?)
