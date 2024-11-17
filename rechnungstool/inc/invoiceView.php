@@ -96,10 +96,9 @@ function getProductsTableHead($invoiceData){
     if ($invoiceData[0]['smallBusinessTax'] || $invoiceData[0]['reverseCharge']){
         $tableHeadHTML = '
                     <th style="text-align: left; width: 40%">Beschreibung</th>
-                    <th>Einzelpreis netto</th>
-                    <th>MwSt</th>
+                    <th>Einzelpreis</th>
                     <th>Menge</th>
-                    <th style="text-align: right;">Betrag netto</th>
+                    <th style="text-align: right;">Betrag</th>
         ';
     } else {
         $tableHeadHTML = '

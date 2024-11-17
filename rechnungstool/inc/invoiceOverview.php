@@ -1,5 +1,6 @@
 <?php
 
+
 $stmt = $conn->prepare("SELECT * FROM invoices");
 $stmt->execute();
 $fetchedInvoiceData = $stmt->get_result();
@@ -75,7 +76,6 @@ function processDate($dateString)
 
 function getInvoiceTotalAmount($data)
 {
-    error_log($data['smallBusinessTax']);
     return $data['smallBusinessTax'] == 1 || $data['reverseCharge'] == 1 ?
         $data['invoiceNetAmount'] : $data['invoiceGrossAmount'];
 }

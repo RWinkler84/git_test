@@ -19,10 +19,11 @@ $path = [
     'invoiceFormHTML' => 'html_templates/invoiceForm.html',
     'invoiceOverviewHTML' => 'html_templates/invoiceOverview.html',
 
-    // einzelne Seiten
-    'invoiceView' => 'invoiceView.php',
-    'invoiceOverview' => 'invoiceOverview.php',
-    'invoiceForm' => 'invoiceform.php',
+    // einzelne Seiten und Seitenelemente
+    'topMenu' => 'inc/topMenu.php',
+    'invoiceView' => 'inc/invoiceView.php',
+    'invoiceOverview' => 'inc/invoiceOverview.php',
+    'invoiceForm' => 'inc/invoiceform.php',
     'index' => 'index.php',
     // nicht existierende oder externe Seite aufgerufen
     'notFoundHTML' => 'html_templates/404.html'

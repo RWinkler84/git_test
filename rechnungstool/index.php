@@ -6,17 +6,17 @@ include_once getPath('initialData');
 
 include_once getPath('headerHTML');
 
-include_once getPath('topMenuHTML');
+include_once getPath('topMenu');
 
 //Beginn des Seiteninhaltes
 
 if (!isset($_GET['a'])){
-    $calledSite = 'invoiceFormHTML';
+    $calledPage = 'invoiceFormHTML';
 
 } else {
-    $calledSite = $_GET['a'];
+    $calledPage = $_GET['a'];
 } 
 
-include_once getPath($calledSite);
+include_once getPath($calledPage);
 
 include_once getPath('footerHTML');

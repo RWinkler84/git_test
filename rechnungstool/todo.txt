@@ -12,3 +12,10 @@ siehe createInvoice-Funktion
 invoiceOverview:
 
 - Template mit Tabelle, die Rechnungen anzeigt (und sortiert?)
+
+
+invoiceView:
+
+- Tabellenblock bei mehrwertsteuerfreien Rechnungen anpassen, so
+das kein netto oder brutto angezeigt wird (erledigt für Kleinunternehmer, passt das auch für Reverse Charge?)
+
