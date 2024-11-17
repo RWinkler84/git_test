@@ -5,12 +5,8 @@ $path = [
     'ajax' => 'core/ajax.php',
     'templateEngine' => 'core/templateEngine.php',
 
-    // HTML Templates für das Rechnungslayout
+    // HTML Template für das Rechnungslayout
     'invoiceLayoutHTML' => 'html_templates/invoice/invoiceLayout.html',
-    'productsBlockTaxedHTML' => 'html_templates/invoice/productsBlockTaxed.html',
-    'productsBlockUntaxedHTML' => 'html_templates/invoice/productsBlockUntaxed.html',
-    'totalAmountBlockTaxedHTML' => 'html_templates/invoice/totalAmountBlockTaxed.html',
-    'totalAmountBlockUntaxedHTML' => 'html_templates/invoice/totalAmountBlockUntaxed.html',
 
     // HTML Templates für das Seitenlayout
     'footerHTML' => 'html_templates/footer.html',

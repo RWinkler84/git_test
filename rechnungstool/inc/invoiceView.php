@@ -49,29 +49,30 @@ function processDate($dateString)
 }
 
 
-function getFullfillmentDate($startDate, $endDate){
+function getFullfillmentDate($startDate, $endDate)
+{
 
-    if (!empty($endDate)){
+    if (!empty($endDate)) {
         $result = "<span>Leistungszeitraum:</span><span class='bold' style='text-wrap: nowrap;'>" . processDate($startDate) . " - " . processDate($endDate) . "</span>";
     } else {
         $result = "<span>Leistungsdatum:</span><span class='bold'>" . processDate($startDate) . "</span>";
     }
 
     return $result;
-
 }
 
 
-function getCostumerTaxId($taxId){
+function getCostumerTaxId($taxId)
+{
 
     return empty($taxId) ? "" : "<span>St-Nr:</span><span class='bold'>" . $taxId . '</span>';
 }
 
 
-function getCostumerSalesTaxId($salesTaxId){
+function getCostumerSalesTaxId($salesTaxId)
+{
 
     return empty($salesTaxId) ? "" : "<span>USt-IdNr:</span><span class='bold'>" . $salesTaxId . '</span>';
-
 }
 
 
@@ -91,9 +92,10 @@ function getPaymentDate($terms, $dateString)
 }
 
 
-function getProductsTableHead($invoiceData){
+function getProductsTableHead($invoiceData)
+{
 
-    if ($invoiceData[0]['smallBusinessTax'] || $invoiceData[0]['reverseCharge']){
+    if ($invoiceData[0]['smallBusinessTax'] || $invoiceData[0]['reverseCharge']) {
         $tableHeadHTML = '
                     <th style="text-align: left; width: 40%">Beschreibung</th>
                     <th>Einzelpreis</th>
@@ -133,9 +135,29 @@ function getProducts($productJson)
                 'productDescription' => $product['productDescription']
             ];
 
-            $template = file_get_contents(
-                $invoiceData[0]['smallBusinessTax'] == 1 || $invoiceData[0]['reverseCharge'] == 1 ?
-                'html_templates/invoice/productsBlockUntaxed.html' : 'html_templates/invoice/productsBlockTaxed.html');
+            $template = 
+                $invoiceData[0]['smallBusinessTax'] == 1 || $invoiceData[0]['reverseCharge'] == 1 
+                ?
+                <<<productsBlockUntaxed
+                <tr>
+                    <td style="text-align: left;"><span class="bold">{productTitle}</span><br>{productDescription}</td>
+                    <td>{productPrice} €</td>
+                    <td>{productAmount}</td>
+                    <td style="text-align: right;">{productTotalNetPrice} €</td>
+                </tr>
+                productsBlockUntaxed
+                :
+                <<<productsBlockTaxed
+                <tr>
+                    <td style="text-align: left;"><span class="bold">{productTitle}</span><br>{productDescription}</td>
+                    <td>{productPrice} €</td>
+                    <td>{taxRate}%</td>
+                    <td>{productAmount}</td>
+                    <td>{productTotalNetPrice} €</td>
+                    <td style="text-align: right;">{productTotalGrossPrice} €</td>
+                </tr>
+                productsBlockTaxed
+                ;
             $productsHTML .= templateEngine($template, $placeholders);
         }
     }
@@ -153,10 +175,35 @@ function getTotalAmountBlock($invoiceData)
         'invoiceGrossAmount' => $invoiceData[0]['invoiceGrossAmount'],
     ];
 
-    $template = file_get_contents(
-        $invoiceData[0]['smallBusinessTax'] == 1 || $invoiceData[0]['reverseCharge'] == 1 ?
-        'html_templates/invoice/totalAmountBlockUntaxed.html' : 'html_templates/invoice/totalAmountBlockTaxed.html'
-    );
+    $template =
+        $invoiceData[0]['smallBusinessTax'] == 1 || $invoiceData[0]['reverseCharge'] == 1 
+        ?
+        <<<totalAmountBlockUntaxed
+        <div class="flex spaceBetween">
+            <div></div>
+            <div style="width: 40%">
+                <div class="flex spaceBetween"><span>gesamt:</span><span>{invoiceNetAmount} €</span></div>
+                <div class="flex" style="justify-content: right;">
+                    <h3>zu bezahlen: {invoiceNetAmount} €</h3>
+                </div>
+            </div>
+        </div>
+        totalAmountBlockUntaxed
+        :
+        <<<totalAmountBlockTaxed
+        <div class="flex spaceBetween">
+            <div></div>
+            <div style="width: 40%">
+                <div class="flex spaceBetween"><span>gesamt netto:</span><span>{invoiceNetAmount} €</span></div>
+                <div class="flex spaceBetween"><span>USt. 7%:</span><span>{totalTax7} €</span></div>
+                <div class="flex spaceBetween"><span>USt. 19%:</span><span>{totalTax19} €</span></div>
+                <div class="flex spaceBetween"><span>gesamt brutto:</span><span>{invoiceGrossAmount} €</span></div>
+                <div class="flex" style="justify-content: right;">
+                    <h3>zu bezahlen: {invoiceGrossAmount} €</h3>
+                </div>
+            </div>
+        </div>
+        totalAmountBlockTaxed;
 
     return templateEngine($template, $placeholders);
 }
@@ -181,4 +228,3 @@ function getInvoiceComment($comment)
 
 
 echo $invoiceHTML;
-
