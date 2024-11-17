@@ -1,4 +1,7 @@
 <?php 
+
+session_start();
+
 include 'src/paths.php';
 include getPath('templateEngine');
 
