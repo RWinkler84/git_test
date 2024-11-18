@@ -46,7 +46,7 @@ const forms = {
                 </div>
                 <form method="post" id="newProductForm" onsubmit="createProduct(event)">
                     <h2>Neues Produkt anlegen</h2>
-
+                    <input type="hidden" name="id">
                     <label for="productTitle">Titel</label>
                     <input type="text" id="productTitle" name="productTitle" placeholder="Eine Bezeichnung vergeben" required>
                     
@@ -167,6 +167,7 @@ function createCostumer(event) {
 function createProduct(event) {
     event.preventDefault();
     data = {
+        productId: $('#newProductForm input[name=id]').val() ?? '',
         productTitle: $('#newProductForm input[name=productTitle]').val(),
         productPrice: $('#newProductForm input[name=productPrice]').val(),
         taxRate: $('#newProductForm input[type=radio]:checked').val(),
@@ -302,6 +303,7 @@ function showSubForm(requestedForm) {
 
 function hideSubForm() {
     $('#subFormWrapper').html('').addClass('hidden');
+    $('#editFormWrapper').html('').addClass('hidden');
 }
 
 $('#startDate').ready(() => {

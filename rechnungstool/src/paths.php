@@ -14,11 +14,16 @@ $path = [
     'topMenuHTML'  => 'html_templates/topMenu.html',
     'invoiceFormHTML' => 'html_templates/invoiceForm.html',
     'invoiceOverviewHTML' => 'html_templates/invoiceOverview.html',
+    'costumerOverviewHTML' => 'html_templates/costumerOverview.html',
+    'productsOverviewHTML' => 'html_templates/productsOverview.html',
+
 
     // einzelne Seiten und Seitenelemente
     'topMenu' => 'inc/topMenu.php',
     'invoiceView' => 'inc/invoiceView.php',
     'invoiceOverview' => 'inc/invoiceOverview.php',
+    'costumerOverview' => 'inc/costumerOverview.php',
+    'productsOverview' => 'inc/productsOverview.php',
     'invoiceForm' => 'inc/invoiceform.php',
     'index' => 'index.php',
     // nicht existierende oder externe Seite aufgerufen

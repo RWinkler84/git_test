@@ -27,10 +27,7 @@ if (isset($_POST['action'])) {
             break;
 
         case 'createProduct':
-            $sqlQuery = "INSERT INTO products (productTitle, productPrice, taxRate, productDescription) VALUES (?,?,?,?)";
-            $paramType = "ssss";
-            $param = [$_POST['productTitle'], $_POST['productPrice'], $_POST['taxRate'], $_POST['productDescription']];
-            $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+            empty($_POST['productId']) ?  createProduct() : updateProduct();
             break;
 
         case 'createCostumer':
@@ -39,9 +36,17 @@ if (isset($_POST['action'])) {
             $param = [$_POST['name'], $_POST['address'], $_POST['taxId'], $_POST['salesTaxId']];
             $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
             break;
+
         case 'createInvoice':
             $result = processInvoiceData();
+            break;
 
+        case 'editProduct':
+            $sqlQuery = "SELECT * FROM products WHERE id=?";
+            $paramType = 'i';
+            $param = [$_POST['id']];
+            $fetchProduct = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+            $result = $fetchProduct->fetch_all(MYSQLI_ASSOC);
             break;
     }
 }
@@ -110,6 +115,26 @@ function filterForSelectedProducts($key)
     return str_contains($key, 'productSelect');
 }
 
+function createProduct()
+{
+    $sqlQuery = "INSERT INTO products (productTitle, productPrice, taxRate, productDescription) VALUES (?,?,?,?)";
+    $paramType = "ssss";
+    $param = [$_POST['productTitle'], $_POST['productPrice'], $_POST['taxRate'], $_POST['productDescription']];
+    $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+
+    return $result;
+}
+
+function updateProduct()
+{
+    $sqlQuery = "UPDATE products SET productTitle=?, productPrice=?, taxRate=?, productDescription=? WHERE id=?";
+    $paramType = "sdssi";
+    $param = [$_POST['productTitle'], $_POST['productPrice'], $_POST['taxRate'], $_POST['productDescription'], $_POST['productId']];
+    $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+
+    return $result;
+}
+
 
 function processInvoiceData()
 {
@@ -132,7 +157,7 @@ function processInvoiceData()
     extract($costumer[0], EXTR_PREFIX_ALL, "costumer");
 
     //checkt, ob beim Kunden eine UStId gesetzt ist, wenn Reverse Charge ausgewählt wurde
-    if (isset($_POST['invoiceData']['reverseCharge']) && empty($costumer_salesTaxId)){
+    if (isset($_POST['invoiceData']['reverseCharge']) && empty($costumer_salesTaxId)) {
         $result = 'salesTaxId not set';
         return $result;
     }
@@ -168,7 +193,7 @@ function processInvoiceData()
     //7 Prozent
     if (isset($products7[0])) {
         for ($i = 0; $i < count($products7); $i++) {
-            $singleProductTotalPrice7 = round($products7[$i]['productPrice'] * $products7[$i]['amount'],2); //Netto-Preis aller Exemplare eines Produkts
+            $singleProductTotalPrice7 = round($products7[$i]['productPrice'] * $products7[$i]['amount'], 2); //Netto-Preis aller Exemplare eines Produkts
             $allProductsTotalPrice7 += $singleProductTotalPrice7; //Netto-Preis aller Produkte
             $totalTax7 = round($allProductsTotalPrice7 * 0.07, 2);
             $products7[$i]['productTotalNetPrice'] = $singleProductTotalPrice7;
@@ -188,7 +213,7 @@ function processInvoiceData()
     }
 
     $invoiceNetAmount = $allProductsTotalPrice0 + $allProductsTotalPrice7 + $allProductsTotalPrice19;
-    $invoiceGrossAmunt = isset($_POST['invoiceData']['smallBusinessTax']) || isset($_POST['invoiceData']['reverseCharge']) ? 
+    $invoiceGrossAmunt = isset($_POST['invoiceData']['smallBusinessTax']) || isset($_POST['invoiceData']['reverseCharge']) ?
         0 : $invoiceNetAmount + $totalTax7 + $totalTax19;
 
     //bereitet Daten für Datenbank-Query vor

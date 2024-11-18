@@ -8,8 +8,8 @@ $invoiceData = $fetchedInvoiceData->fetch_all(MYSQLI_ASSOC);
 
 
 $placeholders = [
-    'logdata' => print_r($invoiceData, true),
     'tableContent' => getTableContent($invoiceData),
+    'totalCount' => getDataTotalCount($invoiceData)
 ];
 
 $template = file_get_contents(getPath('invoiceOverviewHTML'));
@@ -85,6 +85,11 @@ function getPaymentStatus($status)
 {
 
     return $status == 0 ? "<span style='color: red'>&#10008</span>" : "<span style='color: green'>&#10004;</span>";
+}
+
+function getDataTotalCount($invoiceData){
+
+    return count($invoiceData) . ' Datenssätze ingesamt';
 }
 
 //invoiceGrossAmount muss durch getInvoiceAmoun-Funktion ersetzt werden, damit keine Brutto-Preise

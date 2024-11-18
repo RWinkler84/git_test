@@ -10,6 +10,7 @@
     --table-blue: rgb(55, 114, 151);
     --grey: rgb(149,149,149);
     --lighter-grey: #e8e8e8;
+    --light-blue: rgba(164, 186, 202, 0.696);
 
     font-size: 16px;
     --font-size-small: 12px;
@@ -22,6 +23,7 @@
 
 body {
     background-color: var(--background-body);
+    width: 100vw;
 }
 
 h1 {
@@ -62,6 +64,8 @@ textarea,
 input[type='text'],
 select {
     width: 20em;
+    border-style: solid;
+    border-width: 1px;
 }
 
 textarea {
@@ -148,12 +152,14 @@ button {
 }
 
 .subFormWrapper {
-    position: absolute;
-    top: 80px;
-    left: 100px;
+    position: fixed;
+    top: 140px;
+    left: 0;
+    right: 0;
+    margin-inline: auto;
     padding: 20px 40px;
-    margin: 10px;
     width: fit-content;
+    border: 1px solid var(--button-blue);
     background-color: rgb(232, 232, 232);
     border-radius: 10px;
     box-shadow: 5px 5px 10px var(--shadow);

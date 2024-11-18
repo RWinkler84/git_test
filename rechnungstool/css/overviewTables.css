@@ -11,6 +11,6 @@
     }
 
 #invoiceOverviewTable tr:hover {
-    background-color: var(--grey);
+    background-color: var(--light-blue);
 }
 

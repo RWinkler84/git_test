@@ -1,0 +1,103 @@
+<div id="contentWrapper">
+    {tableContent}
+    <div class="divider"></div>
+    <div class="flex spaceBetween">
+        <div></div>
+        <div>{totalCount}</div>
+    </div>
+
+    <div id="editFormWrapper" class="subFormWrapper hidden">
+        <div id="toast">
+            <p></p>
+            <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
+                <button id="confirmButton"></button>
+                <button id="cancelButton" style="display: none">Abbrechen</button>
+            </div>
+        </div>
+        <form method="post" id="newProductForm" onsubmit="createProduct(event)">
+            <h2>Produkt bearbeiten</h2>
+
+            <input type="hidden" name="id">
+
+            <label for="productTitle">Titel</label>
+            <input type="text" id="productTitle" name="productTitle" placeholder="Eine Bezeichnung vergeben" required>
+
+            <div class="marginTop"><label for="productPrice" style="display: inline">Netto-Preis</label><span
+                    class="info" onclick="netPriceInfo()">?</span></div>
+            <input type="text" id="productPrice" name="productPrice" placeholder="Format: 10.99" required>
+            <button type="button" class="noMarginTop" onclick="netPriceCalculator()">berechnen</button>
+
+            <div class="marginTop">
+                <label>Mehrwertsteuer</label>
+                <div>
+                    <input type="radio" id="tax0" name="taxRate" value="0" required>
+                    <label for="tax0" style="display: inline;">0 %</label>
+                </div>
+                <div>
+                    <input type="radio" id="tax7" name="taxRate" value="7" required>
+                    <label for="tax7" style="display: inline;">7 %</label>
+                </div>
+                <div>
+                    <input type="radio" id="tax19" name="taxRate" value="19" required>
+                    <label for="tax19" style="display: inline;">19 %</label>
+                </div>
+            </div>
+
+            <label for="productDescription">Beschreibung (optional)</label>
+            <textarea id="productDescription" name="productDescription"
+                placeholder="Wichtige Infos zum Produkt..."></textarea>
+            <div>
+                <button type="submit" id="sendNewProduct">Speichern</button>
+                <button type="button" id="cancelNewProduct" onclick="hideEditForm()">Abbrechen</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+
+        function editProduct(item) {
+
+            let data = {
+                id: $(item).closest('tr').find('td[id]').text(),
+                action: 'editProduct'
+            };
+
+            let response = makeAjaxRequest(data);
+
+            response
+                .then(function (result) {
+
+                    fillEditForm(result.data[0]);
+                })
+                .catch(function (result) {
+
+                });
+        }
+
+        function fillEditForm(product) {
+            $('form input[name=id]').val(product.id)
+            $('form #productTitle').val(product.productTitle);
+            $('form #productPrice').val(product.productPrice);
+            $('form #productDescription').text(product.productDescription);
+
+            switch (product.taxRate) {
+                case 0:
+                    $('form #tax0').prop('checked', true);
+                    break;
+                case 7:
+                    $('form #tax7').prop('checked', true);
+                    break;
+                case 19:
+                    $('form #tax19').prop('checked', true);
+                    break;
+
+            }
+
+            $('#editFormWrapper').removeClass('hidden');
+        }
+
+        function hideEditForm() {
+
+            $('#editFormWrapper').addClass('hidden');
+        }
+    </script>
