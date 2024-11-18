@@ -6,6 +6,9 @@
         <div>{totalCount}</div>
     </div>
 
+    <!-- Modal zur Löschabfrage -->
+    <div id="deleteModal" class="deleteModal"></div>
+
     <div id="editFormWrapper" class="subFormWrapper hidden">
         <div id="toast">
             <p></p>
@@ -59,7 +62,7 @@
 
             let data = {
                 id: $(item).closest('tr').find('td[id]').text(),
-                action: 'editProduct'
+                action: 'getProductDataToEdit'
             };
 
             let response = makeAjaxRequest(data);
@@ -67,37 +70,75 @@
             response
                 .then(function (result) {
 
-                    fillEditForm(result.data[0]);
+                    let product = result.data[0];
+                    $('form input[name=id]').val(product.id)
+                    $('form #productTitle').val(product.productTitle);
+                    $('form #productPrice').val(product.productPrice);
+                    $('form #productDescription').text(product.productDescription);
+
+                    switch (product.taxRate) {
+                        case 0:
+                            $('form #tax0').prop('checked', true);
+                            break;
+                        case 7:
+                            $('form #tax7').prop('checked', true);
+                            break;
+                        case 19:
+                            $('form #tax19').prop('checked', true);
+                            break;
+                    }
+
+                    $('#editFormWrapper').removeClass('hidden');
+
                 })
                 .catch(function (result) {
 
                 });
         }
 
-        function fillEditForm(product) {
-            $('form input[name=id]').val(product.id)
-            $('form #productTitle').val(product.productTitle);
-            $('form #productPrice').val(product.productPrice);
-            $('form #productDescription').text(product.productDescription);
 
-            switch (product.taxRate) {
-                case 0:
-                    $('form #tax0').prop('checked', true);
-                    break;
-                case 7:
-                    $('form #tax7').prop('checked', true);
-                    break;
-                case 19:
-                    $('form #tax19').prop('checked', true);
-                    break;
+        function confirmProductDeletion(item) {
 
+            let id = $(item).closest('tr').find('td[id]').text();
+            let modalContent = `
+                 <p>Willst du das Produkt ${id} unwiderruflich löschen?</p>
+                <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
+                    <button id="confirmButton" onclick="deleteProduct(${id})">Löschen</button>
+                    <button id="cancelButton" onclick="hideDeleteModal()">Abbrechen</button>
+                </div>
+            `;
+            $('#deleteModal').css('display', 'flex').html(modalContent);
+        }
+
+
+        function deleteProduct(id) {
+
+            let data = {
+                action: 'deleteProduct',
+                id: id
             }
 
-            $('#editFormWrapper').removeClass('hidden');
+            let response = makeAjaxRequest(data);
+
+            response
+                .then(function (result) {
+                    console.log(result);
+
+                })
+                .catch(function (result) {
+
+                });
         }
+
 
         function hideEditForm() {
 
             $('#editFormWrapper').addClass('hidden');
+        }
+
+
+        function hideDeleteModal(){
+
+            $('#deleteModal').css('display', 'none');
         }
     </script>

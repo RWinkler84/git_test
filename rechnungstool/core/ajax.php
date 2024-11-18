@@ -41,12 +41,19 @@ if (isset($_POST['action'])) {
             $result = processInvoiceData();
             break;
 
-        case 'editProduct':
+        case 'getProductDataToEdit':
             $sqlQuery = "SELECT * FROM products WHERE id=?";
             $paramType = 'i';
             $param = [$_POST['id']];
             $fetchProduct = dataQueryPrepStmt($sqlQuery, $paramType, $param);
             $result = $fetchProduct->fetch_all(MYSQLI_ASSOC);
+            break;
+
+        case 'deleteProduct':
+            $sqlQuery = "DELETE FROM products WHERE id=?";
+            $paramType = "i";
+            $param = [$_POST['id']];
+            $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
             break;
     }
 }
@@ -115,6 +122,8 @@ function filterForSelectedProducts($key)
     return str_contains($key, 'productSelect');
 }
 
+
+//Funktionen zur Verwaltung von Produkten
 function createProduct()
 {
     $sqlQuery = "INSERT INTO products (productTitle, productPrice, taxRate, productDescription) VALUES (?,?,?,?)";
@@ -136,6 +145,7 @@ function updateProduct()
 }
 
 
+//füllt die invoice-Tabelle mit Daten
 function processInvoiceData()
 {
     $selectedProductsData = fetchSelectedProductData(); //holt die Daten der ausgewählten Produkte
@@ -268,4 +278,14 @@ function processInvoiceData()
     $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
 
     return $result;
+}
+
+
+//simple Error-Logging
+
+function logger($valueToLog)
+{
+    error_log('file: ' . __FILE__);
+    error_log('line: ' . __LINE__);
+    error_log(print_r($valueToLog, true));
 }

@@ -9,7 +9,7 @@ $sites = [
     'invoiceForm',
     'invoiceOverview',
     'costumerOverview',
-    'productOverview',
+    'productsOverview',
     'analysis',
 ];
 

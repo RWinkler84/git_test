@@ -34,6 +34,7 @@ function getTableContent($productsData)
                     <th>Umsatzsteuer-satz</th>
                     <th>Beschreibung</th>
                     <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -52,7 +53,8 @@ function getTableContent($productsData)
                     <td class="multiline" style="padding-right: 1em;">{$data['productPrice']} €</td>
                     <td style="padding-right: 1em;">{$data['taxRate']}%</td>
                     <td style="padding-right: 1em;">{$data['productDescription']}</td>
-                    <td style="cursor: pointer" onclick="editProduct(this)">&#9997;</a></td>
+                    <td style="cursor: pointer" onclick="editProduct(this)">&#9997;</td>
+                    <td style="cursor: pointer" onclick="confirmProductDeletion(this)">&#x1F5D1;</td>
                 </tr>
         TABLEROW;
 

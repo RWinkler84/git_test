@@ -303,7 +303,8 @@ function showSubForm(requestedForm) {
 
 function hideSubForm() {
     $('#subFormWrapper').html('').addClass('hidden');
-    $('#editFormWrapper').html('').addClass('hidden');
+    $('#editFormWrapper').addClass('hidden');
+    $('#toast').css('display', 'none');
 }
 
 $('#startDate').ready(() => {
