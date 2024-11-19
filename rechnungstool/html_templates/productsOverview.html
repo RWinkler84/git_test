@@ -57,13 +57,23 @@
     </div>
 
     <script>
+        let resendData;
 
         function editProduct(item) {
 
-            let data = {
-                id: $(item).closest('tr').find('td[id]').text(),
-                action: 'getProductDataToEdit'
-            };
+            let data;
+
+            if (resendData && resendData.action == 'getProductDataToEdit') {
+
+                data = resendData;
+
+            } else {
+
+                data = {
+                    id: $(item).closest('tr').find('td[id]').text(),
+                    action: 'getProductDataToEdit'
+                };
+            }
 
             let response = makeAjaxRequest(data);
 
@@ -89,15 +99,26 @@
                     }
 
                     $('#editFormWrapper').removeClass('hidden');
+                    $('#deleteModal').css('display', 'none');
 
                 })
-                .catch(function (result) {
+                .catch(function (result) { //nicht fertig, editProduct muss erneut aufgerufen werden
+                    resendData = data;
+                    let modalContent = `
+                    <p>Da ist etwas schief gelaufen...</p>
+                    <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
+                        <button id="confirmButton" onclick="editProduct()">Erneut versuchen</button>
+                        <button id="cancelButton" onclick="hideDeleteModal()">Abbrechen</button>
+                    </div>
+                    `;
+
+                    $('#deleteModal').css('display', 'flex').html(modalContent);
 
                 });
         }
 
 
-        function confirmProductDeletion(item) {
+        function optInProductDeletion(item) {
 
             let id = $(item).closest('tr').find('td[id]').text();
             let modalContent = `
@@ -107,25 +128,52 @@
                     <button id="cancelButton" onclick="hideDeleteModal()">Abbrechen</button>
                 </div>
             `;
+
             $('#deleteModal').css('display', 'flex').html(modalContent);
         }
 
 
         function deleteProduct(id) {
 
-            let data = {
-                action: 'deleteProduct',
-                id: id
+            if (resendData && resendData.action == 'deleteProduct') {
+
+                data = resendData;
+
+            } else {
+
+                data = {
+                    action: 'deleteProduct',
+                    id: id
+                }
             }
 
             let response = makeAjaxRequest(data);
 
             response
                 .then(function (result) {
-                    console.log(result);
+
+                    let modalContent = `
+                        <p>Das Produkt ${id} wurde erfolgreich gelöscht.</p>
+                        <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
+                            <button id="cancelButton" onclick="hideDeleteModal()">Okay</button>
+                        </div>
+                        `;
+
+                    $('#deleteModal').css('display', 'flex').html(modalContent);
 
                 })
                 .catch(function (result) {
+
+                    resendData = data;
+                    let modalContent = `
+                    <p>Da ist etwas schief gelaufen...</p>
+                    <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
+                        <button id="confirmButton" onclick="deleteProduct()">Erneut versuchen</button>
+                        <button id="cancelButton" onclick="hideDeleteModal()">Abbrechen</button>
+                    </div>
+                    `;
+
+                    $('#deleteModal').css('display', 'flex').html(modalContent);
 
                 });
         }
@@ -137,7 +185,7 @@
         }
 
 
-        function hideDeleteModal(){
+        function hideDeleteModal() {
 
             $('#deleteModal').css('display', 'none');
         }
