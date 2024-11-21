@@ -88,6 +88,8 @@ function addProductSelect() {
     let items = makeAjaxRequest(data);
     items.then(function (result) {
 
+        result.data = JSON.parse(result.data);
+
         for (let i = 0; i < result.data.length; i++) {
             newOption = `<option name='productSelect' value='${result.data[i]['id']}' price='${result.data[i]['productPrice']}'>${result.data[i]['productTitle']}  -  ${result.data[i]['productPrice']}€</option>`;
             options += newOption;

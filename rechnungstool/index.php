@@ -5,7 +5,7 @@ session_start();
 include 'src/paths.php';
 include getPath('templateEngine');
 
-include_once getPath('initialData');
+include_once getPath('ajax');
 
 include_once getPath('headerHTML');
 

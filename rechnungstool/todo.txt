@@ -18,3 +18,6 @@ invoiceOverview:
 invoiceView:
 
 - drucken Button neu positionieren
+
+get rid of header on ajax.php and migrate initialdata.php into ajax.php
+migrate dataqueries from costumer and invoiceoverview

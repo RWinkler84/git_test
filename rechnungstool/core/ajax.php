@@ -1,7 +1,7 @@
 <?php
-require_once '../src/paths.php';
+// require_once '../src/paths.php';
 require getPath('database');
-header('Content-Type: application/json');
+// header('Content-Type: application/json');
 $result = [];
 
 if (isset($_POST['action'])) {
@@ -15,6 +15,7 @@ if (isset($_POST['action'])) {
                 return strcmp($b['lastEdited'], $a['lastEdited']);
             });
             $result = $product;
+
             break;
 
         case 'getCostumer':
@@ -67,7 +68,8 @@ function dataQueryPrepStmt($sqlQuery, $paramType, $param)
     global $conn;
 
     $stmt = $conn->prepare($sqlQuery);
-    $stmt->bind_param($paramType, ...$param);
+
+    if (!empty($param)) $stmt->bind_param($paramType, ...$param);
     $stmt->execute();
     $fetchedData = $stmt->get_result();
 
@@ -75,7 +77,39 @@ function dataQueryPrepStmt($sqlQuery, $paramType, $param)
 }
 
 
-function fetchCostumerFromDB()
+function fetchAllCostumers()
+{
+    $sqlQuery = 'SELECT id, name FROM costumer';
+    $paramType = '';
+    $param = [];
+    $fetchCostumers = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+    $costumers = $fetchCostumers->fetch_all(MYSQLI_ASSOC);
+
+    usort($costumers, function ($a, $b) {
+        return strcmp($a['name'], $b['name']);
+    });
+
+    return $costumers;
+}
+
+function fetchAllProducts()
+{
+    $sqlQuery = 'SELECT id, productTitle, productPrice, lastEdited FROM products';
+    $paramType = '';
+    $param = [];
+    $fetchProducts = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+    $products = $fetchProducts->fetch_all(MYSQLI_ASSOC);
+
+    usort($products, function ($a, $b) {
+        return strcmp($b['lastEdited'], $a['lastEdited']);
+    });
+
+    return $products;
+}
+
+function fetchAllInvoices() {}
+
+function fetchCostumerById()
 {
     $sqlQuery = "SELECT * FROM costumer WHERE id=?";
     $param = [$_POST['invoiceData']['costumerSelect']];
@@ -84,6 +118,8 @@ function fetchCostumerFromDB()
 
     return $fetchCostumer->fetch_all(MYSQLI_ASSOC);
 }
+
+function fetchProductById() {}
 
 
 function fetchSelfFromDB()
@@ -149,7 +185,7 @@ function updateProduct()
 function processInvoiceData()
 {
     $selectedProductsData = fetchSelectedProductData(); //holt die Daten der ausgewählten Produkte
-    $costumer = fetchCostumerFromDB();
+    $costumer = fetchCostumerById();
     $self = fetchSelfFromDB(); //self sind die Daten des eigenen Unternehmens
     $products0 = [];
     $products7 = [];
