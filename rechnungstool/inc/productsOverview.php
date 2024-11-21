@@ -1,11 +1,6 @@
 <?php
 
-$stmt = $conn->prepare("SELECT * FROM products");
-$stmt->execute();
-$fetchedproductsData = $stmt->get_result();
-$productsData = $fetchedproductsData->fetch_all(MYSQLI_ASSOC);
-
-
+$productsData = fetchAllProducts(false);
 $placeholders = [
     'logdata' => print_r($productsData, true),
     'tableContent' => getTableContent($productsData),

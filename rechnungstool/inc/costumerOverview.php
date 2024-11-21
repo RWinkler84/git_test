@@ -1,11 +1,6 @@
 <?php
 
-$stmt = $conn->prepare("SELECT * FROM costumer");
-$stmt->execute();
-$fetchedCostumerData = $stmt->get_result();
-$costumerData = $fetchedCostumerData->fetch_all(MYSQLI_ASSOC);
-
-
+$costumerData = fetchAllCostumers(false);
 $placeholders = [
     'logdata' => print_r($costumerData, true),
     'tableContent' => getTableContent($costumerData),

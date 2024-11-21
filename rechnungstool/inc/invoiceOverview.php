@@ -1,12 +1,7 @@
 <?php
 
 
-$stmt = $conn->prepare("SELECT * FROM invoices");
-$stmt->execute();
-$fetchedInvoiceData = $stmt->get_result();
-$invoiceData = $fetchedInvoiceData->fetch_all(MYSQLI_ASSOC);
-
-
+$invoiceData = fetchAllInvoices();
 $placeholders = [
     'tableContent' => getTableContent($invoiceData),
     'totalCount' => getDataTotalCount($invoiceData)

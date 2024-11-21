@@ -1,7 +1,10 @@
 <?php
 
-$product = fetchAllProducts();
-$costumer = fetchAllCostumers();
+$product = fetchAllProducts(true);
+$costumer = fetchAllCostumers(true);
+
+
+
 $allCostumerOptions = "";
 $allProductOptions = "";
 

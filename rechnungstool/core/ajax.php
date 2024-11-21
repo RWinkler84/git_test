@@ -1,7 +1,10 @@
 <?php
-// require_once '../src/paths.php';
+if (!function_exists('getPath')) {
+    require 'paths.php';
+};
 require getPath('database');
-// header('Content-Type: application/json');
+global $conn;
+
 $result = [];
 
 if (isset($_POST['action'])) {
@@ -9,22 +12,11 @@ if (isset($_POST['action'])) {
     switch ($_POST['action']) {
 
         case 'addProductSelect':
-            $fetchProduct = $conn->query("SELECT id, productTitle, productPrice, lastEdited FROM products");
-            $product = $fetchProduct->fetch_all(MYSQLI_ASSOC);
-            usort($product, function ($a, $b) {
-                return strcmp($b['lastEdited'], $a['lastEdited']);
-            });
-            $result = $product;
-
+            $result = fetchAllProducts(true);
             break;
 
         case 'getCostumer':
-            $fetchCostumer = $conn->query("SELECT id, name FROM costumer");
-            $costumer = $fetchCostumer->fetch_all(MYSQLI_ASSOC);
-            usort($costumer, function ($a, $b) {
-                return strcmp($a['name'], $b['name']);
-            });
-            $result = $costumer;
+            $result = fetchAllCostumers(true);
             break;
 
         case 'createProduct':
@@ -32,10 +24,7 @@ if (isset($_POST['action'])) {
             break;
 
         case 'createCostumer':
-            $sqlQuery = "INSERT INTO costumer (name, address, taxId, salesTaxid) VALUES (?,?,?,?)";
-            $paramType = 'ssss';
-            $param = [$_POST['name'], $_POST['address'], $_POST['taxId'], $_POST['salesTaxId']];
-            $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+            $result = createCostumer();
             break;
 
         case 'createInvoice':
@@ -43,18 +32,11 @@ if (isset($_POST['action'])) {
             break;
 
         case 'getProductDataToEdit':
-            $sqlQuery = "SELECT * FROM products WHERE id=?";
-            $paramType = 'i';
-            $param = [$_POST['id']];
-            $fetchProduct = dataQueryPrepStmt($sqlQuery, $paramType, $param);
-            $result = $fetchProduct->fetch_all(MYSQLI_ASSOC);
+            $result = fetchProductById();
             break;
 
         case 'deleteProduct':
-            $sqlQuery = "DELETE FROM products WHERE id=?";
-            $paramType = "i";
-            $param = [$_POST['id']];
-            $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+            $result = deleteProduct();
             break;
     }
 }
@@ -77,37 +59,51 @@ function dataQueryPrepStmt($sqlQuery, $paramType, $param)
 }
 
 
-function fetchAllCostumers()
+function fetchAllCostumers(bool $sorted)
 {
-    $sqlQuery = 'SELECT id, name FROM costumer';
+    $sqlQuery = 'SELECT * FROM costumer';
     $paramType = '';
     $param = [];
     $fetchCostumers = dataQueryPrepStmt($sqlQuery, $paramType, $param);
     $costumers = $fetchCostumers->fetch_all(MYSQLI_ASSOC);
 
-    usort($costumers, function ($a, $b) {
+    if ($sorted) {
+        usort($costumers, function ($a, $b) {
         return strcmp($a['name'], $b['name']);
     });
+    }
 
     return $costumers;
 }
 
-function fetchAllProducts()
+function fetchAllProducts(bool $sorted)
 {
-    $sqlQuery = 'SELECT id, productTitle, productPrice, lastEdited FROM products';
+    $sqlQuery = 'SELECT * FROM products';
     $paramType = '';
     $param = [];
     $fetchProducts = dataQueryPrepStmt($sqlQuery, $paramType, $param);
     $products = $fetchProducts->fetch_all(MYSQLI_ASSOC);
 
+    if ($sorted){
     usort($products, function ($a, $b) {
         return strcmp($b['lastEdited'], $a['lastEdited']);
     });
+    }
 
     return $products;
 }
 
-function fetchAllInvoices() {}
+function fetchAllInvoices()
+{
+    $sqlQuery = 'SELECT * FROM invoices';
+    $paramType = '';
+    $param = [];
+
+    $fetchedInvoiceData = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+    $invoiceData = $fetchedInvoiceData->fetch_all(MYSQLI_ASSOC);
+
+    return $invoiceData;
+}
 
 function fetchCostumerById()
 {
@@ -119,7 +115,16 @@ function fetchCostumerById()
     return $fetchCostumer->fetch_all(MYSQLI_ASSOC);
 }
 
-function fetchProductById() {}
+function fetchProductById()
+{
+    $sqlQuery = "SELECT * FROM products WHERE id=?";
+    $paramType = 'i';
+    $param = [$_POST['id']];
+    $fetchProduct = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+    $result = $fetchProduct->fetch_all(MYSQLI_ASSOC);
+
+    return $result;
+}
 
 
 function fetchSelfFromDB()
@@ -180,6 +185,32 @@ function updateProduct()
     return $result;
 }
 
+function deleteProduct()
+{
+    $sqlQuery = "DELETE FROM products WHERE id=?";
+    $paramType = "i";
+    $param = [$_POST['id']];
+    $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+
+    return $result;
+}
+
+
+function createCostumer()
+{
+    $sqlQuery = "INSERT INTO costumer (name, address, taxId, salesTaxid) VALUES (?,?,?,?)";
+    $paramType = 'ssss';
+    $param = [$_POST['name'], $_POST['address'], $_POST['taxId'], $_POST['salesTaxId']];
+    $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+
+    return $result;
+}
+
+
+function editCostumer() {}
+
+
+function deleteCostumer() {}
 
 //füllt die invoice-Tabelle mit Daten
 function processInvoiceData()
@@ -322,6 +353,5 @@ function processInvoiceData()
 function logger($valueToLog)
 {
     error_log('file: ' . __FILE__);
-    error_log('line: ' . __LINE__);
-    error_log(print_r($valueToLog, true));
+    error_log('Logger: ' . print_r($valueToLog, true));
 }

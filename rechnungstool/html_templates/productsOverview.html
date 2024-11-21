@@ -79,7 +79,8 @@
 
             response
                 .then(function (result) {
-
+                    
+                    result.data = JSON.parse(result.data);
                     let product = result.data[0];
                     $('form input[name=id]').val(product.id)
                     $('form #productTitle').val(product.productTitle);

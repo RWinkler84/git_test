@@ -2,10 +2,12 @@
 
 session_start();
 
-include 'src/paths.php';
+require_once 'core/paths.php';
 include getPath('templateEngine');
 
-include_once getPath('ajax');
+require getPath('database');
+
+require getPath('ajax');
 
 include_once getPath('headerHTML');
 

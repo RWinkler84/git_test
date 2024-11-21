@@ -1,7 +1,6 @@
 <?php 
 $path = [
-    'database' => 'src/db.php',
-    'initialData' => 'core/initialData.php',
+    'database' => 'core/db.php',
     'ajax' => 'core/ajax.php',
     'templateEngine' => 'core/templateEngine.php',
 

@@ -88,6 +88,7 @@ function addProductSelect() {
     let items = makeAjaxRequest(data);
     items.then(function (result) {
 
+        console.log(result);
         result.data = JSON.parse(result.data);
 
         for (let i = 0; i < result.data.length; i++) {
