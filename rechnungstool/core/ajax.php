@@ -13,6 +13,7 @@ if (isset($_POST['action'])) {
 
         case 'addProductSelect':
             $result = fetchAllProducts(true);
+            echo json_encode($result);
             break;
 
         case 'getCostumer':
@@ -33,6 +34,7 @@ if (isset($_POST['action'])) {
 
         case 'getProductDataToEdit':
             $result = fetchProductById();
+            echo json_encode($result);
             break;
 
         case 'deleteProduct':
@@ -40,9 +42,6 @@ if (isset($_POST['action'])) {
             break;
     }
 }
-
-echo json_encode($result);
-
 
 
 function dataQueryPrepStmt($sqlQuery, $paramType, $param)
@@ -69,8 +68,8 @@ function fetchAllCostumers(bool $sorted)
 
     if ($sorted) {
         usort($costumers, function ($a, $b) {
-        return strcmp($a['name'], $b['name']);
-    });
+            return strcmp($a['name'], $b['name']);
+        });
     }
 
     return $costumers;
@@ -84,10 +83,10 @@ function fetchAllProducts(bool $sorted)
     $fetchProducts = dataQueryPrepStmt($sqlQuery, $paramType, $param);
     $products = $fetchProducts->fetch_all(MYSQLI_ASSOC);
 
-    if ($sorted){
-    usort($products, function ($a, $b) {
-        return strcmp($b['lastEdited'], $a['lastEdited']);
-    });
+    if ($sorted) {
+        usort($products, function ($a, $b) {
+            return strcmp($b['lastEdited'], $a['lastEdited']);
+        });
     }
 
     return $products;
