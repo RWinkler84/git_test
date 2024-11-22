@@ -7,7 +7,7 @@ include getPath('templateEngine');
 
 require getPath('database');
 
-require getPath('ajax');
+require getPath('dataqueries');
 
 include_once getPath('headerHTML');
 

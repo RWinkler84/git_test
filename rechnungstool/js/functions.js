@@ -19,8 +19,8 @@ const forms = {
                     <label for="name">Kundenname</label>
                     <input type="text" name="name" id="name" placeholder="Kundennamen eingeben" autocomplete="off" required>
                         
-                    <label for="adress">Kundenadresse</label>
-                    <textarea id="adress" name="address" placeholder="Adresse eingeben" rows="6" cols="30" required></textarea>
+                    <label for="address">Kundenadresse</label>
+                    <textarea id="address" name="address" placeholder="Adresse eingeben" rows="6" cols="30" required></textarea>
                         
                     <label for="taxId">Steuernummer</label>
                     <input type="text" id="taxId" name="taxId" placeholder="Die Steuernummer eingeben" autocomplete="off">
@@ -88,7 +88,6 @@ function addProductSelect() {
     let items = makeAjaxRequest(data);
     items.then(function (result) {
 
-        console.log(result);
         result.data = JSON.parse(result.data);
 
         for (let i = 0; i < result.data.length; i++) {
@@ -120,7 +119,7 @@ function makeAjaxRequest(data) {
     return new Promise((resolve, reject) => {
         $.ajax({
             type: 'POST',
-            url: 'core/ajax.php',
+            url: 'core/dataqueries.php',
             data: data
         })
             .done(function (data) {
@@ -135,7 +134,8 @@ function makeAjaxRequest(data) {
 
 //Logik des createCostumer-Fensters
 function createCostumer(event) {
-    event.preventDefault();
+
+   event ? event.preventDefault() : false;
     data = {
         name: $('#newCostumerForm input[name=name]').val(),
         address: $('#newCostumerForm textarea[name=address]').val(),
@@ -147,7 +147,43 @@ function createCostumer(event) {
     let response = makeAjaxRequest(data);
     response
         .then(function (result) {
+
             $('#toast p').text('Kunde erfolgreich angelegt.');
+            $('#toast #confirmButton').on('click', hideSubForm).text('Okay');
+            $('#toast #cancelButton').css('display', 'none');
+            $('#toast').css('display', 'flex');
+        })
+        .catch(function (result) {
+            $('#toast p').text('Da ist etwas schief gelaufen!');
+            $('#toast #confirmButton').on('click', createProduct).text('Erneut versuchen');
+            $('#toast #cancelButton').css('display', 'block');
+            $('#toast').css('display', 'flex');
+
+            $('#toast #cancelButton').on('click', function () {
+                $('#toast').css('display', 'none')
+            });
+        });
+
+}
+
+
+function updateCostumer(event) {
+
+    event ?  event.preventDefault() : false;
+    data = {
+        id: $('#newCostumerForm input[name=id]').val(),
+        name: $('#newCostumerForm input[name=name]').val(),
+        address: $('#newCostumerForm textarea[name=address]').val(),
+        taxId: $('#newCostumerForm input[name=taxId]').val(),
+        salesTaxId: $('#newCostumerForm input[name=salesTaxId]').val(),
+        action: 'updateCostumer'
+    };
+
+    let response = makeAjaxRequest(data);
+    response
+        .then(function (result) {
+
+            $('#toast p').text('Kunde erfolgreich bearbeitet.');
             $('#toast #confirmButton').on('click', hideSubForm).text('Okay');
             $('#toast #cancelButton').css('display', 'none');
             $('#toast').css('display', 'flex');
@@ -168,9 +204,8 @@ function createCostumer(event) {
 
 //Logik des createProduct-Fensters
 function createProduct(event) {
-    event.preventDefault();
+   event ? event.preventDefault() : false;
     data = {
-        productId: $('#newProductForm input[name=id]').val() ?? '',
         productTitle: $('#newProductForm input[name=productTitle]').val(),
         productPrice: $('#newProductForm input[name=productPrice]').val(),
         taxRate: $('#newProductForm input[type=radio]:checked').val(),
@@ -198,6 +233,37 @@ function createProduct(event) {
         });
 
 }
+function updateProduct(event) {
+    event ? event.preventDefault() : false;
+    data = {
+        productId: $('#newProductForm input[name=id]').val(),
+        productTitle: $('#newProductForm input[name=productTitle]').val(),
+        productPrice: $('#newProductForm input[name=productPrice]').val(),
+        taxRate: $('#newProductForm input[type=radio]:checked').val(),
+        productDescription: $('#newProductForm textarea').val(),
+        action: 'updateProduct'
+    };
+
+    let response = makeAjaxRequest(data);
+    response
+        .then(function (result) {
+            $('#toast p').text('Produkt erfolgreich bearbeitet.');
+            $('#toast #confirmButton').on('click', hideSubForm).text('Okay');
+            $('#toast #cancelButton').css('display', 'none');
+            $('#toast').css('display', 'flex');
+        })
+        .catch(function (result) {
+            $('#toast p').text('Da ist etwas schief gelaufen!');
+            $('#toast #confirmButton').on('click', createProduct).text('Erneut versuchen');
+            $('#toast #cancelButton').css('display', 'block');
+            $('#toast').css('display', 'flex');
+
+            $('#toast #cancelButton').on('click', function () {
+                $('#toast').css('display', 'none')
+            });
+        });
+
+}
 
 function netPriceInfo() {
     $('#toast p').text('Ist dir nur der Brutto-Preis bekannst, kannst du diesen eingeben und den Netto-Preis abhängig von der Mehrwertsteuer berechnen lassen. Wähle dafür einen Mehrwertsteuersatz aus und klicke "berechnen".');
@@ -206,7 +272,7 @@ function netPriceInfo() {
     $('#toast').css('display', 'flex');
 }
 
-function fullfillmentDateInfo(){
+function fullfillmentDateInfo() {
     $('#toastMain p').html(
         `<p>In jeder Rechnung muss ein konkretes Lieferdatum oder ein Lieferzeitraum angegeben werden. Wählst du kein Datum aus, wird dieses
         automatisch auf den aktuellen Tag gesetzt.</p>Gibt es ein konkretes Lieferdatum, wähle das Datum im linken Feld aus. 
@@ -247,20 +313,19 @@ function createInvoice(event) {
     let response = makeAjaxRequest(data);
     response
         .then(function (result) {
-            console.log(result);
-            if (result.data == 'salesTaxId not set'){ 
-            
-            let toastText = `Bei Rechnungen mit Umkehr der Umsatzsteuerschuld (Reverse Charge) muss zwingend die Umsatzsteuernummer
+            if (result.data == 'salesTaxId not set') {
+
+                let toastText = `Bei Rechnungen mit Umkehr der Umsatzsteuerschuld (Reverse Charge) muss zwingend die Umsatzsteuernummer
             des Empfängers angegeben werden. Beim gewählten Kunden ist diese nicht hinterlegt.<p>Sobald die Nummer hinterlegt ist, kann
             die Rechnung gespeichert werden. Bearbeite dafür die Information des gewählten Kunden.</p>`;
-            
-            $('#toastMain p').html(toastText);
-            $('#toastMain #confirmButton').off('click').on('click', function () { $('#toastMain').css('display', 'none') }).text('Okay');
-            // TODO: Link für Window.open anpassen, sodass die Kundenübersicht geöffnet wird
-            $('#toastMain #cancelButton').off('click').on('click', () => window.open('costumers.php')).css('display', 'block').text('Kunden bearbeiten');
-            $('#toastMain').css('display', 'flex');
-            
-            return;
+
+                $('#toastMain p').html(toastText);
+                $('#toastMain #confirmButton').off('click').on('click', function () { $('#toastMain').css('display', 'none') }).text('Okay');
+                // TODO: Link für Window.open anpassen, sodass die Kundenübersicht geöffnet wird
+                $('#toastMain #cancelButton').off('click').on('click', () => window.open('costumers.php')).css('display', 'block').text('Kunden bearbeiten');
+                $('#toastMain').css('display', 'flex');
+
+                return;
             }
 
             $('#toastMain p').text('Rechnung erfolgreich angelegt.');

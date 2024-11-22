@@ -17,15 +17,32 @@ if (isset($_POST['action'])) {
             break;
 
         case 'getCostumer':
-            $result = fetchAllCostumers(true);
+            fetchAllCostumers(true);
             break;
 
         case 'createProduct':
-            empty($_POST['productId']) ?  createProduct() : updateProduct();
+            createProduct();
+            break;
+
+        case 'updateProduct':
+            $result = updateProduct();
+            echo $result;
+            break;
+
+        case 'deleteProduct':
+            $result = deleteProduct();
             break;
 
         case 'createCostumer':
-            $result = createCostumer();
+            createCostumer();
+            break;
+
+        case 'updateCostumer':
+            updateCostumer();
+            break;
+
+        case 'deleteCostumer':
+        //istnoch nicht geschrieben
             break;
 
         case 'createInvoice':
@@ -37,9 +54,11 @@ if (isset($_POST['action'])) {
             echo json_encode($result);
             break;
 
-        case 'deleteProduct':
-            $result = deleteProduct();
+        case 'getCostumerDataToEdit':
+            $result = fetchCostumerById();
+            echo json_encode($result);
             break;
+
     }
 }
 
@@ -48,10 +67,18 @@ function dataQueryPrepStmt($sqlQuery, $paramType, $param)
 {
     global $conn;
 
+    try {
     $stmt = $conn->prepare($sqlQuery);
-
+    
     if (!empty($param)) $stmt->bind_param($paramType, ...$param);
+    
     $stmt->execute();
+     
+    } catch (Exception $e){
+        http_response_code(500);
+        return json_encode(['errorMessage' => 'Es gab da ein Problem...']);
+    }
+
     $fetchedData = $stmt->get_result();
 
     return $fetchedData;
@@ -107,7 +134,7 @@ function fetchAllInvoices()
 function fetchCostumerById()
 {
     $sqlQuery = "SELECT * FROM costumer WHERE id=?";
-    $param = [$_POST['invoiceData']['costumerSelect']];
+    $param = !empty($_POST['invoiceData']) ? [$_POST['invoiceData']['costumerSelect']] : [$_POST['id']];
     $paramType = "i";
     $fetchCostumer = dataQueryPrepStmt($sqlQuery, $paramType, $param);
 
@@ -180,7 +207,7 @@ function updateProduct()
     $paramType = "sdssi";
     $param = [$_POST['productTitle'], $_POST['productPrice'], $_POST['taxRate'], $_POST['productDescription'], $_POST['productId']];
     $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
-
+ 
     return $result;
 }
 
@@ -206,10 +233,27 @@ function createCostumer()
 }
 
 
-function editCostumer() {}
+function updateCostumer()
+{
+    $sqlQuery = "UPDATE costumer SET name=?, address=?, taxId=?, salesTaxid=? WHERE id=?";
+    $paramType = 'ssssi';
+    $param = [$_POST['name'], $_POST['address'], $_POST['taxId'], $_POST['salesTaxId'], $_POST['id']];
+    $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+
+    return $result;
+}
 
 
-function deleteCostumer() {}
+function deleteCostumer()
+{
+    $sqlQuery = "DELETE FROM costumer WHERE id=?";
+    $paramType = "i";
+    $param = [$_POST['id']];
+    $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+
+    return $result;
+}
+
 
 //füllt die invoice-Tabelle mit Daten
 function processInvoiceData()

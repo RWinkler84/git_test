@@ -29,6 +29,7 @@ function getTableContent($costumerData)
                     <th>Steuer-Id</th>
                     <th>Umsatzsteuer-Id</th>
                     <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -42,12 +43,13 @@ function getTableContent($costumerData)
 
         $tableRow = <<<TABLEROW
                 <tr>
-                    <td>{$data['id']}</td>
+                    <td id>{$data['id']}</td>
                     <td style="padding-right: 1em;">{$data['name']}</td>
                     <td class="multiline" style="padding-right: 1em;">{$data['address']}</td>
                     <td style="padding-right: 1em;">{$data['taxId']}</td>
                     <td style="padding-right: 1em;">{$data['salesTaxId']}</td>
-                    <td style="cursor: pointer">&#9997;</a></td>
+                    <td style="padding-right: 0.5em; cursor: pointer" onclick="editCostumer(this)">&#9997;</a></td>
+                     <td style="cursor: pointer" onclick="optIncostumerDeletion(this)">&#x1F5D1;</td>
                 </tr>
         TABLEROW;
 

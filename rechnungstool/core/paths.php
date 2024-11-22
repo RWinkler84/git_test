@@ -1,7 +1,7 @@
 <?php 
 $path = [
     'database' => 'core/db.php',
-    'ajax' => 'core/ajax.php',
+    'dataqueries' => 'core/dataqueries.php',
     'templateEngine' => 'core/templateEngine.php',
 
     // HTML Template für das Rechnungslayout

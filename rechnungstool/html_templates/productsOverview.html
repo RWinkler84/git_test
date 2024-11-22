@@ -1,4 +1,8 @@
 <div id="contentWrapper">
+
+    <button type="button" onclick="showEditForm()">Neues Produkt anlegen</button>
+
+    <div class="divider"></div>
     {tableContent}
     <div class="divider"></div>
     <div class="flex spaceBetween">
@@ -17,7 +21,7 @@
                 <button id="cancelButton" style="display: none">Abbrechen</button>
             </div>
         </div>
-        <form method="post" id="newProductForm" onsubmit="createProduct(event)">
+        <form id="newProductForm">
             <h2>Produkt bearbeiten</h2>
 
             <input type="hidden" name="id">
@@ -50,7 +54,7 @@
             <textarea id="productDescription" name="productDescription"
                 placeholder="Wichtige Infos zum Produkt..."></textarea>
             <div>
-                <button type="submit" id="sendNewProduct">Speichern</button>
+                <button type="button" id="sendNewProduct" onclick="createOrUpdate()">Speichern</button>
                 <button type="button" id="cancelNewProduct" onclick="hideEditForm()">Abbrechen</button>
             </div>
         </form>
@@ -79,13 +83,13 @@
 
             response
                 .then(function (result) {
-                    
+
                     result.data = JSON.parse(result.data);
                     let product = result.data[0];
                     $('form input[name=id]').val(product.id)
                     $('form #productTitle').val(product.productTitle);
                     $('form #productPrice').val(product.productPrice);
-                    $('form #productDescription').text(product.productDescription);
+                    $('form #productDescription').val(product.productDescription);
 
                     switch (product.taxRate) {
                         case 0:
@@ -101,9 +105,10 @@
 
                     $('#editFormWrapper').removeClass('hidden');
                     $('#deleteModal').css('display', 'none');
+                    resendData = '';
 
                 })
-                .catch(function (result) { //nicht fertig, editProduct muss erneut aufgerufen werden
+                .catch(function (result) {
                     resendData = data;
                     let modalContent = `
                     <p>Da ist etwas schief gelaufen...</p>
@@ -161,6 +166,7 @@
                         `;
 
                     $('#deleteModal').css('display', 'flex').html(modalContent);
+                    resendData = '';
 
                 })
                 .catch(function (result) {
@@ -180,14 +186,38 @@
         }
 
 
+        function createOrUpdate(event) {
+            if (!$('form input[name=id]').val()) {
+                createProduct();
+            } else {
+                updateProduct();
+            }
+        }
+
+        function showEditForm() {
+            $('form h2').text('Neues Produkt anlegen');
+            $('form input[name=id]').val('')
+            $('form #productTitle').val('');
+            $('form #productPrice').val('');
+            $('form #productDescription').val('');
+            $('form #tax0').prop('checked', false);
+            $('form #tax7').prop('checked', false);
+            $('form #tax19').prop('checked', false);
+
+
+            $('#editFormWrapper').removeClass('hidden');
+        }
+
         function hideEditForm() {
 
             $('#editFormWrapper').addClass('hidden');
+            resendData = '';
         }
 
 
         function hideDeleteModal() {
 
             $('#deleteModal').css('display', 'none');
+            resendData = '';
         }
     </script>
