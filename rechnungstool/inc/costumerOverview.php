@@ -49,7 +49,7 @@ function getTableContent($costumerData)
                     <td style="padding-right: 1em;">{$data['taxId']}</td>
                     <td style="padding-right: 1em;">{$data['salesTaxId']}</td>
                     <td style="padding-right: 0.5em; cursor: pointer" onclick="editCostumer(this)">&#9997;</a></td>
-                     <td style="cursor: pointer" onclick="optIncostumerDeletion(this)">&#x1F5D1;</td>
+                     <td style="cursor: pointer" onclick="optInCostumerDeletion(this)">&#x1F5D1;</td>
                 </tr>
         TABLEROW;
 

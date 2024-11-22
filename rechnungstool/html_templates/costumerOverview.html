@@ -100,7 +100,7 @@
     }
 
 
-    function optInProductDeletion(item) {
+    function optInCostumerDeletion(item) {
 
         let id = $(item).closest('tr').find('td[id]').text();
         let modalContent = `
@@ -117,14 +117,14 @@
 
     function deleteCostumer(id) {
 
-        if (resendData && resendData.action == 'deleteProduct') {
+        if (resendData && resendData.action == 'deleteCostumer') {
 
             data = resendData;
 
         } else {
 
             data = {
-                action: 'deleteProduct',
+                action: 'deleteCostumer',
                 id: id
             }
         }

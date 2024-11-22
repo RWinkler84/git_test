@@ -42,7 +42,7 @@ if (isset($_POST['action'])) {
             break;
 
         case 'deleteCostumer':
-        //istnoch nicht geschrieben
+            deleteCostumer();
             break;
 
         case 'createInvoice':
