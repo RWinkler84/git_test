@@ -11,7 +11,7 @@
     </div>
 
     <!-- Modal zur Löschabfrage -->
-    <div id="deleteModal" class="deleteModal"></div>
+    <div id="modal" class="modal hidden"></div>
 
     <div id="editFormWrapper" class="subFormWrapper hidden">
         <div id="toast">
@@ -104,21 +104,15 @@
                     }
 
                     $('#editFormWrapper').removeClass('hidden');
-                    $('#deleteModal').css('display', 'none');
+                    $('#modal').addClass('hidden').html('');
                     resendData = '';
 
                 })
                 .catch(function (result) {
                     resendData = data;
-                    let modalContent = `
-                    <p>Da ist etwas schief gelaufen...</p>
-                    <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
-                        <button id="confirmButton" onclick="editProduct()">Erneut versuchen</button>
-                        <button id="cancelButton" onclick="hideDeleteModal()">Abbrechen</button>
-                    </div>
-                    `;
+                    let modalContent = getModalContent('prefillProductForm', 'failed');
 
-                    $('#deleteModal').css('display', 'flex').html(modalContent);
+                    $('#modal').removeClass('hidden').html(modalContent);
 
                 });
         }
@@ -127,15 +121,9 @@
         function optInProductDeletion(item) {
 
             let id = $(item).closest('tr').find('td[id]').text();
-            let modalContent = `
-                 <p>Willst du das Produkt ${id} unwiderruflich löschen?</p>
-                <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
-                    <button id="confirmButton" onclick="deleteProduct(${id})">Löschen</button>
-                    <button id="cancelButton" onclick="hideDeleteModal()">Abbrechen</button>
-                </div>
-            `;
+            let modalContent = getModalContent('deleteProduct', 'requireConfirm', id);
 
-            $('#deleteModal').css('display', 'flex').html(modalContent);
+            $('#modal').removeClass('hidden').html(modalContent);
         }
 
 
@@ -158,29 +146,18 @@
             response
                 .then(function (result) {
 
-                    let modalContent = `
-                        <p>Das Produkt ${id} wurde erfolgreich gelöscht.</p>
-                        <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
-                            <button id="cancelButton" onclick="hideDeleteModal()">Okay</button>
-                        </div>
-                        `;
+                    let modalContent = getModalContent('deleteProduct', 'success', id);
 
-                    $('#deleteModal').css('display', 'flex').html(modalContent);
+                    $('#modal').removeClass('hidden').html(modalContent);
                     resendData = '';
 
                 })
                 .catch(function (result) {
 
                     resendData = data;
-                    let modalContent = `
-                    <p>Da ist etwas schief gelaufen...</p>
-                    <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
-                        <button id="confirmButton" onclick="deleteProduct()">Erneut versuchen</button>
-                        <button id="cancelButton" onclick="hideDeleteModal()">Abbrechen</button>
-                    </div>
-                    `;
+                    let modalContent = getModalContent('deleteProduct', 'failed')
 
-                    $('#deleteModal').css('display', 'flex').html(modalContent);
+                    $('#modal').removeClass('hidden').html(modalContent);
 
                 });
         }
@@ -215,9 +192,9 @@
         }
 
 
-        function hideDeleteModal() {
+        function hideModal() {
 
-            $('#deleteModal').css('display', 'none');
+            $('#modal').css('display', 'none');
             resendData = '';
         }
     </script>

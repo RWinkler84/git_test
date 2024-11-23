@@ -182,21 +182,14 @@ function updateCostumer(event) {
     let response = makeAjaxRequest(data);
     response
         .then(function (result) {
+            let modalContent = getModalContent('updateCostumer', 'success');
 
-            $('#toast p').text('Kunde erfolgreich bearbeitet.');
-            $('#toast #confirmButton').on('click', hideSubForm).text('Okay');
-            $('#toast #cancelButton').css('display', 'none');
-            $('#toast').css('display', 'flex');
+            $('#modal').removeClass('hidden').html(modalContent);
         })
         .catch(function (result) {
-            $('#toast p').text('Da ist etwas schief gelaufen!');
-            $('#toast #confirmButton').on('click', createProduct).text('Erneut versuchen');
-            $('#toast #cancelButton').css('display', 'block');
-            $('#toast').css('display', 'flex');
+            let modalContent = getModalContent('updateCostumer', 'failed');
 
-            $('#toast #cancelButton').on('click', function () {
-                $('#toast').css('display', 'none')
-            });
+            $('#modal').removeClass('hidden').html(modalContent);
         });
 
 }
@@ -380,7 +373,7 @@ $('#startDate').ready(() => {
 });
 
 
-function createModal(action, state, id = '') {
+function getModalContent(action, state, id = '') {
     //die funktion, die den Toast erzeugen soll
     let confirmButtonStyle;
     let cancelButtonStyle;
@@ -388,31 +381,31 @@ function createModal(action, state, id = '') {
     let cancelButtonAction;
     let confirmButtonText;
     let cancelButtonText;
-    let toastMessage;
+    let modalMessage;
 
     let message = {
         success: {
-            createInvoice: 'Rechnung erfolgreich erstellt.',
-            createCostumer: 'Kunde erfolgreich angelegt.',
-            createProduct: 'Produkt erfolgreich angelegt.',
-            updateCostumer: 'Kunde erfolgreich aktualisiert.',
-            updateProduct: 'Produkt erfolgreich aktualisiert.',
-            deleteCostumer: 'Kunde erfolgreich gelöscht.',
-            deleteProduct: 'Produkt erfolgreich gelöscht.'
+            createInvoice: 'Die Rechnung wurde erfolgreich erstellt.',
+            createCostumer: 'Der Kunde wurde erfolgreich angelegt.',
+            createProduct: 'Das Produkt wurde erfolgreich angelegt.',
+            updateCostumer: 'Der Kunde wurde erfolgreich aktualisiert.',
+            updateProduct: 'Das Produkt wurde erfolgreich aktualisiert.',
+            deleteCostumer: 'Der Kunde wurde erfolgreich gelöscht.',
+            deleteProduct: 'Das Produkt wurde erfolgreich gelöscht.'
         },
         failed: "Da ist etwas schief gelaufen :-*!",
         requireConfirm: {
             deleteCostumer: `Willst du den Kunden ${id} unwiderruflich löschen?`,
-            deleteProdcut: `Willst du das Produkt ${id} unwiderruflich löschen?`
+            deleteProduct: `Willst du das Produkt ${id} unwiderruflich löschen?`
         }
     }
 
     let button = {
-        confirm: {
+        confirmButton: {
             success: {
                 text: 'Okay',
                 css: 'block',
-                onclick: 'closeToast(true)'
+                onclick: 'closeModal(true)'
             },
             failed: {
                 text: 'Erneut versuchen',
@@ -441,7 +434,7 @@ function createModal(action, state, id = '') {
                 }
             },
         },
-        cancel: {
+        cancelButton: {
             success: {
                 text: '',
                 onclick: '',
@@ -462,57 +455,66 @@ function createModal(action, state, id = '') {
 
 
     if (state == 'success') {
-        toastMessage = message.success[action];
+        modalMessage = message.success[action];
 
-        confirmButtonText = button.confirm.success.text;
-        confirmButtonStyle = button.confirm.success.css;
-        confirmButtonAction = button.confirm.success.onclick;
+        confirmButtonText = button.confirmButton.success.text;
+        confirmButtonStyle = button.confirmButton.success.css;
+        confirmButtonAction = button.confirmButton.success.onclick;
 
-        cancelButtonText = button.cancel.success.text;
-        cancelButtonStyle = button.cancel.success.css;
-        cancelButtonAction = button.cancel.success.onclick;
+        cancelButtonText = button.cancelButton.success.text;
+        cancelButtonStyle = button.cancelButton.success.css;
+        cancelButtonAction = button.cancelButton.success.onclick;
     }
     else if (state == 'failed') {
-        toastMessage = message.failed;
+        modalMessage = message.failed;
 
-        confirmButtonText = button.confirm.failed.text;
-        confirmButtonStyle = button.confirm.failed.css;
-        confirmButtonAction = button.confirm.failed.onclick[action];
+        confirmButtonText = button.confirmButton.failed.text;
+        confirmButtonStyle = button.confirmButton.failed.css;
+        confirmButtonAction = button.confirmButton.failed.onclick[action];
 
-        cancelButtonText = button.cancel.failed.text;
-        cancelButtonStyle = button.cancel.failed.css;
-        cancelButtonAction = button.cancel.failed.onclick;
+        cancelButtonText = button.cancelButton.failed.text;
+        cancelButtonStyle = button.cancelButton.failed.css;
+        cancelButtonAction = button.cancelButton.failed.onclick;
     }
     else if (state == 'requireConfirm') {
-        toastMessage = message.requireConfirm[action];
+        modalMessage = message.requireConfirm[action];
 
-        confirmButtonText = button.confirm.requireConfirm.text[action];
-        confirmButtonStyle = button.confirm.requireConfirm.css;
-        confirmButtonAction = button.confirm.requireConfirm.onclick[action];
+        confirmButtonText = button.confirmButton.requireConfirm.text[action];
+        confirmButtonStyle = button.confirmButton.requireConfirm.css;
+        confirmButtonAction = button.confirmButton.requireConfirm.onclick[action];
 
-        cancelButtonText = button.cancel.requireConfirm.text;
-        cancelButtonStyle = button.cancel.requireConfirm.css;
-        cancelButtonAction = button.cancel.requireConfirm.onclick;
+        cancelButtonText = button.cancelButton.requireConfirm.text;
+        cancelButtonStyle = button.cancelButton.requireConfirm.css;
+        cancelButtonAction = button.cancelButton.requireConfirm.onclick;
     }
 
-    let toastHTML = `
-            <p>${toastMessage}</p>
+    let modalHTML = `
+            <div style="display: flex; flex-direction: column; align-items: center;">
+            <p>${modalMessage}</p>
             <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
                 <button id="confirmButton" style="display: ${confirmButtonStyle}" onclick="${confirmButtonAction}">${confirmButtonText}</button>
                 <button id="cancelButton" style="display: ${cancelButtonStyle}" onclick="${cancelButtonAction}">${cancelButtonText}</button>
             </div>
+            </div>
     `;
 
-    return toastHTML;
+    return modalHTML;
 }
 
 
 function closeModal(closeAll) {
 
     if (closeAll) {
-        // toasts und Subform schließen
-    } else {
-        // nur toasts schließen und leeren
-    }
+        $('#modal').addClass('hidden').html('');
+        $('#subFormWrapper').addClass('hidden').html('');
+        $('#editFormWrapper').addClass('hidden');
 
+        //resendData speichert die Daten eines Ajax-Calls auf product und costumerOverview, um sie wiederzuverwenden,
+        //wenn Ajax fehlschlägt und wiederholt werden soll
+        //wird ein Modal über Abbrechen oder Okay geschlossen, weil Ajax erfolgreich, werden die Daten hier geleert.
+        resendData = ''; 
+    } else {
+        $('#modal').addClass('hidden').html('');
+        resendData = '';
+    }
 }

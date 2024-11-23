@@ -11,17 +11,10 @@
 </div>
 
 <!-- Modal zur Löschabfrage -->
-<div id="deleteModal" class="deleteModal"></div>
+<div id="modal" class="modal hidden"></div>
 
 <!-- Formular zur Bearbeitung der Kundendaten -->
 <div id="editFormWrapper" class="subFormWrapper hidden">
-    <div id="toast">
-        <!-- <p></p>
-        <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
-            <button id="confirmButton"></button>
-            <button id="cancelButton" style="display: none">Abbrechen</button>
-        </div> -->
-    </div>
     <form id="newCostumerForm">
         <h2>Kunden bearbeiten</h2>
 
@@ -80,14 +73,14 @@
                 $('form #salesTaxId').val(costumer.salesTaxId);
 
                 $('#editFormWrapper').removeClass('hidden');
-                $('#deleteModal').css('display', 'none');
+                $('#modal').addClass('hidden');
                 resendData = '';
 
             })
             .catch(function (result) {
                 resendData = data;
-                let modalContent = createModal('prefillCostumerForm', 'failed');
-                $('#deleteModal').css('display', 'flex').html(modalContent);
+                let modalContent = getModalContent('prefillCostumerForm', 'failed');
+                $('#modal').removeClass('hidden').html(modalContent);
             });
     }
 
@@ -95,16 +88,9 @@
     function optInCostumerDeletion(item) {
 
         let id = $(item).closest('tr').find('td[id]').text();
-        // let modalContent = `
-        //          <p>Willst du den Kunden ${id} unwiderruflich löschen?</p>
-        //         <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
-        //             <button id="confirmButton" onclick="deleteCostumer(${id})">Löschen</button>
-        //             <button id="cancelButton" onclick="hideDeleteModal()">Abbrechen</button>
-        //         </div>
-        //     `;
-        let modalContent = createModal('deleteCostumer', 'requireConfirm');
+        let modalContent = getModalContent('deleteCostumer', 'requireConfirm', id);
 
-        $('#deleteModal').css('display', 'flex').html(modalContent);
+        $('#modal').removeClass('hidden').html(modalContent);
     }
 
 
@@ -127,35 +113,24 @@
         response
             .then(function (result) {
 
-                let modalContent = `
-                        <p>Der Kunde ${id} wurde erfolgreich gelöscht.</p>
-                        <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
-                            <button id="cancelButton" onclick="hideDeleteModal()">Okay</button>
-                        </div>
-                        `;
+                let modalContent = getModalContent('deleteCostumer', 'success', id);
 
-                $('#deleteModal').css('display', 'flex').html(modalContent);
+                $('#modal').removeClass('hidden').html(modalContent);
                 resendData = '';
 
             })
             .catch(function (result) {
 
                 resendData = data;
-                let modalContent = `
-                    <p>Da ist etwas schief gelaufen...</p>
-                    <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
-                        <button id="confirmButton" onclick="deleteCostumer()">Erneut versuchen</button>
-                        <button id="cancelButton" onclick="hideDeleteModal()">Abbrechen</button>
-                    </div>
-                    `;
+                let modalContent = getModalContent('deleteCostumer', 'failed', id);
 
-                $('#deleteModal').css('display', 'flex').html(modalContent);
+                $('#modal').removeClass('hidden').html(modalContent);
 
             });
     }
 
 
-    function createOrUpdate(event) {
+    function createOrUpdate() {
         if (!$('form input[name=id]').val()) {
             createCostumer();
         } else {
@@ -183,9 +158,9 @@
     }
 
 
-    function hideDeleteModal() {
+    function hideModal() {
 
-        $('#deleteModal').css('display', 'none');
+        $('#modal').css('display', 'none');
         resendData = '';
     }
 </script>
