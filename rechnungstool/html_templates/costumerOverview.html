@@ -16,11 +16,11 @@
 <!-- Formular zur Bearbeitung der Kundendaten -->
 <div id="editFormWrapper" class="subFormWrapper hidden">
     <div id="toast">
-        <p></p>
+        <!-- <p></p>
         <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
             <button id="confirmButton"></button>
             <button id="cancelButton" style="display: none">Abbrechen</button>
-        </div>
+        </div> -->
     </div>
     <form id="newCostumerForm">
         <h2>Kunden bearbeiten</h2>
@@ -49,7 +49,7 @@
 <script>
     let resendData;
 
-    function editCostumer(item) {
+    function prefillCostumerForm(item) {
 
         let data;
 
@@ -86,16 +86,8 @@
             })
             .catch(function (result) {
                 resendData = data;
-                let modalContent = `
-                    <p>Da ist etwas schief gelaufen...</p>
-                    <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
-                        <button id="confirmButton" onclick="editCostumer()">Erneut versuchen</button>
-                        <button id="cancelButton" onclick="hideDeleteModal()">Abbrechen</button>
-                    </div>
-                    `;
-
+                let modalContent = createModal('prefillCostumerForm', 'failed');
                 $('#deleteModal').css('display', 'flex').html(modalContent);
-
             });
     }
 
@@ -103,13 +95,14 @@
     function optInCostumerDeletion(item) {
 
         let id = $(item).closest('tr').find('td[id]').text();
-        let modalContent = `
-                 <p>Willst du den Kunden ${id} unwiderruflich löschen?</p>
-                <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
-                    <button id="confirmButton" onclick="deleteCostumer(${id})">Löschen</button>
-                    <button id="cancelButton" onclick="hideDeleteModal()">Abbrechen</button>
-                </div>
-            `;
+        // let modalContent = `
+        //          <p>Willst du den Kunden ${id} unwiderruflich löschen?</p>
+        //         <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
+        //             <button id="confirmButton" onclick="deleteCostumer(${id})">Löschen</button>
+        //             <button id="cancelButton" onclick="hideDeleteModal()">Abbrechen</button>
+        //         </div>
+        //     `;
+        let modalContent = createModal('deleteCostumer', 'requireConfirm');
 
         $('#deleteModal').css('display', 'flex').html(modalContent);
     }

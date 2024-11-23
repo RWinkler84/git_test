@@ -48,7 +48,7 @@ function getTableContent($productsData)
                     <td class="multiline" style="padding-right: 1em;">{$data['productPrice']} €</td>
                     <td style="padding-right: 1em;">{$data['taxRate']}%</td>
                     <td style="padding-right: 1em;">{$data['productDescription']}</td>
-                    <td style="padding-right: 0.5em; cursor: pointer" onclick="editProduct(this)">&#9997;</td>
+                    <td style="padding-right: 0.5em; cursor: pointer" onclick="prefillProductForm(this)">&#9997;</td>
                     <td style="cursor: pointer" onclick="optInProductDeletion(this)">&#x1F5D1;</td>
                 </tr>
         TABLEROW;

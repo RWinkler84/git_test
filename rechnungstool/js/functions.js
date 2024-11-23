@@ -135,7 +135,7 @@ function makeAjaxRequest(data) {
 //Logik des createCostumer-Fensters
 function createCostumer(event) {
 
-   event ? event.preventDefault() : false;
+    event ? event.preventDefault() : false;
     data = {
         name: $('#newCostumerForm input[name=name]').val(),
         address: $('#newCostumerForm textarea[name=address]').val(),
@@ -169,7 +169,7 @@ function createCostumer(event) {
 
 function updateCostumer(event) {
 
-    event ?  event.preventDefault() : false;
+    event ? event.preventDefault() : false;
     data = {
         id: $('#newCostumerForm input[name=id]').val(),
         name: $('#newCostumerForm input[name=name]').val(),
@@ -204,7 +204,7 @@ function updateCostumer(event) {
 
 //Logik des createProduct-Fensters
 function createProduct(event) {
-   event ? event.preventDefault() : false;
+    event ? event.preventDefault() : false;
     data = {
         productTitle: $('#newProductForm input[name=productTitle]').val(),
         productPrice: $('#newProductForm input[name=productPrice]').val(),
@@ -379,3 +379,140 @@ $('#startDate').ready(() => {
     $('#startDate').val('' + date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0'));
 });
 
+
+function createModal(action, state, id = '') {
+    //die funktion, die den Toast erzeugen soll
+    let confirmButtonStyle;
+    let cancelButtonStyle;
+    let confirmButtonAction;
+    let cancelButtonAction;
+    let confirmButtonText;
+    let cancelButtonText;
+    let toastMessage;
+
+    let message = {
+        success: {
+            createInvoice: 'Rechnung erfolgreich erstellt.',
+            createCostumer: 'Kunde erfolgreich angelegt.',
+            createProduct: 'Produkt erfolgreich angelegt.',
+            updateCostumer: 'Kunde erfolgreich aktualisiert.',
+            updateProduct: 'Produkt erfolgreich aktualisiert.',
+            deleteCostumer: 'Kunde erfolgreich gelöscht.',
+            deleteProduct: 'Produkt erfolgreich gelöscht.'
+        },
+        failed: "Da ist etwas schief gelaufen :-*!",
+        requireConfirm: {
+            deleteCostumer: `Willst du den Kunden ${id} unwiderruflich löschen?`,
+            deleteProdcut: `Willst du das Produkt ${id} unwiderruflich löschen?`
+        }
+    }
+
+    let button = {
+        confirm: {
+            success: {
+                text: 'Okay',
+                css: 'block',
+                onclick: 'closeToast(true)'
+            },
+            failed: {
+                text: 'Erneut versuchen',
+                css: 'block',
+                onclick: {
+                    createInvoice: 'createInvoice()',
+                    createCostumer: 'createCostumer()',
+                    createProduct: 'createProduct()',
+                    prefillCostumerForm: 'prefillCostumerForm()',
+                    prefillProductForm: 'prefillProductForm()',
+                    updateCostumer: 'updateCostumer()',
+                    updateProduct: 'updateProduct()',
+                    deleteCostumer: 'deleteCostumer()',
+                    deleteProduct: 'deleteProduct()'
+                }
+            },
+            requireConfirm: {
+                text: {
+                    deleteCostumer: 'Löschen',
+                    deleteProduct: 'Löschen'
+                },
+                css: 'block',
+                onclick: {
+                    deleteCostumer: `deleteCostumer(${id})`,
+                    deleteProduct: `deleteProduct(${id})`
+                }
+            },
+        },
+        cancel: {
+            success: {
+                text: '',
+                onclick: '',
+                css: 'none'
+            },
+            failed: {
+                text: 'Abbrechen',
+                css: 'block',
+                onclick: 'closeModal(false)'
+            },
+            requireConfirm: {
+                text: 'Abbrechen',
+                css: 'block',
+                onclick: 'closeModal(false)'
+            }
+        }
+    }
+
+
+    if (state == 'success') {
+        toastMessage = message.success[action];
+
+        confirmButtonText = button.confirm.success.text;
+        confirmButtonStyle = button.confirm.success.css;
+        confirmButtonAction = button.confirm.success.onclick;
+
+        cancelButtonText = button.cancel.success.text;
+        cancelButtonStyle = button.cancel.success.css;
+        cancelButtonAction = button.cancel.success.onclick;
+    }
+    else if (state == 'failed') {
+        toastMessage = message.failed;
+
+        confirmButtonText = button.confirm.failed.text;
+        confirmButtonStyle = button.confirm.failed.css;
+        confirmButtonAction = button.confirm.failed.onclick[action];
+
+        cancelButtonText = button.cancel.failed.text;
+        cancelButtonStyle = button.cancel.failed.css;
+        cancelButtonAction = button.cancel.failed.onclick;
+    }
+    else if (state == 'requireConfirm') {
+        toastMessage = message.requireConfirm[action];
+
+        confirmButtonText = button.confirm.requireConfirm.text[action];
+        confirmButtonStyle = button.confirm.requireConfirm.css;
+        confirmButtonAction = button.confirm.requireConfirm.onclick[action];
+
+        cancelButtonText = button.cancel.requireConfirm.text;
+        cancelButtonStyle = button.cancel.requireConfirm.css;
+        cancelButtonAction = button.cancel.requireConfirm.onclick;
+    }
+
+    let toastHTML = `
+            <p>${toastMessage}</p>
+            <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
+                <button id="confirmButton" style="display: ${confirmButtonStyle}" onclick="${confirmButtonAction}">${confirmButtonText}</button>
+                <button id="cancelButton" style="display: ${cancelButtonStyle}" onclick="${cancelButtonAction}">${cancelButtonText}</button>
+            </div>
+    `;
+
+    return toastHTML;
+}
+
+
+function closeModal(closeAll) {
+
+    if (closeAll) {
+        // toasts und Subform schließen
+    } else {
+        // nur toasts schließen und leeren
+    }
+
+}

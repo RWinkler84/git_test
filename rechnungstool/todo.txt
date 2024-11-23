@@ -4,6 +4,8 @@ submits auf invoiceForm-Seite auf buttons umstellen, da alle daten ohnehin per A
 
 toasts per Funktion befüllen lassen, um Code-Duplikation zu reduzieren
 
+testen, ob Fehlermeldung bei RC-Rechnungen auftritt, wenn keine SalesTaxId hinterlegt ist
+
 
 functions.js: 
 

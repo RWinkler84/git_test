@@ -47,6 +47,7 @@ if (isset($_POST['action'])) {
 
         case 'createInvoice':
             $result = processInvoiceData();
+            echo json_encode($result);
             break;
 
         case 'getProductDataToEdit':
