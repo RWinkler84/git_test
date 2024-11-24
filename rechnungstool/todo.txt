@@ -7,6 +7,7 @@ toasts per Funktion befüllen lassen, um Code-Duplikation zu reduzieren
 testen, ob Fehlermeldung bei RC-Rechnungen auftritt, wenn keine SalesTaxId hinterlegt ist
 
 
+
 functions.js: 
 
 -Zu öffnenden Link anpassen, wenn bei Reverse Charge-Rechnungen keine USt-Id des Kunden angeben wurde
@@ -16,6 +17,12 @@ siehe createInvoice-Funktion
 invoiceOverview:
 
 - Suchfunktion für Tabelle
+
+
+styles.css:
+
+- den modals ein optisches Feedback geben, wenn eine Aktion ausgeführt wurde (grüne/rote Border, die
+innerhalb von circa 200ms ausfaded)
 
 
 

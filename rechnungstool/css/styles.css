@@ -156,10 +156,14 @@ button {
     color: white;
     width: fit-content;
     height: fit-content;
-    max-width: 50%;
+    max-width: 33%;
     padding: 20px 40px;
     border-radius: 5px;
     box-shadow: 5px 5px 10px var(--shadow);
+}
+
+#modal p {
+    margin-block-end: 0em;
 }
 
 #toast button,

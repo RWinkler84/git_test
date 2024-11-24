@@ -81,6 +81,7 @@ const forms = {
     }
 };
 
+
 function addProductSelect() {
 
     let options = ``;
@@ -145,24 +146,7 @@ function createCostumer(event) {
     };
 
     let response = makeAjaxRequest(data);
-    response
-        .then(function (result) {
-
-            $('#toast p').text('Kunde erfolgreich angelegt.');
-            $('#toast #confirmButton').on('click', hideSubForm).text('Okay');
-            $('#toast #cancelButton').css('display', 'none');
-            $('#toast').css('display', 'flex');
-        })
-        .catch(function (result) {
-            $('#toast p').text('Da ist etwas schief gelaufen!');
-            $('#toast #confirmButton').on('click', createProduct).text('Erneut versuchen');
-            $('#toast #cancelButton').css('display', 'block');
-            $('#toast').css('display', 'flex');
-
-            $('#toast #cancelButton').on('click', function () {
-                $('#toast').css('display', 'none')
-            });
-        });
+    handleAjaxResponse(response, data);
 
 }
 
@@ -180,23 +164,14 @@ function updateCostumer(event) {
     };
 
     let response = makeAjaxRequest(data);
-    response
-        .then(function (result) {
-            let modalContent = getModalContent('updateCostumer', 'success');
-
-            $('#modal').removeClass('hidden').html(modalContent);
-        })
-        .catch(function (result) {
-            let modalContent = getModalContent('updateCostumer', 'failed');
-
-            $('#modal').removeClass('hidden').html(modalContent);
-        });
+    handleAjaxResponse(response, data);
 
 }
 
 
 //Logik des createProduct-Fensters
 function createProduct(event) {
+
     event ? event.preventDefault() : false;
     data = {
         productTitle: $('#newProductForm input[name=productTitle]').val(),
@@ -207,26 +182,12 @@ function createProduct(event) {
     };
 
     let response = makeAjaxRequest(data);
-    response
-        .then(function (result) {
-            $('#toast p').text('Produkt erfolgreich angelegt.');
-            $('#toast #confirmButton').on('click', hideSubForm).text('Okay');
-            $('#toast #cancelButton').css('display', 'none');
-            $('#toast').css('display', 'flex');
-        })
-        .catch(function (result) {
-            $('#toast p').text('Da ist etwas schief gelaufen!');
-            $('#toast #confirmButton').on('click', createProduct).text('Erneut versuchen');
-            $('#toast #cancelButton').css('display', 'block');
-            $('#toast').css('display', 'flex');
-
-            $('#toast #cancelButton').on('click', function () {
-                $('#toast').css('display', 'none')
-            });
-        });
-
+    handleAjaxResponse(response, data);
 }
+
+
 function updateProduct(event) {
+
     event ? event.preventDefault() : false;
     data = {
         productId: $('#newProductForm input[name=id]').val(),
@@ -238,43 +199,21 @@ function updateProduct(event) {
     };
 
     let response = makeAjaxRequest(data);
-    response
-        .then(function (result) {
-            $('#toast p').text('Produkt erfolgreich bearbeitet.');
-            $('#toast #confirmButton').on('click', hideSubForm).text('Okay');
-            $('#toast #cancelButton').css('display', 'none');
-            $('#toast').css('display', 'flex');
-        })
-        .catch(function (result) {
-            $('#toast p').text('Da ist etwas schief gelaufen!');
-            $('#toast #confirmButton').on('click', createProduct).text('Erneut versuchen');
-            $('#toast #cancelButton').css('display', 'block');
-            $('#toast').css('display', 'flex');
-
-            $('#toast #cancelButton').on('click', function () {
-                $('#toast').css('display', 'none')
-            });
-        });
-
+    handleAjaxResponse(response, data);
 }
+
 
 function netPriceInfo() {
-    $('#toast p').text('Ist dir nur der Brutto-Preis bekannst, kannst du diesen eingeben und den Netto-Preis abhängig von der Mehrwertsteuer berechnen lassen. Wähle dafür einen Mehrwertsteuersatz aus und klicke "berechnen".');
-    $('#toast #confirmButton').on('click', function () { $('#toast').css('display', 'none') }).text('Okay');
-    $('#toast #cancelButton').css('display', 'none');
-    $('#toast').css('display', 'flex');
+    let modalContent = getModalContent('netPriceInfo', 'info');
+    $('#modal').removeClass('hidden').html(modalContent);
 }
 
+
 function fullfillmentDateInfo() {
-    $('#toastMain p').html(
-        `<p>In jeder Rechnung muss ein konkretes Lieferdatum oder ein Lieferzeitraum angegeben werden. Wählst du kein Datum aus, wird dieses
-        automatisch auf den aktuellen Tag gesetzt.</p>Gibt es ein konkretes Lieferdatum, wähle das Datum im linken Feld aus. 
-        Um einen Lieferzeitraum anzugeben, lege links das Start- und rechts das Enddatum fest.<p>Willst du einem Produkt ein Datum zuweisen, 
-        ist das über das Kommentarfeld des jeweiligen Produkts möglich.</p>`);
-    $('#toastMain #confirmButton').on('click', function () { $('#toastMain').css('display', 'none') }).text('Okay');
-    $('#toastMain #cancelButton').css('display', 'none');
-    $('#toastMain').css('display', 'flex');
+    modalContent = getModalContent('fullfillmentDateInfo', 'info');
+    $('#modal').removeClass('hidden').html(modalContent);
 }
+
 
 function netPriceCalculator() {
     let grossPrice = $('#productPrice').val();
@@ -293,6 +232,7 @@ function netPriceCalculator() {
     };
 
 }
+
 
 //Erzeugt die Rechnung
 function createInvoice(event) {
@@ -337,6 +277,18 @@ function createInvoice(event) {
 
 }
 
+function handleAjaxResponse(response, data) {
+    response
+        .then(function (result) {
+            let modalContent = getModalContent(data.action, 'success');
+            $('#modal').removeClass('hidden').html(modalContent);
+        })
+        .catch(function (result) {
+            let modalContent = getModalContent(data.action, 'failed');
+            $('#modal').removeClass('hidden').html(modalContent);
+        });
+}
+
 function preprocessFormData(formData) {
     let processedData = {};
     for (let i = 0; i < formData.length; i++) {
@@ -374,6 +326,7 @@ $('#startDate').ready(() => {
 
 
 function getModalContent(action, state, id = '') {
+    console.log(state);
     //die funktion, die den Toast erzeugen soll
     let confirmButtonStyle;
     let cancelButtonStyle;
@@ -397,7 +350,17 @@ function getModalContent(action, state, id = '') {
         requireConfirm: {
             deleteCostumer: `Willst du den Kunden ${id} unwiderruflich löschen?`,
             deleteProduct: `Willst du das Produkt ${id} unwiderruflich löschen?`
-        }
+        },
+        fullfillmentDateInfo: `
+        In jeder Rechnung muss ein konkretes Lieferdatum oder ein Lieferzeitraum angegeben werden. Wählst du kein Datum aus, wird dieses
+        automatisch auf den aktuellen Tag gesetzt.<p>Gibt es ein konkretes Lieferdatum, wähle das Datum im linken Feld aus. 
+        Um einen Lieferzeitraum anzugeben, lege links das Start- und rechts das Enddatum fest.</p>
+        <p>Willst du einem Produkt ein Datum zuweisen, ist das über das Kommentarfeld des jeweiligen Produkts möglich.</p>
+        `,
+        netPriceInfo: `
+        Ist dir nur der Brutto-Preis bekannst, kannst du diesen eingeben und den Netto-Preis abhängig von der Mehrwertsteuer 
+        berechnen lassen. Wähle dafür einen Mehrwertsteuersatz aus und klicke "berechnen".
+        `,
     }
 
     let button = {
@@ -433,6 +396,11 @@ function getModalContent(action, state, id = '') {
                     deleteProduct: `deleteProduct(${id})`
                 }
             },
+            info: {
+                text: 'Okay',
+                css: 'block',
+                onclick: 'closeModal(false)'
+            }
         },
         cancelButton: {
             success: {
@@ -449,6 +417,11 @@ function getModalContent(action, state, id = '') {
                 text: 'Abbrechen',
                 css: 'block',
                 onclick: 'closeModal(false)'
+            },
+            info: {
+                text: '',
+                css: 'none',
+                onclick: ''
             }
         }
     }
@@ -487,6 +460,17 @@ function getModalContent(action, state, id = '') {
         cancelButtonStyle = button.cancelButton.requireConfirm.css;
         cancelButtonAction = button.cancelButton.requireConfirm.onclick;
     }
+    else if (state == 'info') {
+        modalMessage = message[action];
+
+        confirmButtonText = button.confirmButton[state].text;
+        confirmButtonStyle = button.confirmButton[state].css;
+        confirmButtonAction = button.confirmButton[state].onclick;
+
+        cancelButtonText = button.cancelButton[state].text;
+        cancelButtonStyle = button.cancelButton[state].css;
+        cancelButtonAction = button.cancelButton[state].onclick;
+    }
 
     let modalHTML = `
             <div style="display: flex; flex-direction: column; align-items: center;">
@@ -512,7 +496,7 @@ function closeModal(closeAll) {
         //resendData speichert die Daten eines Ajax-Calls auf product und costumerOverview, um sie wiederzuverwenden,
         //wenn Ajax fehlschlägt und wiederholt werden soll
         //wird ein Modal über Abbrechen oder Okay geschlossen, weil Ajax erfolgreich, werden die Daten hier geleert.
-        resendData = ''; 
+        resendData = '';
     } else {
         $('#modal').addClass('hidden').html('');
         resendData = '';
