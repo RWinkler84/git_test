@@ -15,7 +15,7 @@
 
 <!-- Formular zur Bearbeitung der Kundendaten -->
 <div id="editFormWrapper" class="subFormWrapper hidden">
-    <form id="newCostumerForm">
+    <form id="newCostumerForm" method="post" onsubmit="createOrUpdate(event)">
         <h2>Kunden bearbeiten</h2>
 
         <input type="hidden" name="id" value="">
@@ -33,7 +33,7 @@
         <input type="text" id="salesTaxId" name="salesTaxId" placeholder="Die Umsatzsteuer-ID eingeben"
             autocomplete="off">
         <div class="marginTop">
-            <button type="button" id="sendNewCostumer" onclick="createOrUpdate()">Speichern</button>
+            <button type="submit" id="sendNewCostumer">Speichern</button>
             <button type="button" id="cancelNewCostumer" onclick="hideEditForm()">Abbrechen</button>
         </div>
     </form>
@@ -130,7 +130,9 @@
     }
 
 
-    function createOrUpdate() {
+    function createOrUpdate(event) {
+        event.preventDefault();
+
         if (!$('form input[name=id]').val()) {
             createCostumer();
         } else {

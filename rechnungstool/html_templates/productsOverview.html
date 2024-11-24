@@ -21,7 +21,7 @@
                 <button id="cancelButton" style="display: none">Abbrechen</button>
             </div>
         </div>
-        <form id="newProductForm">
+        <form id="newProductForm" method="post" onsubmit="createOrUpdate(event)">
             <h2>Produkt bearbeiten</h2>
 
             <input type="hidden" name="id">
@@ -54,7 +54,7 @@
             <textarea id="productDescription" name="productDescription"
                 placeholder="Wichtige Infos zum Produkt..."></textarea>
             <div>
-                <button type="button" id="sendNewProduct" onclick="createOrUpdate()">Speichern</button>
+                <button type="submit" id="sendNewProduct">Speichern</button>
                 <button type="button" id="cancelNewProduct" onclick="hideEditForm()">Abbrechen</button>
             </div>
         </form>
@@ -148,6 +148,8 @@
 
 
         function createOrUpdate(event) {
+            event.preventDefault();
+            
             if (!$('form input[name=id]').val()) {
                 createProduct();
             } else {

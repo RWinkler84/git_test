@@ -8,7 +8,7 @@ const forms = {
     createCostumer: {
         id: "newCostumerFormWrapper",
         content: `
-                <form method="post" id="newCostumerForm" onsubmit="createCostumer(event)>
+                <form method="post" id="newCostumerForm" onsubmit="createCostumer(event)">
                     <h2>Neuen Kunden anlegen</h2>
 
                     <input type="hidden" name="id">
@@ -170,6 +170,7 @@ function updateCostumer(event) {
 function editCostumerOnInvoiceForm() {
 
     $('#subFormWrapper').html(forms.createCostumer.content).removeClass('hidden');
+    $('#newCostumerForm h2').text('Kunden bearbeiten');
     $('#modal').addClass('hidden').html('');
 
     $('#subFormWrapper input[name=id]').val(costumerDataFromDb.id)

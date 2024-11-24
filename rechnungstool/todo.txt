@@ -12,6 +12,7 @@ invoiceOverview:
 - Suchfunktion für Tabelle
 
 
+
 styles.css:
 
 - den modals ein optisches Feedback geben, wenn eine Aktion ausgeführt wurde (grüne/rote Border, die
