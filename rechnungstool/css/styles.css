@@ -12,7 +12,7 @@
     --lighter-grey: #e8e8e8;
     --light-blue: rgba(164, 186, 202, 0.696);
 
-    font-size: 16px;
+    font-size: 15px;
     --font-size-small: 12px;
 }
 
@@ -156,7 +156,7 @@ button {
     color: white;
     width: fit-content;
     height: fit-content;
-    max-width: 33%;
+    max-width: 25%;
     padding: 20px 40px;
     border-radius: 5px;
     box-shadow: 5px 5px 10px var(--shadow);
@@ -205,6 +205,7 @@ button {
     font-size: 10px;
     vertical-align: text-top;
     margin-left: 0.5em;
+    cursor: pointer;
 }
 
 .blue {

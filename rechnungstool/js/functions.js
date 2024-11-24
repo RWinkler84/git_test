@@ -1,20 +1,17 @@
 let productCount = 0; //nummeriert zur Rechnung hinzugefügte Produkte
 let date = new Date();
+let id
+let costumerDataFromDb
 
 
 const forms = {
     createCostumer: {
         id: "newCostumerFormWrapper",
         content: `
-                <div id="toast">
-                    <p></p>
-                    <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
-                        <button id="confirmButton"></button>
-                        <button id="cancelButton" style="display: none">Abbrechen</button>
-                    </div>
-                </div>
-                <form method="post" onsubmit="createCostumer(event)" id="newCostumerForm">
+                <form method="post" id="newCostumerForm" onsubmit="createCostumer(event)>
                     <h2>Neuen Kunden anlegen</h2>
+
+                    <input type="hidden" name="id">
 
                     <label for="name">Kundenname</label>
                     <input type="text" name="name" id="name" placeholder="Kundennamen eingeben" autocomplete="off" required>
@@ -37,13 +34,6 @@ const forms = {
     createProduct: {
         id: "newProductFormWrapper",
         content: `
-                <div id="toast">
-                    <p></p>
-                    <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
-                        <button id="confirmButton"></button>
-                        <button id="cancelButton" style="display: none">Abbrechen</button>
-                    </div>
-                </div>
                 <form method="post" id="newProductForm" onsubmit="createProduct(event)">
                     <h2>Neues Produkt anlegen</h2>
                     <input type="hidden" name="id">
@@ -164,10 +154,32 @@ function updateCostumer(event) {
     };
 
     let response = makeAjaxRequest(data);
-    handleAjaxResponse(response, data);
-
+    response
+        .then(function (result) {
+            let modalContent = getModalContent(data.action, 'success');
+            $('#modal').removeClass('hidden').html(modalContent);
+            costumerDataFromDb = '';
+        })
+        .catch(function (result) {
+            let modalContent = getModalContent(data.action, 'failed');
+            $('#modal').removeClass('hidden').html(modalContent);
+        });
 }
 
+
+function editCostumerOnInvoiceForm() {
+
+    $('#subFormWrapper').html(forms.createCostumer.content).removeClass('hidden');
+    $('#modal').addClass('hidden').html('');
+
+    $('#subFormWrapper input[name=id]').val(costumerDataFromDb.id)
+    $('#subFormWrapper #name').val(costumerDataFromDb.name);
+    $('#subFormWrapper #address').val(costumerDataFromDb.address);
+    $('#subFormWrapper #taxId').val(costumerDataFromDb.taxId);
+    $('#subFormWrapper #salesTaxId').val(costumerDataFromDb.salesTaxId);
+    $('#newCostumerForm').attr('onsubmit', 'updateCostumer()');
+    $('#sendNewCostumer').text('Speichern');
+}
 
 //Logik des createProduct-Fensters
 function createProduct(event) {
@@ -236,7 +248,7 @@ function netPriceCalculator() {
 
 //Erzeugt die Rechnung
 function createInvoice(event) {
-    event.preventDefault();
+    event ? event.preventDefault() : false;
     let invoiceData = preprocessFormData($('#invoiceForm').serializeArray());
     data = {
         action: 'createInvoice',
@@ -246,36 +258,45 @@ function createInvoice(event) {
     let response = makeAjaxRequest(data);
     response
         .then(function (result) {
-            if (result.data == 'salesTaxId not set') {
-
-                let toastText = `Bei Rechnungen mit Umkehr der Umsatzsteuerschuld (Reverse Charge) muss zwingend die Umsatzsteuernummer
-            des Empfängers angegeben werden. Beim gewählten Kunden ist diese nicht hinterlegt.<p>Sobald die Nummer hinterlegt ist, kann
-            die Rechnung gespeichert werden. Bearbeite dafür die Information des gewählten Kunden.</p>`;
-
-                $('#toastMain p').html(toastText);
-                $('#toastMain #confirmButton').off('click').on('click', function () { $('#toastMain').css('display', 'none') }).text('Okay');
-                // TODO: Link für Window.open anpassen, sodass die Kundenübersicht geöffnet wird
-                $('#toastMain #cancelButton').off('click').on('click', () => window.open('costumers.php')).css('display', 'block').text('Kunden bearbeiten');
-                $('#toastMain').css('display', 'flex');
-
-                return;
+            if (JSON.parse(result.data) == 'salesTaxId not set') {
+                salesTaxIdNotSet();
             }
 
-            $('#toastMain p').text('Rechnung erfolgreich angelegt.');
-            $('#toastMain #confirmButton').off('click').on('click', function () { $('#toastMain').css('display', 'none') }).text('Okay');
-            $('#toastMain #cancelButton').css('display', 'none');
-            $('#toastMain').css('display', 'flex');
+            let modalContent = getModalContent('createInvoice', 'success');
+            $('#modal').removeClass('hidden').html(modalContent);
         })
         .catch(function (result) {
-            $('#toastMain p').text('Da ist etwas schief gelaufen!');
-            $('#toastMain #confirmButton').off('click').on('click', function () { createInvoice(event) }).text('Erneut versuchen');
-            $('#toastMain #cancelButton').css('display', 'block');
-            $('#toastMain').css('display', 'flex');
+            let modalContent = getModalContent('createInvoice', 'failed');
+            $('#modal').removeClass('hidden').html(modalContent);
+        });
+}
 
-            $('#toastMain #cancelButton').on('click', function () { $('#toastMain').css('display', 'none') });
+
+function salesTaxIdNotSet() {
+
+    let data = {
+        id: $('#costumerSelect').val(),
+        action: 'getCostumerDataToEdit'
+    };
+    let response = makeAjaxRequest(data);
+    response
+        .then((result) => {
+            result.data = JSON.parse(result.data);
+            costumerDataFromDb = result.data[0];
+            let modalContent = getModalContent('salesTaxIdNotSet', 'salesTaxIdNotSet');
+            $('#modal').removeClass('hidden').html(modalContent);
+        })
+        .catch((result) => {
+            let modalContent = getModalContent('createInvoice', 'failed');
+            $('#modal').html(modalContent);
         });
 
+
+
+    return;
+
 }
+
 
 function handleAjaxResponse(response, data) {
     response
@@ -302,7 +323,6 @@ function preprocessFormData(formData) {
 
 //Öffnen und Schließen der newCostumer und newProduct-Formulare
 function showSubForm(requestedForm) {
-
     switch (requestedForm) {
         case 'createCostumer':
             $('#subFormWrapper').html(forms.createCostumer.content).removeClass('hidden');
@@ -325,9 +345,10 @@ $('#startDate').ready(() => {
 });
 
 
-function getModalContent(action, state, id = '') {
-    console.log(state);
-    //die funktion, die den Toast erzeugen soll
+function getModalContent(action, state, data = '') {
+    // action = aufrufende Funktion, state = Art des Modals (success, failed, info, usw), 
+    // id = optionale daten aus der aufrufenden Funktion, die im Modal verarbeitet werden sollen
+
     let confirmButtonStyle;
     let cancelButtonStyle;
     let confirmButtonAction;
@@ -348,8 +369,8 @@ function getModalContent(action, state, id = '') {
         },
         failed: "Da ist etwas schief gelaufen :-*!",
         requireConfirm: {
-            deleteCostumer: `Willst du den Kunden ${id} unwiderruflich löschen?`,
-            deleteProduct: `Willst du das Produkt ${id} unwiderruflich löschen?`
+            deleteCostumer: `Willst du den Kunden ${data} unwiderruflich löschen?`,
+            deleteProduct: `Willst du das Produkt ${data} unwiderruflich löschen?`
         },
         fullfillmentDateInfo: `
         In jeder Rechnung muss ein konkretes Lieferdatum oder ein Lieferzeitraum angegeben werden. Wählst du kein Datum aus, wird dieses
@@ -361,6 +382,11 @@ function getModalContent(action, state, id = '') {
         Ist dir nur der Brutto-Preis bekannst, kannst du diesen eingeben und den Netto-Preis abhängig von der Mehrwertsteuer 
         berechnen lassen. Wähle dafür einen Mehrwertsteuersatz aus und klicke "berechnen".
         `,
+        salesTaxIdNotSet: `
+            Bei Rechnungen mit Umkehr der Umsatzsteuerschuld (Reverse Charge) muss zwingend die Umsatzsteuernummer
+            des Empfängers angegeben werden. Beim gewählten Kunden ist diese nicht hinterlegt.<p>Sobald die Nummer hinterlegt ist, kann
+            die Rechnung gespeichert werden. Die Kundeninformationen kannst du im Kundenmenü bearbeiten.</p>
+            `
     }
 
     let button = {
@@ -392,14 +418,19 @@ function getModalContent(action, state, id = '') {
                 },
                 css: 'block',
                 onclick: {
-                    deleteCostumer: `deleteCostumer(${id})`,
-                    deleteProduct: `deleteProduct(${id})`
+                    deleteCostumer: `deleteCostumer(${data})`,
+                    deleteProduct: `deleteProduct(${data})`
                 }
             },
             info: {
                 text: 'Okay',
                 css: 'block',
                 onclick: 'closeModal(false)'
+            },
+            salesTaxIdNotSet: {
+                text: 'Kunden bearbeiten',
+                css: 'block',
+                onclick: `editCostumerOnInvoiceForm()`
             }
         },
         cancelButton: {
@@ -422,54 +453,38 @@ function getModalContent(action, state, id = '') {
                 text: '',
                 css: 'none',
                 onclick: ''
+            },
+            salesTaxIdNotSet: {
+                text: 'Abbrechen',
+                css: 'block',
+                onclick: 'closeModal(false)'
             }
         }
     }
 
+    //befüllt die Variablen des Modals abhängig ihres Status
+
+    modalMessage = message[action];
+
+    confirmButtonText = button.confirmButton[state].text;
+    confirmButtonStyle = button.confirmButton[state].css;
+    confirmButtonAction = button.confirmButton[state].onclick;
+
+    cancelButtonText = button.cancelButton[state].text;
+    cancelButtonStyle = button.cancelButton[state].css;
+    cancelButtonAction = button.cancelButton[state].onclick;
 
     if (state == 'success') {
         modalMessage = message.success[action];
-
-        confirmButtonText = button.confirmButton.success.text;
-        confirmButtonStyle = button.confirmButton.success.css;
-        confirmButtonAction = button.confirmButton.success.onclick;
-
-        cancelButtonText = button.cancelButton.success.text;
-        cancelButtonStyle = button.cancelButton.success.css;
-        cancelButtonAction = button.cancelButton.success.onclick;
     }
     else if (state == 'failed') {
         modalMessage = message.failed;
-
-        confirmButtonText = button.confirmButton.failed.text;
-        confirmButtonStyle = button.confirmButton.failed.css;
         confirmButtonAction = button.confirmButton.failed.onclick[action];
-
-        cancelButtonText = button.cancelButton.failed.text;
-        cancelButtonStyle = button.cancelButton.failed.css;
-        cancelButtonAction = button.cancelButton.failed.onclick;
     }
     else if (state == 'requireConfirm') {
         modalMessage = message.requireConfirm[action];
-
         confirmButtonText = button.confirmButton.requireConfirm.text[action];
-        confirmButtonStyle = button.confirmButton.requireConfirm.css;
         confirmButtonAction = button.confirmButton.requireConfirm.onclick[action];
-
-        cancelButtonText = button.cancelButton.requireConfirm.text;
-        cancelButtonStyle = button.cancelButton.requireConfirm.css;
-        cancelButtonAction = button.cancelButton.requireConfirm.onclick;
-    }
-    else if (state == 'info') {
-        modalMessage = message[action];
-
-        confirmButtonText = button.confirmButton[state].text;
-        confirmButtonStyle = button.confirmButton[state].css;
-        confirmButtonAction = button.confirmButton[state].onclick;
-
-        cancelButtonText = button.cancelButton[state].text;
-        cancelButtonStyle = button.cancelButton[state].css;
-        cancelButtonAction = button.cancelButton[state].onclick;
     }
 
     let modalHTML = `

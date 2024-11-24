@@ -16,7 +16,7 @@ include_once getPath('topMenu');
 //Beginn des Seiteninhaltes
 
 if (!isset($_GET['a'])){
-    $calledPage = 'invoiceFormHTML';
+    $calledPage = 'invoiceForm';
 
 } else {
     $calledPage = $_GET['a'];

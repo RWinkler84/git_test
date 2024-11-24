@@ -2,16 +2,9 @@ generell:
 
 submits auf invoiceForm-Seite auf buttons umstellen, da alle daten ohnehin per Ajax geliefert werden
 
-toasts per Funktion befüllen lassen, um Code-Duplikation zu reduzieren
-
-testen, ob Fehlermeldung bei RC-Rechnungen auftritt, wenn keine SalesTaxId hinterlegt ist
+funktion entwickeln, die Daten unabgesendeter Rechnung zwischenspeichert, wenn Nutzer InvoiceForm verlässt´
 
 
-
-functions.js: 
-
--Zu öffnenden Link anpassen, wenn bei Reverse Charge-Rechnungen keine USt-Id des Kunden angeben wurde
-siehe createInvoice-Funktion
 
 
 invoiceOverview:
