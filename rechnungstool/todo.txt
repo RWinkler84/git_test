@@ -1,22 +1,17 @@
 generell:
 
-submits auf invoiceForm-Seite auf buttons umstellen, da alle daten ohnehin per Ajax geliefert werden
+- funktion entwickeln, die Daten unabgesendeter Rechnung zwischenspeichert, wenn Nutzer InvoiceForm verlässt
 
-funktion entwickeln, die Daten unabgesendeter Rechnung zwischenspeichert, wenn Nutzer InvoiceForm verlässt´
-
+- kopf um die Auswertung der Rechnungsdaten machen
 
 
 
 invoiceOverview:
 
+----> option, um zahlungseingänge zu registrieren  <----    WICHTIG!
+
 - Suchfunktion für Tabelle
 
-
-
-styles.css:
-
-- den modals ein optisches Feedback geben, wenn eine Aktion ausgeführt wurde (grüne/rote Border, die
-innerhalb von circa 200ms ausfaded)
 
 
 

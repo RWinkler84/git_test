@@ -357,6 +357,7 @@ function getModalContent(action, state, data = '') {
     let confirmButtonText;
     let cancelButtonText;
     let modalMessage;
+    let feedbackClass= "";
 
     let message = {
         success: {
@@ -465,6 +466,7 @@ function getModalContent(action, state, data = '') {
 
     //befüllt die Variablen des Modals abhängig ihres Status
 
+    
     modalMessage = message[action];
 
     confirmButtonText = button.confirmButton[state].text;
@@ -477,10 +479,13 @@ function getModalContent(action, state, data = '') {
 
     if (state == 'success') {
         modalMessage = message.success[action];
+        feedbackClass = 'success';
     }
     else if (state == 'failed') {
         modalMessage = message.failed;
         confirmButtonAction = button.confirmButton.failed.onclick[action];
+        feedbackClass = 'failed';
+
     }
     else if (state == 'requireConfirm') {
         modalMessage = message.requireConfirm[action];
@@ -489,12 +494,14 @@ function getModalContent(action, state, data = '') {
     }
 
     let modalHTML = `
-            <div style="display: flex; flex-direction: column; align-items: center;">
-            <p>${modalMessage}</p>
-            <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
-                <button id="confirmButton" style="display: ${confirmButtonStyle}" onclick="${confirmButtonAction}">${confirmButtonText}</button>
-                <button id="cancelButton" style="display: ${cancelButtonStyle}" onclick="${cancelButtonAction}">${cancelButtonText}</button>
-            </div>
+            <div id="feedbackBorderModal" class="${feedbackClass}">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <p>${modalMessage}</p>
+                    <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
+                        <button id="confirmButton" style="display: ${confirmButtonStyle}" onclick="${confirmButtonAction}">${confirmButtonText}</button>
+                        <button id="cancelButton" style="display: ${cancelButtonStyle}" onclick="${cancelButtonAction}">${cancelButtonText}</button>
+                    </div>
+                </div>
             </div>
     `;
 
@@ -506,6 +513,8 @@ function closeModal(closeAll) {
 
     if (closeAll) {
         $('#modal').addClass('hidden').html('');
+        $('#innerDivModal').removeClass('success', 'failed');
+
         $('#subFormWrapper').addClass('hidden').html('');
         $('#editFormWrapper').addClass('hidden');
 
@@ -515,6 +524,7 @@ function closeModal(closeAll) {
         resendData = '';
     } else {
         $('#modal').addClass('hidden').html('');
+        $('#innerDivModal').removeClass('success', 'failed');
         resendData = '';
     }
 }
