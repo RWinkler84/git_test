@@ -59,7 +59,6 @@ if (isset($_POST['action'])) {
             $result = fetchCostumerById();
             echo json_encode($result);
             break;
-
     }
 }
 
@@ -69,13 +68,12 @@ function dataQueryPrepStmt($sqlQuery, $paramType, $param)
     global $conn;
 
     try {
-    $stmt = $conn->prepare($sqlQuery);
-    
-    if (!empty($param)) $stmt->bind_param($paramType, ...$param);
-    
-    $stmt->execute();
-     
-    } catch (Exception $e){
+        $stmt = $conn->prepare($sqlQuery);
+
+        if (!empty($param)) $stmt->bind_param($paramType, ...$param);
+
+        $stmt->execute();
+    } catch (Exception $e) {
         http_response_code(500);
         return json_encode(['errorMessage' => 'Es gab da ein Problem...']);
     }
@@ -83,6 +81,18 @@ function dataQueryPrepStmt($sqlQuery, $paramType, $param)
     $fetchedData = $stmt->get_result();
 
     return $fetchedData;
+}
+
+function cleanedData($dataToClean)
+{
+
+    foreach ($dataToClean as $key => $value) {
+        foreach ($value as $subKey => $subValue) {
+            $dataToClean[$key][$subKey] = htmlspecialchars($subValue);
+        }
+    }
+
+    return $dataToClean;
 }
 
 
@@ -99,6 +109,7 @@ function fetchAllCostumers(bool $sorted)
             return strcmp($a['name'], $b['name']);
         });
     }
+    $costumers = cleanedData($costumers);
 
     return $costumers;
 }
@@ -117,6 +128,8 @@ function fetchAllProducts(bool $sorted)
         });
     }
 
+    $products = cleanedData($products);
+
     return $products;
 }
 
@@ -128,10 +141,11 @@ function fetchAllInvoices()
 
     $fetchedInvoiceData = dataQueryPrepStmt($sqlQuery, $paramType, $param);
     $invoiceData = $fetchedInvoiceData->fetch_all(MYSQLI_ASSOC);
-    Logger($invoiceData);
-    usort($invoiceData, function ($a, $b){
+    usort($invoiceData, function ($a, $b) {
         return $b['id'] - $a['id'];
     });
+
+    $invoiceData = cleanedData($invoiceData);
 
     return $invoiceData;
 }
@@ -155,6 +169,40 @@ function fetchProductById()
     $result = $fetchProduct->fetch_all(MYSQLI_ASSOC);
 
     return $result;
+}
+
+
+function fetchInvoiceDataById($id)
+{
+    $sqlQuery = "SELECT * FROM invoices WHERE id=?";
+    $param = [$id];
+    $paramType = 'i';
+
+    $fetchedInvoiceData = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+    $invoiceData = $fetchedInvoiceData->fetch_all(MYSQLI_ASSOC);
+
+//eliminiert htmlspecialchars auf der invoiceView
+    foreach ($invoiceData[0] as $key => $value) {
+
+        if ($key == 'products0' || $key == 'products7' || $key == 'products19') {
+            $products = json_decode($value, true);
+
+            foreach ($products as $productProperties => $value) {
+                foreach ($value as $subKey => $subValue) {
+                    $products[$productProperties][$subKey] = htmlspecialchars($subValue);
+                }
+            }
+
+            $products = json_encode($products);
+            $invoiceData[0][$key] = $products;
+        }
+
+        if ($key != 'products0' && $key != 'products7' && $key != 'products19') {
+            $invoiceData[0][$key] = htmlspecialchars($value);
+        }
+    }
+
+    return $invoiceData;
 }
 
 
@@ -212,7 +260,7 @@ function updateProduct()
     $paramType = "sdssi";
     $param = [$_POST['productTitle'], $_POST['productPrice'], $_POST['taxRate'], $_POST['productDescription'], $_POST['productId']];
     $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
- 
+
     return $result;
 }
 
@@ -312,6 +360,8 @@ function processInvoiceData()
             $singleProductTotalPrice0 = round($products0[$i]['productPrice'] * $products0[$i]['amount'], 2);
             $allProductsTotalPrice0 += $singleProductTotalPrice0;
             $products0[$i]['productTotalPrice'] = $singleProductTotalPrice0;
+            $products0[$i]['productTotalNetPrice'] = $singleProductTotalPrice0;
+            $products0[$i]['productTotalGrossPrice'] = $singleProductTotalPrice0;
         }
     }
 
@@ -400,6 +450,6 @@ function processInvoiceData()
 
 function logger($valueToLog)
 {
-    error_log('file: ' . __FILE__);
+    // error_log('file: ' . __FILE__);
     error_log('Logger: ' . print_r($valueToLog, true));
 }

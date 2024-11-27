@@ -3,11 +3,7 @@
 // require_once getPath('templateEngine');
 // require getPath('database');
 
-$stmt = $conn->prepare("SELECT * FROM invoices WHERE id=?");
-$stmt->bind_param('i', $_GET['id']);
-$stmt->execute();
-$fetchedInvoiceData = $stmt->get_result();
-$invoiceData = $fetchedInvoiceData->fetch_all(MYSQLI_ASSOC);
+$invoiceData = fetchInvoiceDataById($_GET['id']);
 
 
 $placeholders = [
@@ -121,6 +117,7 @@ function getProducts($productJson)
     global $invoiceData;
     $productsArray = [];
     $productsArray = json_decode($productJson, true);
+    logger($productsArray);
     $productsHTML = "";
 
     if (isset($productsArray[0])) {

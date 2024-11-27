@@ -15,6 +15,7 @@ invoiceOverview:
 
 
 
-
+Wird eine Rechnung mit nur 0 Prozent Produkten erzeugt, sorgt dass dafür, das essentielle Felder leer bleiben und wirft
+Fehler in der InvoiceView
 
 
