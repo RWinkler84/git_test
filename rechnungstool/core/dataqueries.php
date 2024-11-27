@@ -128,6 +128,10 @@ function fetchAllInvoices()
 
     $fetchedInvoiceData = dataQueryPrepStmt($sqlQuery, $paramType, $param);
     $invoiceData = $fetchedInvoiceData->fetch_all(MYSQLI_ASSOC);
+    Logger($invoiceData);
+    usort($invoiceData, function ($a, $b){
+        return $b['id'] - $a['id'];
+    });
 
     return $invoiceData;
 }

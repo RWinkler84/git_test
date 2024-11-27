@@ -1,12 +1,17 @@
 <div id="contentWrapper">
-
-    <button type="button" onclick="showEditForm()">Neues Produkt anlegen</button>
+    <div class="flex spaceBetween">
+        <button type="button" onclick="showEditForm()" style="margin-top: 0;">Neues Produkt anlegen</button>
+        <div>
+            <label for="search" style="display: inline;">&#128269 </label>
+            <input type="text" name="search" id="search" autocomplete="off" style="width: 15em;">
+        </div>
+    </div>
 
     <div class="divider"></div>
     {tableContent}
     <div class="divider"></div>
     <div class="flex spaceBetween">
-        <div></div>
+        <div><span id="noSearchMatch" style="display: none">Die Suche hatte keine Treffer.</span></div>
         <div>{totalCount}</div>
     </div>
 
@@ -149,7 +154,7 @@
 
         function createOrUpdate(event) {
             event.preventDefault();
-            
+
             if (!$('form input[name=id]').val()) {
                 createProduct();
             } else {
@@ -176,4 +181,5 @@
             $('#editFormWrapper').addClass('hidden');
             resendData = '';
         }
+
     </script>

@@ -1,11 +1,17 @@
 <div id="contentWrapper">
+    <div class="flex spaceBetween">
+        <button type="button" style="margin-top: 0" onclick="showEditForm()">Neuen Kunden anlegen</button>
+        <div>
+            <label for="search" style="display: inline;">&#128269 </label>
+            <input type="text" name="search" id="search" autocomplete="off" style="width: 15em;">
+        </div>
+    </div>
 
-    <button type="button" onclick="showEditForm()">Neuen Kunden anlegen</button>
     <div class="divider"></div>
     {tableContent}
     <div class="divider"></div>
     <div class="flex spaceBetween">
-        <div></div>
+        <div><span id="noSearchMatch" style="display: none">Die Suche hatte keine Treffer.</span></div>
         <div>{totalCount}</div>
     </div>
 </div>

@@ -129,8 +129,8 @@ button:active {
 #contentWrapper {
     background-color: var(--background-main);
     padding: 50px 100px 50px;
-    min-width: 300px;
-    max-width: 700px;
+    min-width: 600px;
+    max-width: 1000px;
 }
 
 #toast,
@@ -269,8 +269,8 @@ button:active {
 
 #topMenuWrapper {
     background-color: var(--background-topMenu);
-    min-width: 400px;
-    max-width: 800px;
+    min-width: 700px;
+    max-width: 1100px;
     padding: 30px 50px 30px;
     text-transform: uppercase;
     color: var(--text-light);

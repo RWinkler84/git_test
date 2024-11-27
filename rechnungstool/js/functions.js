@@ -357,7 +357,7 @@ function getModalContent(action, state, data = '') {
     let confirmButtonText;
     let cancelButtonText;
     let modalMessage;
-    let feedbackClass= "";
+    let feedbackClass = "";
 
     let message = {
         success: {
@@ -466,7 +466,7 @@ function getModalContent(action, state, data = '') {
 
     //befüllt die Variablen des Modals abhängig ihres Status
 
-    
+
     modalMessage = message[action];
 
     confirmButtonText = button.confirmButton[state].text;
@@ -528,3 +528,42 @@ function closeModal(closeAll) {
         resendData = '';
     }
 }
+
+//Suchlogik
+
+$('#search').on('input', () => {
+    let searchPhrase = $('#search').val().toLowerCase();
+    let tr = $('table tr');
+
+    tr.each(function () {
+        let match;
+        let td = $(this).find('td');
+
+        td.each(function () {
+            if ($(this).text().toLocaleLowerCase().includes(searchPhrase)) {
+                match = true;
+            }
+        });
+        if (match) {
+            $(this).css('display', 'table-row');
+        } else {
+            $(this).css('display', 'none');
+            $('tr:has(th)').css('display', 'table-row');
+        }
+    });
+    let trNew = [];
+    tr.each(function () {
+        if ($(this).css('display') == 'table-row') {
+            trNew.push(this);
+        }
+    });
+    for (let i = 0; i < trNew.length; i++) {
+        if (i % 2 == 0) {
+            $(trNew[i]).css('background-color', 'var(--lighter-grey)');
+        } else {
+            $(trNew[i]).css('background-color', 'var(--background-main)');
+        }
+    }
+    console.log(trNew);
+    trNew.length == 1 ? $('#noSearchMatch').toggle(true) : $('#noSearchMatch').toggle(false);
+});

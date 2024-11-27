@@ -4,13 +4,14 @@ generell:
 
 - kopf um die Auswertung der Rechnungsdaten machen
 
+- htmlspecialchars() implementieren
+
 
 
 invoiceOverview:
 
 ----> option, um zahlungseingänge zu registrieren  <----    WICHTIG!
 
-- Suchfunktion für Tabelle
 
 
 
