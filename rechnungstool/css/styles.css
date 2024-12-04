@@ -3,20 +3,21 @@
     --background-main: rgb(245, 245, 245);
     --background-topMenu: rgb(0, 54, 88);
     --background-submenu: rgb(232, 232, 232);
-    
+
     --text-light: rgb(255, 255, 255);
     --text-dark: rgb(47, 47, 51);
-    
+
     --button-blue: rgb(0, 74, 119);
     --button-blue-active: rgb(0, 63, 101);
     --button-light: rgb(245, 245, 245);
     --button-light-active: rgb(225, 225, 225);
-    
+
     --toast-blue: rgb(41, 91, 122);
     --table-blue: rgb(55, 114, 151);
     --grey: rgb(149, 149, 149);
     --lighter-grey: #e8e8e8;
     --light-blue: rgba(164, 186, 202, 0.696);
+    --status-pending: rgb(209, 122, 0);
 
     font-size: 15px;
     --font-size-small: 12px;
@@ -105,12 +106,13 @@ button {
     padding: 8px 16px;
     font-size: 14px;
     cursor: pointer;
-    
+
 }
 
 button:active {
     background-color: var(--button-blue-active);
 }
+
 .marginTop {
     margin-top: 0.5rem;
 }
@@ -196,7 +198,9 @@ button:active {
 @keyframes success-fade {
     from {
         border-color: rgba(0, 184, 0)
-    } to {
+    }
+
+    to {
         border-color: rgba(184, 0, 0, 0)
     }
 }
@@ -209,7 +213,9 @@ button:active {
 @keyframes failed-fade {
     from {
         border-color: rgba(184, 0, 0)
-    } to {
+    }
+
+    to {
         border-color: rgba(184, 0, 0, 0)
     }
 }
@@ -259,6 +265,12 @@ button:active {
 
 .hidden {
     display: none;
+}
+
+.visible.divider {
+    min-height: 0px !important;
+    margin: 15px -10px 10px;
+    border-top: solid 1px var(--light-blue);
 }
 
 /*  ############

@@ -357,7 +357,7 @@ function getModalContent(action, state, data = '') {
     let confirmButtonText;
     let cancelButtonText;
     let modalMessage;
-    let feedbackClass = "";
+    let feedbackClass = ""; // setzt die CSS-Klasse für den Rahmen des Modals
 
     let message = {
         success: {
@@ -367,9 +367,10 @@ function getModalContent(action, state, data = '') {
             updateCostumer: 'Der Kunde wurde erfolgreich aktualisiert.',
             updateProduct: 'Das Produkt wurde erfolgreich aktualisiert.',
             deleteCostumer: 'Der Kunde wurde erfolgreich gelöscht.',
-            deleteProduct: 'Das Produkt wurde erfolgreich gelöscht.'
+            deleteProduct: 'Das Produkt wurde erfolgreich gelöscht.',
+            createIncomingPayment: 'Die Zahlung wurde erfolgreich gebucht.'
         },
-        failed: "Da ist etwas schief gelaufen :-*!",
+        failed: "Da ist etwas schief gelaufen!",
         requireConfirm: {
             deleteCostumer: `Willst du den Kunden ${data} unwiderruflich löschen?`,
             deleteProduct: `Willst du das Produkt ${data} unwiderruflich löschen?`
@@ -388,7 +389,9 @@ function getModalContent(action, state, data = '') {
             Bei Rechnungen mit Umkehr der Umsatzsteuerschuld (Reverse Charge) muss zwingend die Umsatzsteuernummer
             des Empfängers angegeben werden. Beim gewählten Kunden ist diese nicht hinterlegt.<p>Sobald die Nummer hinterlegt ist, kann
             die Rechnung gespeichert werden. Die Kundeninformationen kannst du im Kundenmenü bearbeiten.</p>
-            `
+        `,
+        invoiceOverpayed: `Der Zahlungseingang übersteigt den offenen Rechnungsbetrag.
+        `
     }
 
     let button = {
@@ -410,7 +413,9 @@ function getModalContent(action, state, data = '') {
                     updateCostumer: 'updateCostumer()',
                     updateProduct: 'updateProduct()',
                     deleteCostumer: 'deleteCostumer()',
-                    deleteProduct: 'deleteProduct()'
+                    deleteProduct: 'deleteProduct()',
+                    getReceivedPayments: 'getReceivedPayments()',
+                    createIncomingPayment: 'createPayment()'
                 }
             },
             requireConfirm: {
@@ -433,7 +438,7 @@ function getModalContent(action, state, data = '') {
                 text: 'Kunden bearbeiten',
                 css: 'block',
                 onclick: `editCostumerOnInvoiceForm()`
-            }
+            },
         },
         cancelButton: {
             success: {
@@ -497,6 +502,7 @@ function getModalContent(action, state, data = '') {
             <div id="feedbackBorderModal" class="${feedbackClass}">
                 <div style="display: flex; flex-direction: column; align-items: center;">
                     <p>${modalMessage}</p>
+                    <div class="divider"></div>
                     <div id="toastButtonWrapper" style="display: flex; gap: 1em;">
                         <button id="confirmButton" style="display: ${confirmButtonStyle}" onclick="${confirmButtonAction}">${confirmButtonText}</button>
                         <button id="cancelButton" style="display: ${cancelButtonStyle}" onclick="${cancelButtonAction}">${cancelButtonText}</button>
@@ -517,6 +523,7 @@ function closeModal(closeAll) {
 
         $('#subFormWrapper').addClass('hidden').html('');
         $('#editFormWrapper').addClass('hidden');
+        $('#paymentForm').addClass('hidden');
 
         //resendData speichert die Daten eines Ajax-Calls auf product und costumerOverview, um sie wiederzuverwenden,
         //wenn Ajax fehlschlägt und wiederholt werden soll
@@ -564,6 +571,5 @@ $('#search').on('input', () => {
             $(trNew[i]).css('background-color', 'var(--background-main)');
         }
     }
-    console.log(trNew);
     trNew.length == 1 ? $('#noSearchMatch').toggle(true) : $('#noSearchMatch').toggle(false);
 });

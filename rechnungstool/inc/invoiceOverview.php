@@ -39,16 +39,16 @@ function getTableContent($invoiceData)
         $invoiceViewPath = "index.php?a=invoiceView&id=" . $invoiceData[$key]['id'];
         $invoiceDate = processDate($data['date']);
         $invoiceTotalAmount = getInvoiceTotalAmount($data);
-        $invoicePayed = getPaymentStatus($data['paymentStatus']);
+        $invoicePayed = getPaymentStatus($data['paymentStatus'], $data['receivedPayments']);
 
 
         $tableRow = <<<TABLEROW
                 <tr>
                     <td>{$invoiceDate}</td>
-                    <td style="width: 10%">{$data['id']}</td>
+                    <td id style="width: 10%">{$data['id']}</td>
                     <td>{$data['costumerName']}</td>
                     <td>{$invoiceTotalAmount} €</td>
-                    <td>{$invoicePayed}</td>
+                    <td onclick="getReceivedPayments(this)">{$invoicePayed}</td>
                     <td><a href="{$invoiceViewPath}" target="_blank">&#128269</a></td>
                 </tr>
         TABLEROW;
@@ -76,10 +76,18 @@ function getInvoiceTotalAmount($data)
 }
 
 
-function getPaymentStatus($status)
+function getPaymentStatus($status, $receivedPayments)
 {
-
-    return $status == 0 ? "<span style='color: red'>&#10008</span>" : "<span style='color: green'>&#10004;</span>";
+    $receivedPayments = htmlspecialchars_decode($receivedPayments);
+    $receivedPayments = json_decode($receivedPayments, true);
+    
+    if ($status == '0' && !isset($receivedPayments[0]['payment'])){
+        return "<span style='color: red; cursor: pointer;' title='offen'>&#10008</span>";
+    } else if ($status == '1'){
+        return "<span style='color: green; cursor: pointer;' title='bezahlt'>&#10004;</span>";
+    } else if ($status == '0' && isset($receivedPayments[0]['payment'])){
+        return "<span style='color: var(--status-pending); cursor: pointer;' title='Anzahlung erhalten'>&#10004;</span>";
+    }     
 }
 
 function getDataTotalCount($invoiceData){

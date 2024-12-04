@@ -59,6 +59,16 @@ if (isset($_POST['action'])) {
             $result = fetchCostumerById();
             echo json_encode($result);
             break;
+
+        case 'getReceivedPayments':
+            $result = fetchPaymentDataByInvoiceId($_POST['id']);
+            echo json_encode($result);
+            break;
+
+        case 'createIncomingPayment':
+            $result = createIncomingPayment();
+            echo json_encode($result);
+            break;
     }
 }
 
@@ -181,7 +191,7 @@ function fetchInvoiceDataById($id)
     $fetchedInvoiceData = dataQueryPrepStmt($sqlQuery, $paramType, $param);
     $invoiceData = $fetchedInvoiceData->fetch_all(MYSQLI_ASSOC);
 
-//eliminiert htmlspecialchars auf der invoiceView
+    //eliminiert htmlspecialchars auf der invoiceView
     foreach ($invoiceData[0] as $key => $value) {
 
         if ($key == 'products0' || $key == 'products7' || $key == 'products19') {
@@ -308,6 +318,66 @@ function deleteCostumer()
 }
 
 
+
+function fetchPaymentDataByInvoiceId($id)
+{
+    $sqlQuery = 'SELECT receivedPayments, invoiceGrossAmount FROM invoices WHERE id=?';
+    $paramType = 'i';
+    $param = [$id];
+    $fetchedPaymentData = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+    $paymentData = $fetchedPaymentData->fetch_all(MYSQLI_ASSOC);
+
+    return $paymentData;
+}
+
+function createIncomingPayment()
+{
+    $paymentData = fetchPaymentDataByInvoiceId($_POST['id']);
+    $paymentData = $paymentData[0]['receivedPayments'];
+    $paymentData = json_decode($paymentData, true);
+    $paymentToAdd = [
+        'payment' => [
+            'date' => $_POST['paymentDate'],
+            'amount' => $_POST['paymentAmount']
+        ]
+    ];
+
+
+    $paymentData[] = $paymentToAdd;
+
+    $paymentData = json_encode($paymentData);
+
+    $sqlQuery = "UPDATE invoices SET receivedPayments=? WHERE id=?";
+    $paramType = 'si';
+    $param = [$paymentData, $_POST['id']];
+
+    $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+
+    isInvoicePayed();
+
+    return $result;
+}
+
+
+function isInvoicePayed(){
+    $receivedPayments = 0;
+    $paymentData = fetchPaymentDataByInvoiceId($_POST['id']);
+    $allReceivedPayments = json_decode($paymentData[0]['receivedPayments'], true);
+
+    for ($i = 0; $i < count($allReceivedPayments); $i++){
+        $receivedPayments += $allReceivedPayments[$i]['payment']['amount'];
+    }
+    
+    if ($paymentData[0]['invoiceGrossAmount'] <= $receivedPayments){
+        $sqlQuery = 'UPDATE invoices SET paymentStatus="1" WHERE id=?';
+        $paramType = 'i';
+        $param = [$_POST['id']];
+
+        dataQueryPrepStmt($sqlQuery, $paramType, $param);
+    }
+}
+
+
 //füllt die invoice-Tabelle mit Daten
 function processInvoiceData()
 {
@@ -324,6 +394,7 @@ function processInvoiceData()
     $allProductsTotalPrice19 = 0;
     $invoiceNetAmount = 0;
     $invoiceGrossAmunt = 0;
+    $receivedPayments = '[]';
 
     //erzeugt Variablen aus den Key-Value-Pairs mit dem Präfix self_ und costumer_
     extract($self[0], EXTR_PREFIX_ALL, "self");
@@ -407,8 +478,8 @@ function processInvoiceData()
 
     $sqlQuery = "INSERT INTO invoices (selfName, selfAddress, selfTaxId, selfSalesTaxId, selfBankAccountNumber, selfIBAN, selfBIC, selfBankName, selfMail, selfPhoneNumber,
                  costumerName, costumerAddress, costumerTaxId, costumerSalesTaxId, products0, products7, products19, totalTax7, totalTax19, invoiceNetAmount, invoiceGrossAmount,
-                 paymentTerms, smallBusinessTax, reverseCharge, invoiceComment, fullfillmentDateStart, FullfillmentDateEnd, paymentStatus) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-    $paramType = 'sssssssssssssssssddddiiisssi';
+                 paymentTerms, smallBusinessTax, reverseCharge, invoiceComment, fullfillmentDateStart, FullfillmentDateEnd, paymentStatus, receivedPayments) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    $paramType = 'sssssssssssssssssddddiiisssis';
     $param = [
         $self_name,
         $self_address,
@@ -437,7 +508,8 @@ function processInvoiceData()
         $invoiceComment,
         $fullfillmentDateStart,
         $fullfillmentDateEnd,
-        $paymentStatus
+        $paymentStatus,
+        $receivedPayments
     ];
 
     $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);

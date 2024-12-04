@@ -1,4 +1,8 @@
 <div id="contentWrapper">
+
+    <!-- Modal -->
+    <div id="modal" class="modal hidden"></div>
+
     <div class="flex spaceBetween">
         <div></div>
         <div>
@@ -15,3 +19,155 @@
         <div>{totalCount}</div>
     </div>
 </div>
+
+<div class="subFormWrapper hidden" id="paymentForm">
+    <form method="post" onsubmit="createPayment(event)">
+        <h2></h2>
+        <input type="hidden" id="invoiceId">
+        <input type="hidden" id="amountToPayHiddenInput">
+        <label for="paymentAmount">gezahlte Summe</label>
+        <input id="paymentAmount" name="payedAmount" type="text" placeholder="Format: 10.99" required>
+        <label for="paymentDate">Eingangsdatum</label>
+        <input id="paymentDate" type="date" required>
+        <div class="marginTop" id="buttonContainer">
+            <button type="submit" id="submitButton">Zahlung buchen</button>
+            <button type="button" id="cancelButton" onclick="closeModal(true)">Abbrechen</button>
+        </div>
+        <div class="visible divider"></div>
+        <div id="receivedPaymentsWrapper" class="hidden">
+            <p class="bold">Bisher eingegangene Zahlungen:</p>
+            <table id="fullfilledPaymentsTable"></table>
+        </div>
+        <p class="bold">Noch ausstehender Betrag:</p>
+        <table>
+            <tr>
+                <td id="amountToPay"></td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<script>
+
+    let resendData;
+
+    function getReceivedPayments(item) {
+
+        let data;
+        let invoiceId = $(item).closest('tr').find('td[id]').text();
+
+        if (resendData && resendData.action == 'getReceivedPayments') {
+            data = resendData;
+        } else {
+            data = {
+                id: invoiceId,
+                action: 'getReceivedPayments'
+            };
+        }
+
+        let response = makeAjaxRequest(data);
+        response
+            .then((result) => {
+                let invoiceData = JSON.parse(result.data);
+
+                let fullfilledPaymentsHTML;
+                let paymentsTotalAmount = 0;
+                let invoiceTotalAmount = invoiceData[0].invoiceGrossAmount;
+                let amountToPay;
+                let amountToPayHTML;
+
+                if (invoiceData[0].receivedPayments != '[]') {
+
+                    let payments = JSON.parse(invoiceData[0].receivedPayments);
+
+                    payments.forEach((payment) => {
+                        let paymentDate = new Date(payment.payment.date);
+                        paymentDate = paymentDate.getDate().toString().padStart(2, '0') + '.' + (paymentDate.getMonth() + 1).toString().padStart(2, '0') + '.' + paymentDate.getFullYear();
+                        let paymentAmount = Number(payment.payment.amount);
+                        let tableRow = `<tr><td style="text-align: left;">${paymentAmount.toFixed(2)} €</td><td>am ${paymentDate}</td></tr>`;
+
+                        fullfilledPaymentsHTML += tableRow;
+                        paymentsTotalAmount += paymentAmount;
+                    });
+
+                    $('#receivedPaymentsWrapper').removeClass('hidden');
+                } else {
+                    $('#receivedPaymentsWrapper').addClass('hidden');
+                }
+
+                amountToPay = invoiceTotalAmount - paymentsTotalAmount;
+                amountToPayHTML = `${amountToPay.toFixed(2)} € von ${invoiceTotalAmount} €`;
+                $('#paymentForm h2').html(`Neue Zahlung zu Rechnung ${invoiceId} erfassen`)
+                $('#fullfilledPaymentsTable').html(fullfilledPaymentsHTML);
+                $('#amountToPay').html(amountToPayHTML);
+                $('#invoiceId').val(invoiceId)
+                $('#amountToPayHiddenInput').val(amountToPay);
+                $('#paymentAmount').val('');
+                $('#paymentDate').val('');
+
+                // ist die Rechnung beglichen, wird das Formular deaktiviert
+                if (paymentsTotalAmount >= invoiceTotalAmount) {
+                    console.log('full');
+                    $('#paymentAmount').prop('disabled', true);
+                    $('#paymentDate').prop('disabled', true);
+                    $('#submitButton').addClass('hidden');
+                } else {
+                    $('#paymentAmount').prop('disabled', false);
+                    $('#paymentDate').prop('disabled', false);
+                    $('#submitButton').removeClass('hidden');
+                }
+
+                $('#paymentForm').removeClass('hidden');
+
+                resendData = '';
+            })
+            .catch((result) => {
+
+                let modalContent = getModalContent('getReceivedPayments', 'failed');
+                resendData = data;
+
+                $('#modal').removeClass('hidden').html(modalContent);
+            });
+
+
+    }
+
+    function createPayment(event) {
+
+        event ? event.preventDefault() : false;
+        let overpayed = false;
+
+        let data = {
+            id: $('#invoiceId').val(),
+            paymentAmount: $('#paymentAmount').val(),
+            paymentDate: $('#paymentDate').val(),
+            action: 'createIncomingPayment'
+        }
+
+        if (Number($('#amountToPayHiddenInput').val()) < Number(data.paymentAmount)) {
+            overpayed = true;
+            console.log('overpayed');
+            modalContent = getModalContent('invoiceOverpayed', 'info');
+            $('#modal').html(modalContent).removeClass('hidden');
+        }
+
+        if (!overpayed) {
+            let response = makeAjaxRequest(data);
+            response
+                .then((result) => {
+                    modalContent = getModalContent('createIncomingPayment', 'success');
+                    $('#modal').html(modalContent).removeClass('hidden');
+
+                })
+                .catch((result) => {
+                    resendData = data;
+                    modalContent = getModalContent('createIncomingPayment', 'failed');
+
+                    $('#modal').html(modalContent).removeClass('hidden');
+                    console.log(resendData);
+
+                });
+        }
+    }
+
+</script>
