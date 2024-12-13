@@ -256,6 +256,8 @@ function createInvoice(event) {
         invoiceData
     };
 
+    console.log(invoiceData);
+
     let response = makeAjaxRequest(data);
     response
         .then(function (result) {
@@ -340,10 +342,6 @@ function hideSubForm() {
     $('#editFormWrapper').addClass('hidden');
     $('#toast').css('display', 'none');
 }
-
-$('#startDate').ready(() => {
-    $('#startDate').val('' + date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0'));
-});
 
 
 function getModalContent(action, state, data = '') {
@@ -573,3 +571,21 @@ $('#search').on('input', () => {
     }
     trNew.length == 1 ? $('#noSearchMatch').toggle(true) : $('#noSearchMatch').toggle(false);
 });
+
+//Interaktion mit dem Invoice-Formular
+
+//setzt das Leistungsdatum im Startfeld auf den aktuellen Tag
+$('#startDate').ready(() => {
+    $('#startDate').val('' + date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0'));
+});
+
+//event-Listener für individuelle Zahlungsziele
+
+$('#paymentTermsCustom').on('change', () => {
+    if ($('#customTermsInput').attr('disabled')) {
+        $('#customTermsInput').removeAttr('disabled');
+    }
+});
+$('#paymentTermsNone').change(() => {$('#customTermsInput').prop('disabled', true).val('');});
+$('#paymentTerms14').change(() => {$('#customTermsInput').prop('disabled', true).val('');});
+$('#paymentTerms30').change(() => {$('#customTermsInput').prop('disabled', true).val('');});

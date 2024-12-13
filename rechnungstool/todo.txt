@@ -4,12 +4,9 @@ generell:
 
 - kopf um die Auswertung der Rechnungsdaten machen
 
-- htmlspecialchars() implementieren
-
 
 
 invoiceOverview:
 
 
-- Fälligkeitsdatum anzeigen
 - Mahnwesen integrieren

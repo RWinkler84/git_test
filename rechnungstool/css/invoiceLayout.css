@@ -55,7 +55,10 @@
         padding: 50px 100px 50px;
         margin: 0 auto;
         background-color: var(--background-main);
-        border-radius: 0;
+        border-radius: 10px;
+        margin-top: -10px;
+        position: relative;
+        z-index: 1;
     }
 
     #invoiceWrapper > * {
@@ -76,14 +79,14 @@
         }
 
         #paymentInfo {
-            position: absolute;
+            position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
         }
 
         #invoiceWrapper {
-            width: 100%;
+            width: 99%;
             padding: 0;
             margin: 0;
             background-color: white;

@@ -1,6 +1,7 @@
 <?php 
 
 session_start();
+!isset($_SESSION['pageHistory']) ? $_SESSION['pageHistory'] = [] : false;
 
 require_once 'core/paths.php';
 include getPath('templateEngine');

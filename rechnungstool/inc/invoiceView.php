@@ -117,7 +117,6 @@ function getProducts($productJson)
     global $invoiceData;
     $productsArray = [];
     $productsArray = json_decode($productJson, true);
-    logger($productsArray);
     $productsHTML = "";
 
     if (isset($productsArray[0])) {

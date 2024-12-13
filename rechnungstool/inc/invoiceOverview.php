@@ -27,6 +27,7 @@ function getTableContent($invoiceData)
                     <th>Rechnungs-nummer</th>
                     <th>Kunde</th>
                     <th>Rechnungsbetrag</th>
+                    <th>Fälligkeitsdatum</th>
                     <th>bezahlt</th>
                     <th></th>
                 </tr>
@@ -39,6 +40,7 @@ function getTableContent($invoiceData)
         $invoiceViewPath = "index.php?a=invoiceView&id=" . $invoiceData[$key]['id'];
         $invoiceDate = processDate($data['date']);
         $invoiceTotalAmount = getInvoiceTotalAmount($data);
+        $invoiceDueDate = getInvoiceDueDate($invoiceDate, $data['paymentTerms'], $data['paymentStatus']);
         $invoicePayed = getPaymentStatus($data['paymentStatus'], $data['receivedPayments']);
 
 
@@ -48,8 +50,9 @@ function getTableContent($invoiceData)
                     <td id style="width: 10%">{$data['id']}</td>
                     <td>{$data['costumerName']}</td>
                     <td>{$invoiceTotalAmount} €</td>
+                    <td>{$invoiceDueDate}
                     <td onclick="getReceivedPayments(this)">{$invoicePayed}</td>
-                    <td><a href="{$invoiceViewPath}" target="_blank">&#128269</a></td>
+                    <td><a href="{$invoiceViewPath}">&#128269</a></td>
                 </tr>
         TABLEROW;
 
@@ -73,6 +76,26 @@ function getInvoiceTotalAmount($data)
 {
     return $data['smallBusinessTax'] == 1 || $data['reverseCharge'] == 1 ?
         $data['invoiceNetAmount'] : $data['invoiceGrossAmount'];
+}
+
+
+function getInvoiceDueDate($invoiceDate, $paymentTerms, $paymentStatus)
+{
+    $date = new DateTime($invoiceDate);
+    $date->modify('+' . $paymentTerms . ' day');
+    $invoiceDueDate = $date->format('d.m.Y');
+
+   if ($invoiceDueDate == $invoiceDate){
+    return '<span>-</span>';
+   }
+
+   if ($paymentStatus == '0' && $date <= new DateTime('now')){
+    $fontColor = 'red';
+   } else {
+    $fontColor = 'black';
+   }
+
+    return "<span style='color: {$fontColor}'>$invoiceDueDate</span>";
 }
 
 

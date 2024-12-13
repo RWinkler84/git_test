@@ -17,7 +17,8 @@
     --grey: rgb(149, 149, 149);
     --lighter-grey: #e8e8e8;
     --light-blue: rgba(164, 186, 202, 0.696);
-    --status-pending: rgb(209, 122, 0);
+    --status-pending: rgb(238, 203, 0);
+
 
     font-size: 15px;
     --font-size-small: 12px;
@@ -128,11 +129,14 @@ button:active {
     border-radius: 0;
 }
 
+
 #contentWrapper {
     background-color: var(--background-main);
     padding: 50px 100px 50px;
     min-width: 600px;
     max-width: 1000px;
+    margin-top: -10px;
+    border-radius: 10px;
 }
 
 #toast,
@@ -146,7 +150,7 @@ button:active {
     left: 0;
     right: 0;
     margin: auto;
-    z-index: 1;
+    z-index: 2;
     background-color: var(--toast-blue);
     color: white;
     width: fit-content;
@@ -163,7 +167,7 @@ button:active {
     left: 0;
     right: 0;
     margin-inline: auto;
-    z-index: 1;
+    z-index: 2;
     background-color: var(--toast-blue);
     color: white;
     width: 400px;
@@ -283,9 +287,11 @@ button:active {
     background-color: var(--background-topMenu);
     min-width: 700px;
     max-width: 1100px;
-    padding: 30px 50px 30px;
+    padding: 30px 50px 40px;
     text-transform: uppercase;
     color: var(--text-light);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
 .menuEntry {
