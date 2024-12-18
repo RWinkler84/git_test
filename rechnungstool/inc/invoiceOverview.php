@@ -46,11 +46,11 @@ function getTableContent($invoiceData)
 
         $tableRow = <<<TABLEROW
                 <tr>
-                    <td>{$invoiceDate}</td>
+                    <td invoiceDate>{$invoiceDate}</td>
                     <td id style="width: 10%">{$data['id']}</td>
                     <td>{$data['costumerName']}</td>
                     <td>{$invoiceTotalAmount} €</td>
-                    <td>{$invoiceDueDate}
+                    <td dueDate>{$invoiceDueDate}
                     <td onclick="getReceivedPayments(this)">{$invoicePayed}</td>
                     <td><a href="{$invoiceViewPath}">&#128269</a></td>
                 </tr>
@@ -91,11 +91,13 @@ function getInvoiceDueDate($invoiceDate, $paymentTerms, $paymentStatus)
 
    if ($paymentStatus == '0' && $date <= new DateTime('now')){
     $fontColor = 'red';
+    $getPaymentReminder = 'getPaymentReminder(this)';
    } else {
     $fontColor = 'black';
+    $getPaymentReminder = '';
    }
 
-    return "<span style='color: {$fontColor}'>$invoiceDueDate</span>";
+    return "<span style='color: {$fontColor}' onclick='{$getPaymentReminder}'>$invoiceDueDate</span>";
 }
 
 

@@ -50,6 +50,11 @@ if (isset($_POST['action'])) {
             echo json_encode($result);
             break;
 
+        case 'createPaymentReminder':
+            $result = createPaymentReminder();
+            echo json_encode($result);
+            break;
+
         case 'getProductDataToEdit':
             $result = fetchProductById();
             echo json_encode($result);
@@ -67,6 +72,11 @@ if (isset($_POST['action'])) {
 
         case 'createIncomingPayment':
             $result = createIncomingPayment();
+            echo json_encode($result);
+            break;
+
+        case 'getPaymentReminders':
+            $result = fetchPaymentRemindersById();
             echo json_encode($result);
             break;
     }
@@ -207,7 +217,7 @@ function fetchInvoiceDataById($id)
             $invoiceData[0][$key] = $products;
         }
 
-        if ($key != 'products0' && $key != 'products7' && $key != 'products19') {
+        if ($key != 'products0' && $key != 'products7' && $key != 'products19' && $key != 'receivedPayments') {
             $invoiceData[0][$key] = htmlspecialchars($value);
         }
     }
@@ -245,6 +255,19 @@ function fetchSelectedProductData()
 
     return $selectedProductsData;
 }
+
+function fetchBaseInterestRate()
+{
+    $sqlQuery = 'SELECT * FROM baseInterestRate WHERE id=?';
+    $paramType = 'i';
+    $param = ['1'];
+
+    $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+    $result = $result->fetch_all(MYSQLI_ASSOC);
+
+    return $result[0]['baseInterestRate'];
+}
+
 
 //Callback-Funktion für fetchSelectedProductData(), die das $_POST nach Keys durchsucht, die productSelect enthalten
 function filterForSelectedProducts($key)
@@ -359,16 +382,17 @@ function createIncomingPayment()
 }
 
 
-function isInvoicePayed(){
+function isInvoicePayed()
+{
     $receivedPayments = 0;
     $paymentData = fetchPaymentDataByInvoiceId($_POST['id']);
     $allReceivedPayments = json_decode($paymentData[0]['receivedPayments'], true);
 
-    for ($i = 0; $i < count($allReceivedPayments); $i++){
+    for ($i = 0; $i < count($allReceivedPayments); $i++) {
         $receivedPayments += $allReceivedPayments[$i]['payment']['amount'];
     }
-    
-    if ($paymentData[0]['invoiceGrossAmount'] <= $receivedPayments){
+
+    if ($paymentData[0]['invoiceGrossAmount'] <= $receivedPayments) {
         $sqlQuery = 'UPDATE invoices SET paymentStatus="1" WHERE id=?';
         $paramType = 'i';
         $param = [$_POST['id']];
@@ -377,6 +401,109 @@ function isInvoicePayed(){
     }
 }
 
+
+function fetchPaymentRemindersById()
+{
+    $sqlQuery = 'SELECT * FROM paymentReminder WHERE invoiceId =?';
+    $paramType = 'i';
+    $param = [$_POST['id']];
+
+    $paymentReminders = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+    $result['paymentReminders'] = $paymentReminders->fetch_all(MYSQLI_ASSOC);
+
+    $sqlQuery = 'SELECT * FROM invoices WHERE id =?';
+
+    $invoiceData = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+    $result['invoiceData'] = $invoiceData->fetch_all(MYSQLI_ASSOC);
+
+    return $result;
+}
+
+
+function createPaymentReminder()
+{
+    $paymentReminderFee = $_POST['paymentReminder']['paymentReminderFee'] == '1' ? '2.50' : '0';
+    $paymentReminderInterest = $_POST['paymentReminder']['paymentReminderFee'] == '1' ? getPaymentReminderFee($_POST['paymentReminder']['invoiceDueDate'], $_POST['paymentReminder']['costumerType'], $_POST['paymentReminder']['invoiceId']) : '0';
+
+    $sqlQuery = 'INSERT INTO paymentReminder (invoiceId, reminderDueDate, reminderTitle, reminderContent, reminderInterest, reminderFee) VALUES (?,?,?,?,?,?)';
+    $paramType = 'isssdd';
+    $param = [$_POST['paymentReminder']['invoiceId'], $_POST['paymentReminder']['paymentReminderDueDate'], $_POST['paymentReminder']['paymentReminderTitle'], $_POST['paymentReminder']['paymentReminderContent'], $paymentReminderFee, $paymentReminderInterest];
+
+    logger($paymentReminderInterest);
+}
+
+
+function getPaymentReminderFee($invoiceDueDate, $costumerType, $invoiceId)
+{
+    $baseInterestRate = fetchBaseInterestRate();
+    $invoiceData = fetchInvoiceDataById($invoiceId);
+    $invoiceGrossAmount = $invoiceData[0]['invoiceGrossAmount'];
+    $paymentReminderFee = 0;
+    $receivedPayments = json_decode($invoiceData[0]['receivedPayments'], true);
+    $invoiceDueDate = new DateTime($invoiceDueDate);
+    $today = new DateTime;
+    $numberOfDaysInYear = isLeapYear() ? 366 : 365;
+
+    if ($costumerType == 'b2c') {
+        $paymentReminderInterestRate = $baseInterestRate + 5;
+    } else if ($costumerType == 'b2b') {
+        $paymentReminderInterestRate = $baseInterestRate + 9;
+    }
+
+    //Berechnung, wenn Teilzahlungen gemacht wurden  !!Rechnungsbetrag reduzieren, wenn vor Fälligkeit Teilbetrag gezahlt wurde
+    if (count($receivedPayments) > 0) {
+        for ($i = 0; $i <= count($receivedPayments); $i++) {
+            $startDate = $i == 0 ? $invoiceDueDate : new DateTime($receivedPayments[$i - 1]['payment']['date']);
+            $receivedPayment = $receivedPayments[$i]['payment']['amount'] ?? 0;
+            $dateOfPayment = new DateTime($receivedPayments[$i]['payment']['date'] ?? 'now');
+
+            if ($dateOfPayment < $invoiceDueDate) {
+                $invoiceGrossAmount -= $receivedPayment;
+            }
+
+            if ($dateOfPayment > $invoiceDueDate) {
+                $numberOfDaysBetween = $startDate->diff($dateOfPayment)->format('%d');
+                $paymentReminderFee += $invoiceGrossAmount * $paymentReminderInterestRate / 100 / $numberOfDaysInYear * $numberOfDaysBetween;
+
+                if ($paymentReminderFee < $receivedPayment) {
+                    $receivedPayment = $receivedPayment - $paymentReminderFee;
+                    $paymentReminderFee = 0;
+                }
+
+                $invoiceGrossAmount += $paymentReminderFee;
+                $invoiceGrossAmount -= $receivedPayment;
+            }
+        }
+        
+        setAmountToPayByInvoiceId($invoiceGrossAmount, $invoiceId);
+
+        return $paymentReminderFee;
+        // logger($numberOfDaysBetween, 'Tage dazwischen');
+
+        // logger($receivedPayments);
+        // logger($invoiceGrossAmount);
+    }
+
+    // logger($invoiceData);
+}
+
+
+function setAmountToPayByInvoiceId($invoiceGrossAmount, $invoiceId){
+    $sqlQuery = 'UPDATE invoices SET amountToPay = ? WHERE id = ?';
+    $paramType = 'di';
+    $param = [$invoiceGrossAmount, $invoiceId];
+
+    dataQueryPrepStmt($sqlQuery, $paramType, $param);
+}
+
+
+function isLeapYear()
+{
+    $date = new DateTime();
+    $year = $date->format('L');
+
+    return $year;
+}
 
 //füllt die invoice-Tabelle mit Daten
 function processInvoiceData()
@@ -520,8 +647,8 @@ function processInvoiceData()
 
 //simple Error-Logging
 
-function logger($valueToLog)
+function logger($valueToLog, $string = '')
 {
     // error_log('file: ' . __FILE__);
-    error_log('Logger: ' . print_r($valueToLog, true));
+    error_log('Logger: ' . $string . ': ' . print_r($valueToLog, true));
 }

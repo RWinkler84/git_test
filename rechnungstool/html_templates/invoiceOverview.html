@@ -47,9 +47,50 @@
     </form>
 </div>
 
+<div class="subFormWrapper hidden" id="paymentReminderFormWrapper">
+    <form method="post" onsubmit="createPaymentReminder(event)" id="paymentReminderForm">
+        <h2>Mahnung erstellen</h2>
+        <input type="hidden" id="invoiceIdPaymentReminderForm" name="invoiceId">
+        <input type="hidden" id="amountToPayPaymentReminderForm" name="amountToPay">
+        <input type="hidden" id="invoiceDate" name="invoiceDate">
+        <input type="hidden" id="invoiceDueDate" name="invoiceDueDate">
+        <input type="hidden" id="paymentReminderCount">
+
+        <label for="costumerType">Art des Kunden</label>
+        <select id="costumerType" name="costumerType" required>
+            <option name="costumerType" value="">-- Bitte eine Kundenart wählen --</option>
+            <option name="costumerType" value="b2c">Privatkunde</option>
+            <option name="costumerType" value="b2b">Unternehmenskunde</option>
+        </select>
+        <div>
+            <label for="paymentReminderTitle">Mahnungstitel</label>
+            <input type="text" id="paymentReminderTitle" name="paymentReminderTitle">
+            <label for="paymentReminderContent">Mahnungsinhalt</label>
+            <textarea id="paymentReminderContent" name="paymentReminderContent"></textarea>
+        </div>
+        <div class="marginTop">
+        <label for="paymentReminderDueDate">Neues Zahlungsziel</label>
+        <input type="date" id="paymentReminderDueDate" name="paymentReminderDueDate">
+        </div>
+        <div>
+            <div class="marginTop">
+                <input type="checkbox" id="paymentReminderFee" name="paymentReminderFee" value="1">
+                <label for="paymentReminderFee" style="display: inline">Mahngebühr in Höhe von 2.50 € erheben</label>
+            </div>
+            <div class="marginTop">
+                <input type="checkbox" id="paymentReminderInterest" name="paymentReminderInterest" value="1">
+                <label for="paymentReminderInterest" style="display: inline">Verzugszinsen erheben</label>
+            </div>
+        </div>
+        <button type="submit">Mahnung erstellen</button>
+        <button type="button">Abbrechen</button>
+    </form>
+</div>
+
 <script>
 
     let resendData;
+    let previousPaymentReminderContent;
 
     function getReceivedPayments(item) {
 
@@ -107,7 +148,6 @@
 
                 // ist die Rechnung beglichen, wird das Formular deaktiviert
                 if (paymentsTotalAmount >= invoiceTotalAmount) {
-                    console.log('full');
                     $('#paymentAmount').prop('disabled', true);
                     $('#paymentDate').prop('disabled', true);
                     $('#submitButton').addClass('hidden');
@@ -146,7 +186,6 @@
 
         if (Number($('#amountToPayHiddenInput').val()) < Number(data.paymentAmount)) {
             overpayed = true;
-            console.log('overpayed');
             modalContent = getModalContent('invoiceOverpayed', 'info');
             $('#modal').html(modalContent).removeClass('hidden');
         }
@@ -164,10 +203,143 @@
                     modalContent = getModalContent('createIncomingPayment', 'failed');
 
                     $('#modal').html(modalContent).removeClass('hidden');
-                    console.log(resendData);
-
                 });
         }
     }
+
+    function getPaymentReminder(item) {
+        let id = $(item).closest('tr').find('td[id]').text();
+        let data = {
+            'id': id,
+            'action': 'getPaymentReminders'
+        };
+
+        let response = makeAjaxRequest(data);
+        response
+            .then((result) => {
+                result.data = JSON.parse(result.data);
+                let invoiceId = id;
+                let invoiceDate = $(item).closest('tr').find('td[invoiceDate]').text();
+                let invoiceDueDate = $(item).closest('tr').find('td[dueDate]').text();
+                let amountToPay = getAmountToPay(result.data.invoiceData);
+                let paymentReminderCount = result.data.paymentReminders.length;
+                let today = new Date;
+                let paymentReminderDueDate = new Date;
+                paymentReminderDueDate.setDate(today.getDate() + 14);
+
+
+                //das Formular füllen
+                $('#invoiceIdPaymentReminderForm').val(invoiceId);
+                $('#invoiceDate').val(invoiceDate);
+                $('#invoiceDueDate').val(invoiceDueDate);
+                $('#amountToPayPaymentReminderForm').val(amountToPay);
+                $('#paymentReminderCount').val(paymentReminderCount);
+                $('#paymentReminderDueDate').val('' + paymentReminderDueDate.getFullYear() + '-' + (paymentReminderDueDate.getMonth() + 1).toString().padStart(2, '0') + '-' + paymentReminderDueDate.getDate().toString().padStart(2, '0'));
+
+
+                $('#paymentReminderFormWrapper').removeClass('hidden');
+            })
+            .catch((result) => {
+                handleAjaxResponse(response, data);
+            });
+    }
+
+
+    function createPaymentReminder(event){
+        event.preventDefault();
+        let formData = preprocessFormData($('#paymentReminderForm').serializeArray());
+        let data = {
+            'paymentReminder': formData,
+            'action': 'createPaymentReminder'
+        }
+
+        let response = makeAjaxRequest(data);
+    }
+
+
+
+    function businessToCostumerPaymentReminderContent() {
+
+        let paymentReminderCount = $('#paymentReminderCount').val();
+        let invoiceDueDate = $('#invoiceDueDate').val();
+        let invoiceDate = $('#invoiceDate').val();
+        let amountToPay = $('#amountToPayPaymentReminderForm').val();
+        let invoiceId = $('#invoiceIdPaymentReminderForm').val();
+        let paymentReminderTitle;
+        let paymentReminderContent;
+        let paymentReminders = getPaymentReminderData(invoiceId);
+
+
+        switch (paymentReminderCount) {
+            case '0':
+                paymentReminderTitle = 'Zahlungserinnerung';
+                paymentReminderContent = `Sehr geehrter Kunde, sehr geehrte Kundin,\n\nbei der Prüfung unserer Zahlungseingänge haben wir festgestellt, dass die Rechnung Nr. ${invoiceId} vom ${invoiceDate} noch zur Zahlung fällig ist. Sollte Ihnen die Rechnung entgangen sein, haben wir Ihnen eine Kopie angehangen.\n\nSollten Sie die Zahlung zwischenzeitlich geleistet haben, betrachten Sie dieses Schreiben bitte als gegenstandslos.`;
+                break;
+
+            case '1':
+             paymentReminderTitle = 'Zweite Mahnung';
+                paymentReminderContent = `Sehr geehrter Kunde, sehr geehrte Kundin,\n\nwir haben festgestellt, dass Sie die Rechnung Nr. ${invoiceId} vom ${invoiceDate} trotz unserer Zahlungserinnerung vom ${paymentReminderDate} nicht beglichen haben. Bitte überweisen Sie den fälligen Betrag in Höhe von ${unpayedAmount} bis zum ${paymentReminderDueDate}\n\nSollten Sie die Zahlung zwischenzeitlich geleistet haben, betrachten Sie dieses Schreiben bitte als gegenstandslos.`;
+                break;
+        }
+        $('#paymentReminderTitle').val(paymentReminderTitle);
+        $('#paymentReminderContent').html(paymentReminderContent);
+
+        if (paymentReminderCount == 0) {
+            $('#paymentReminderInterest').prop('disabled', 'true');
+        }
+    }
+
+    function businessToBusinessPaymentReminderContent() {
+
+    }
+
+    function getAmountToPay(invoiceData) {
+        let payments = JSON.parse(invoiceData[0].receivedPayments);
+        let paymentsTotalAmount = 0;
+        payments.forEach((payment) => {
+            paymentsTotalAmount += Number(payment.payment.amount);
+        });
+
+        return invoiceData[0].invoiceGrossAmount - paymentsTotalAmount;
+    }
+
+
+    function getPaymentReminderData(id){
+        let data = {
+            'id': id,
+            'action': 'getPaymentReminders'
+        }
+
+        let response = makeAjaxRequest(data);
+        response
+        .then ((result) => {
+            result = JSON.parse(result.data);
+            
+            return result.paymentReminders;
+        })
+        .catch ((result) => {
+                handleAjaxResponse(response, data);
+        })
+    }
+
+
+    $('#costumerType').on('change', () => {
+        if ($('#costumerType').val() == 'b2c') {
+            businessToCostumerPaymentReminderContent();
+        } else if ($('#costumerType').val() == 'b2b') {
+            businessToBusinessPaymentReminderContent();
+        }
+    })
+
+    $('#paymentReminderFee').on('change', () => {
+        if ($('#paymentReminderFee').prop('checked') == true) {
+            let reminderFeePhrase = `\n\nZur Deckung unserer zusätzlichen Kosten erlauben wir es uns, eine Mahngebühr in Höhe von 2,50 € zu erheben.`;
+            previousPaymentReminderContent = $('#paymentReminderContent').text();
+
+            $('#paymentReminderContent').text(previousPaymentReminderContent + reminderFeePhrase);
+        } else {
+            $('#paymentReminderContent').text(previousPaymentReminderContent);
+        }
+    })
 
 </script>

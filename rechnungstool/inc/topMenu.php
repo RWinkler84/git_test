@@ -25,22 +25,22 @@ function getTopMenuEntryStyle($currentPage, $sites)
 {
     global $placeholders;
 
-    $priviousPage = isset($_SESSION['pageHistory'][1]) ? $_SESSION['pageHistory'][1] : 'false';
+    $previousPage = isset($_SESSION['pageHistory'][1]) ? $_SESSION['pageHistory'][1] : 'false';
 
     foreach ($sites as $key) {
 
         $key == $currentPage ?
             $placeholders[$key] = 'scaled' : $placeholders[$key] = 'scalable';
-        $key == $priviousPage && $priviousPage != 'false' && $key != $currentPage ?
+        $key == $previousPage && $previousPage != 'false' && $key != $currentPage ?
             $placeholders[$key] = ' scaledown' : false;
 
     }
 
-    if ($currentPage == 'invoiceView' || ($currentPage == 'invoiceView' && $priviousPage == 'invoiceView')) {
+    if ($currentPage == 'invoiceView' || ($currentPage == 'invoiceView' && $previousPage == 'invoiceView')) {
         $placeholders['invoiceOverview'] = ' scaled';
     }
 
-    if ($priviousPage == 'invoiceView' && $currentPage != 'invoiceOverview' && $currentPage != 'invoiceView'){
+    if ($previousPage == 'invoiceView' && $currentPage != 'invoiceOverview' && $currentPage != 'invoiceView'){
         $placeholders['invoiceOverview'] = ' scaledown';
     }
 }

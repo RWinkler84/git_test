@@ -10,3 +10,27 @@ invoiceOverview:
 
 
 - Mahnwesen integrieren
+
+- baseinterestRate berechnen für B2b und b2c
+- mahnung speichern
+
+
+Berechne Zinsen bei zwischenzeitlicher Zahlung, die nach Ablauf der Zahlungsfrist eingeangen ist
+
+Muss noch Zeitabstand zwischen Startdatum und Datum der Zahlung berechnen und dann den Zins dieser
+Tage abhängig vom Restbetrag errechnen - Startdatum ist Fälligkeitsdatum der Rechnung oder Eingangstag
+der Zahlung, wenn mehrere geleistet wurden
+
+Restbetragt ergibt sich aus: (Rechnungsbetrag + Zinsen) - Teilzahlung
+
+
+Außerdem anstehend:
+
+Berechnung, wenn sich Basiszinssatz während des Verzugs ändert
+
+normale Zinsberechnung
+
+
+
+amountToPay bei Rechnungen und beim Erfassen von Zahlungseingängen setzen
+erst
