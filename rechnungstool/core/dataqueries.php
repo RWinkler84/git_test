@@ -423,22 +423,22 @@ function fetchPaymentRemindersById()
 function createPaymentReminder()
 {
     $paymentReminderFee = $_POST['paymentReminder']['paymentReminderFee'] == '1' ? '2.50' : '0';
-    $paymentReminderInterest = $_POST['paymentReminder']['paymentReminderFee'] == '1' ? getPaymentReminderFee($_POST['paymentReminder']['invoiceDueDate'], $_POST['paymentReminder']['costumerType'], $_POST['paymentReminder']['invoiceId']) : '0';
+    $paymentReminderInterest = $_POST['paymentReminder']['paymentReminderFee'] == '1' ? getPaymentReminderInterest($_POST['paymentReminder']['invoiceDueDate'], $_POST['paymentReminder']['costumerType'], $_POST['paymentReminder']['invoiceId']) : '0';
 
     $sqlQuery = 'INSERT INTO paymentReminder (invoiceId, reminderDueDate, reminderTitle, reminderContent, reminderInterest, reminderFee) VALUES (?,?,?,?,?,?)';
     $paramType = 'isssdd';
     $param = [$_POST['paymentReminder']['invoiceId'], $_POST['paymentReminder']['paymentReminderDueDate'], $_POST['paymentReminder']['paymentReminderTitle'], $_POST['paymentReminder']['paymentReminderContent'], $paymentReminderFee, $paymentReminderInterest];
 
-    logger($paymentReminderInterest);
+    // logger($paymentReminderInterest);
 }
 
 
-function getPaymentReminderFee($invoiceDueDate, $costumerType, $invoiceId)
+function getPaymentReminderInterest($invoiceDueDate, $costumerType, $invoiceId)
 {
     $baseInterestRate = fetchBaseInterestRate();
     $invoiceData = fetchInvoiceDataById($invoiceId);
     $invoiceGrossAmount = $invoiceData[0]['invoiceGrossAmount'];
-    $paymentReminderFee = 0;
+    $paymentReminderInterest = 0;
     $receivedPayments = json_decode($invoiceData[0]['receivedPayments'], true);
     $invoiceDueDate = new DateTime($invoiceDueDate);
     $today = new DateTime;
@@ -450,45 +450,55 @@ function getPaymentReminderFee($invoiceDueDate, $costumerType, $invoiceId)
         $paymentReminderInterestRate = $baseInterestRate + 9;
     }
 
-    //Berechnung, wenn Teilzahlungen gemacht wurden  !!Rechnungsbetrag reduzieren, wenn vor Fälligkeit Teilbetrag gezahlt wurde
+    //Berechnung, wenn Teilzahlungen gemacht wurden
     if (count($receivedPayments) > 0) {
         for ($i = 0; $i <= count($receivedPayments); $i++) {
             $startDate = $i == 0 ? $invoiceDueDate : new DateTime($receivedPayments[$i - 1]['payment']['date']);
             $receivedPayment = $receivedPayments[$i]['payment']['amount'] ?? 0;
             $dateOfPayment = new DateTime($receivedPayments[$i]['payment']['date'] ?? 'now');
 
-            if ($dateOfPayment < $invoiceDueDate) {
+            if ($dateOfPayment <= $invoiceDueDate) {
                 $invoiceGrossAmount -= $receivedPayment;
             }
 
             if ($dateOfPayment > $invoiceDueDate) {
                 $numberOfDaysBetween = $startDate->diff($dateOfPayment)->format('%d');
-                $paymentReminderFee += $invoiceGrossAmount * $paymentReminderInterestRate / 100 / $numberOfDaysInYear * $numberOfDaysBetween;
+                $paymentReminderInterest += $invoiceGrossAmount * $paymentReminderInterestRate / 100 / $numberOfDaysInYear * $numberOfDaysBetween;
 
-                if ($paymentReminderFee < $receivedPayment) {
-                    $receivedPayment = $receivedPayment - $paymentReminderFee;
-                    $paymentReminderFee = 0;
+                if ($paymentReminderInterest < $receivedPayment) {
+                    $receivedPayment = $receivedPayment - $paymentReminderInterest;
+                    $paymentReminderInterest = 0;
                 }
 
-                $invoiceGrossAmount += $paymentReminderFee;
+                $invoiceGrossAmount += $paymentReminderInterest;
                 $invoiceGrossAmount -= $receivedPayment;
             }
         }
-        
         setAmountToPayByInvoiceId($invoiceGrossAmount, $invoiceId);
 
-        return $paymentReminderFee;
-        // logger($numberOfDaysBetween, 'Tage dazwischen');
-
-        // logger($receivedPayments);
-        // logger($invoiceGrossAmount);
+        return $paymentReminderInterest;
     }
+
+    //Berechnung, wenn keine Teilzahlung gemacht wurde
+    if (count($receivedPayments) == 0) {
+        $numberOfDaysBetween = $invoiceDueDate->diff($today)->format('%d');
+        
+        $paymentReminderInterest += $invoiceGrossAmount * $paymentReminderInterestRate / 100 / $numberOfDaysInYear * $numberOfDaysBetween;
+        $invoiceGrossAmount += $paymentReminderInterest;
+
+        setAmountToPayByInvoiceId($invoiceGrossAmount, $invoiceId);
+
+        return $paymentReminderInterest;
+    }
+
+
 
     // logger($invoiceData);
 }
 
 
-function setAmountToPayByInvoiceId($invoiceGrossAmount, $invoiceId){
+function setAmountToPayByInvoiceId($invoiceGrossAmount, $invoiceId)
+{
     $sqlQuery = 'UPDATE invoices SET amountToPay = ? WHERE id = ?';
     $paramType = 'di';
     $param = [$invoiceGrossAmount, $invoiceId];

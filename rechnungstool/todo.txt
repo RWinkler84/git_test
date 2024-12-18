@@ -4,6 +4,10 @@ generell:
 
 - kopf um die Auswertung der Rechnungsdaten machen
 
+- Seite einfügen, auf der Nutzerinformationen und der Basiszinssatz gesetzt werden können
+
+- Funktion, die bei der ersten Nutzung nach dem 1.1 und 1.7. um die Eingabe des aktuellen Basiszinses bittet
+
 
 
 invoiceOverview:
@@ -11,26 +15,17 @@ invoiceOverview:
 
 - Mahnwesen integrieren
 
-- baseinterestRate berechnen für B2b und b2c
+
 - mahnung speichern
 
 
-Berechne Zinsen bei zwischenzeitlicher Zahlung, die nach Ablauf der Zahlungsfrist eingeangen ist
-
-Muss noch Zeitabstand zwischen Startdatum und Datum der Zahlung berechnen und dann den Zins dieser
-Tage abhängig vom Restbetrag errechnen - Startdatum ist Fälligkeitsdatum der Rechnung oder Eingangstag
-der Zahlung, wenn mehrere geleistet wurden
-
-Restbetragt ergibt sich aus: (Rechnungsbetrag + Zinsen) - Teilzahlung
 
 
 Außerdem anstehend:
 
-Berechnung, wenn sich Basiszinssatz während des Verzugs ändert
+- Berechnung, wenn sich Basiszinssatz während des Verzugs ändert für mit und ohne Zahlungeingang
 
-normale Zinsberechnung
+- Was passiert eigentlich, wenn kein Zahlungsziel angegeben ist (Privatkunden)?
 
 
-
-amountToPay bei Rechnungen und beim Erfassen von Zahlungseingängen setzen
-erst
+- amountToPay bei Rechnungen und beim Erfassen von Zahlungseingängen setzen
