@@ -69,8 +69,8 @@
             <textarea id="paymentReminderContent" name="paymentReminderContent"></textarea>
         </div>
         <div class="marginTop">
-        <label for="paymentReminderDueDate">Neues Zahlungsziel</label>
-        <input type="date" id="paymentReminderDueDate" name="paymentReminderDueDate">
+            <label for="paymentReminderDueDate">Neues Zahlungsziel</label>
+            <input type="date" id="paymentReminderDueDate" name="paymentReminderDueDate">
         </div>
         <div>
             <div class="marginTop">
@@ -86,6 +86,8 @@
         <button type="button">Abbrechen</button>
     </form>
 </div>
+
+
 
 <script>
 
@@ -245,7 +247,7 @@
     }
 
 
-    function createPaymentReminder(event){
+    function createPaymentReminder(event) {
         event.preventDefault();
         let formData = preprocessFormData($('#paymentReminderForm').serializeArray());
         let data = {
@@ -277,7 +279,7 @@
                 break;
 
             case '1':
-             paymentReminderTitle = 'Zweite Mahnung';
+                paymentReminderTitle = 'Zweite Mahnung';
                 paymentReminderContent = `Sehr geehrter Kunde, sehr geehrte Kundin,\n\nwir haben festgestellt, dass Sie die Rechnung Nr. ${invoiceId} vom ${invoiceDate} trotz unserer Zahlungserinnerung vom ${paymentReminderDate} nicht beglichen haben. Bitte überweisen Sie den fälligen Betrag in Höhe von ${unpayedAmount} bis zum ${paymentReminderDueDate}\n\nSollten Sie die Zahlung zwischenzeitlich geleistet haben, betrachten Sie dieses Schreiben bitte als gegenstandslos.`;
                 break;
         }
@@ -304,7 +306,7 @@
     }
 
 
-    function getPaymentReminderData(id){
+    function getPaymentReminderData(id) {
         let data = {
             'id': id,
             'action': 'getPaymentReminders'
@@ -312,14 +314,14 @@
 
         let response = makeAjaxRequest(data);
         response
-        .then ((result) => {
-            result = JSON.parse(result.data);
-            
-            return result.paymentReminders;
-        })
-        .catch ((result) => {
+            .then((result) => {
+                result = JSON.parse(result.data);
+
+                return result.paymentReminders;
+            })
+            .catch((result) => {
                 handleAjaxResponse(response, data);
-        })
+            })
     }
 
 

@@ -256,16 +256,19 @@ function fetchSelectedProductData()
     return $selectedProductsData;
 }
 
-function fetchBaseInterestRate()
+function fetchBaseInterestRate($invoiceDueDate)
 {
-    $sqlQuery = 'SELECT * FROM baseInterestRate WHERE id=?';
-    $paramType = 'i';
-    $param = ['1'];
+    $invoiceDueDate = new DateTime($invoiceDueDate);
+    $invoiceDueDate = $invoiceDueDate->format('Y-m-d');
+    
+    $sqlQuery = 'SELECT * FROM baseInterestRate WHERE date >= ?';
+    $paramType = 's';
+    $param = [$invoiceDueDate];
 
     $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
     $result = $result->fetch_all(MYSQLI_ASSOC);
 
-    return $result[0]['baseInterestRate'];
+    return $result;
 }
 
 
@@ -435,7 +438,7 @@ function createPaymentReminder()
 
 function getPaymentReminderInterest($invoiceDueDate, $costumerType, $invoiceId)
 {
-    $baseInterestRate = fetchBaseInterestRate();
+    $baseInterestRate = fetchBaseInterestRate($invoiceDueDate);  //BaseInterestRate ist jetzt ein Array, das alle relevanten Basiszinssätze enthält Berechnung anpassen, wenn Datumsgrenzen überschritten werden
     $invoiceData = fetchInvoiceDataById($invoiceId);
     $invoiceGrossAmount = $invoiceData[0]['invoiceGrossAmount'];
     $paymentReminderInterest = 0;
@@ -444,10 +447,10 @@ function getPaymentReminderInterest($invoiceDueDate, $costumerType, $invoiceId)
     $today = new DateTime;
     $numberOfDaysInYear = isLeapYear() ? 366 : 365;
 
-    if ($costumerType == 'b2c') {
-        $paymentReminderInterestRate = $baseInterestRate + 5;
-    } else if ($costumerType == 'b2b') {
-        $paymentReminderInterestRate = $baseInterestRate + 9;
+    if ($costumerType == 'b2c' && count($baseInterestRate) == 1) {
+        $paymentReminderInterestRate = $baseInterestRate[0]['baseInterestRate'] + 5;
+    } else if ($costumerType == 'b2b' && count($baseInterestRate) == 1) {
+        $paymentReminderInterestRate = $baseInterestRate[0]['baseInterestRate'] + 9;
     }
 
     //Berechnung, wenn Teilzahlungen gemacht wurden
@@ -460,7 +463,29 @@ function getPaymentReminderInterest($invoiceDueDate, $costumerType, $invoiceId)
             if ($dateOfPayment <= $invoiceDueDate) {
                 $invoiceGrossAmount -= $receivedPayment;
             }
+            /* wenn DatumBasiszins < DatumFälligkeit && DatumJetzt < nächsteDatumBasiszins {
+             Basiszins = alter Basiszins 
+             StartDatum = Fälligkeitsdatum
+            } 
+                wenn aber DatumBasiszins < DatumFälligkeit && DatumJetzt > nächsteDatumBasiszins 
+            {
+             Basiszins = alter Basiszins
+             StartDatum = Fälligkeitsdatum
+             EndDatum = nächstesBasiszinsDatum
 
+             Tage = Differenz von Start und Enddatum
+
+             Zinssatz = Rate bis Enddatum
+
+             Basiszins = neuer Basiszins
+             StartDatum = Enddatum
+             EndDatum = nächstes nächstesDatumBasisZins || heute wenn nächstesDatumBasisZins > als heute ist
+
+             Tage = Differenz von Start und Enddatum
+
+             Zinssatz = Zinssatz + neue Rate zwischen Start und Enddatum    
+            }
+            */
             if ($dateOfPayment > $invoiceDueDate) {
                 $numberOfDaysBetween = $startDate->diff($dateOfPayment)->format('%d');
                 $paymentReminderInterest += $invoiceGrossAmount * $paymentReminderInterestRate / 100 / $numberOfDaysInYear * $numberOfDaysBetween;
