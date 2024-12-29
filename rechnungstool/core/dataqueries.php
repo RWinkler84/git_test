@@ -95,7 +95,7 @@ function dataQueryPrepStmt($sqlQuery, $paramType, $param)
         $stmt->execute();
     } catch (Exception $e) {
         http_response_code(500);
-        return json_encode(['errorMessage' => 'Es gab da ein Problem...']);
+        return json_encode(['errorMessage' => 'Es gab da ein Problem...' . $e]);
     }
 
     $fetchedData = $stmt->get_result();
@@ -621,7 +621,7 @@ function processInvoiceData()
     }
 
     $invoiceNetAmount = $allProductsTotalPrice0 + $allProductsTotalPrice7 + $allProductsTotalPrice19;
-    $invoiceGrossAmunt = isset($_POST['invoiceData']['smallBusinessTax']) || isset($_POST['invoiceData']['reverseCharge']) ?
+    $invoiceGrossAmount = isset($_POST['invoiceData']['smallBusinessTax']) || isset($_POST['invoiceData']['reverseCharge']) ?
         0 : $invoiceNetAmount + $totalTax7 + $totalTax19;
 
     //bereitet Daten für Datenbank-Query vor
@@ -637,11 +637,12 @@ function processInvoiceData()
     $fullfillmentDateStart = $_POST['invoiceData']['startDate'];
     $fullfillmentDateEnd = $_POST['invoiceData']['endDate'];
     $paymentStatus = 0;
+    $amountToPay = $invoiceGrossAmount;
 
     $sqlQuery = "INSERT INTO invoices (selfName, selfAddress, selfTaxId, selfSalesTaxId, selfBankAccountNumber, selfIBAN, selfBIC, selfBankName, selfMail, selfPhoneNumber,
                  costumerName, costumerAddress, costumerTaxId, costumerSalesTaxId, products0, products7, products19, totalTax7, totalTax19, invoiceNetAmount, invoiceGrossAmount,
-                 paymentTerms, smallBusinessTax, reverseCharge, invoiceComment, fullfillmentDateStart, FullfillmentDateEnd, paymentStatus, receivedPayments) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-    $paramType = 'sssssssssssssssssddddiiisssis';
+                 paymentTerms, smallBusinessTax, reverseCharge, invoiceComment, fullfillmentDateStart, FullfillmentDateEnd, paymentStatus, receivedPayments, amountToPay) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    $paramType = 'sssssssssssssssssddddiiisssisd';
     $param = [
         $self_name,
         $self_address,
@@ -663,7 +664,7 @@ function processInvoiceData()
         $totalTax7,
         $totalTax19,
         $invoiceNetAmount,
-        $invoiceGrossAmunt,
+        $invoiceGrossAmount,
         $paymentTerms,
         $smallBusinessTax,
         $reverseCharge,
@@ -671,7 +672,8 @@ function processInvoiceData()
         $fullfillmentDateStart,
         $fullfillmentDateEnd,
         $paymentStatus,
-        $receivedPayments
+        $receivedPayments,
+        $amountToPay
     ];
 
     $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
