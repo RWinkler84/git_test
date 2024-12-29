@@ -51,7 +51,7 @@
 
     #invoiceWrapper {
         min-width: 600px;
-        max-width: 1000px;
+        max-width: 900px;
         padding: 50px 100px 50px;
         margin: 0 auto;
         background-color: var(--background-main);

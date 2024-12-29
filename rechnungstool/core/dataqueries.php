@@ -7,6 +7,8 @@ global $conn;
 
 $result = [];
 
+logger($_POST);
+
 if (isset($_POST['action'])) {
 
     switch ($_POST['action']) {
@@ -555,7 +557,7 @@ function processInvoiceData()
     $allProductsTotalPrice7 = 0;
     $allProductsTotalPrice19 = 0;
     $invoiceNetAmount = 0;
-    $invoiceGrossAmunt = 0;
+    $invoiceGrossAmount = 0;
     $receivedPayments = '[]';
 
     //erzeugt Variablen aus den Key-Value-Pairs mit dem Präfix self_ und costumer_
@@ -590,7 +592,7 @@ function processInvoiceData()
     //0 Prozent
     if (isset($products0[0])) {
         for ($i = 0; $i < count($products0); $i++) {
-            $singleProductTotalPrice0 = round($products0[$i]['productPrice'] * $products0[$i]['amount'], 2);
+            $singleProductTotalPrice0 = number_format($products0[$i]['productPrice'] * $products0[$i]['amount'], 2, ".");
             $allProductsTotalPrice0 += $singleProductTotalPrice0;
             $products0[$i]['productTotalPrice'] = $singleProductTotalPrice0;
             $products0[$i]['productTotalNetPrice'] = $singleProductTotalPrice0;
@@ -601,28 +603,30 @@ function processInvoiceData()
     //7 Prozent
     if (isset($products7[0])) {
         for ($i = 0; $i < count($products7); $i++) {
-            $singleProductTotalPrice7 = round($products7[$i]['productPrice'] * $products7[$i]['amount'], 2); //Netto-Preis aller Exemplare eines Produkts
+            $singleProductTotalPrice7 = number_format($products7[$i]['productPrice'] * $products7[$i]['amount'], 2, "."); //Netto-Preis aller Exemplare eines Produkts
             $allProductsTotalPrice7 += $singleProductTotalPrice7; //Netto-Preis aller Produkte
-            $totalTax7 = round($allProductsTotalPrice7 * 0.07, 2);
+            $totalTax7 = number_format($allProductsTotalPrice7 * 0.07, 2, ".");
             $products7[$i]['productTotalNetPrice'] = $singleProductTotalPrice7;
-            $products7[$i]['productTotalGrossPrice'] = round($singleProductTotalPrice7 * 1.07, 2);
+            $products7[$i]['productTotalGrossPrice'] = number_format($singleProductTotalPrice7 * 1.07, 2, ".");
         }
     }
 
     //19 Prozent
     if (isset($products19[0])) {
         for ($i = 0; $i < count($products19); $i++) {
-            $singleProductTotalPrice19 = round($products19[$i]['productPrice'] * $products19[$i]['amount'], 2); //Netto-Preis aller Exemplare eines Produkts
+            $singleProductTotalPrice19 = number_format($products19[$i]['productPrice'] * $products19[$i]['amount'], 2, "."); //Netto-Preis aller Exemplare eines Produkts
             $allProductsTotalPrice19 += $singleProductTotalPrice19; //Netto-Preis aller Produkte
-            $totalTax19 = round($allProductsTotalPrice19 * 0.19, 2);
+            $totalTax19 = number_format($allProductsTotalPrice19 * 0.19, 2, ".");
             $products19[$i]['productTotalNetPrice'] = $singleProductTotalPrice19;
-            $products19[$i]['productTotalGrossPrice'] = round($singleProductTotalPrice19 * 1.19, 2);
+            $products19[$i]['productTotalGrossPrice'] = number_format($singleProductTotalPrice19 * 1.19, 2, ".");
         }
     }
 
+    logger($products19);
+
     $invoiceNetAmount = $allProductsTotalPrice0 + $allProductsTotalPrice7 + $allProductsTotalPrice19;
     $invoiceGrossAmount = isset($_POST['invoiceData']['smallBusinessTax']) || isset($_POST['invoiceData']['reverseCharge']) ?
-        0 : $invoiceNetAmount + $totalTax7 + $totalTax19;
+        $invoiceNetAmount : $invoiceNetAmount + $totalTax7 + $totalTax19;
 
     //bereitet Daten für Datenbank-Query vor
 
@@ -677,6 +681,8 @@ function processInvoiceData()
     ];
 
     $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
+
+    logger($result);
 
     return $result;
 }
