@@ -61,14 +61,14 @@ function getFullfillmentDate($startDate, $endDate)
 function getCostumerTaxId($taxId)
 {
 
-    return empty($taxId) ? "" : "<span>St-Nr:</span><span class='bold'>" . $taxId . '</span>';
+    return empty($taxId) ? "" : "<span>St-Nr: </span><span class='bold'>" . $taxId . '</span>';
 }
 
 
 function getCostumerSalesTaxId($salesTaxId)
 {
 
-    return empty($salesTaxId) ? "" : "<span>USt-IdNr:</span><span class='bold'>" . $salesTaxId . '</span>';
+    return empty($salesTaxId) ? "" : "<span>USt-IdNr: </span><span class='bold'>" . $salesTaxId . '</span>';
 }
 
 
@@ -121,13 +121,14 @@ function getProducts($productJson)
 
     if (isset($productsArray[0])) {
         foreach ($productsArray as $product) {
+            logger($product);
             $placeholders = [
                 'productTitle' => $product['productTitle'],
-                'productPrice' => $product['productPrice'],
+                'productPrice' => number_format($product['productPrice'], 2, "."),
                 'taxRate' => $product['taxRate'],
                 'productAmount' => $product['amount'],
-                'productTotalNetPrice' => $product['productTotalNetPrice'],
-                'productTotalGrossPrice' => $product['productTotalGrossPrice'],
+                'productTotalNetPrice' => number_format($product['productTotalNetPrice'], 2, "."),
+                'productTotalGrossPrice' => number_format($product['productTotalGrossPrice'], 2, "."),
                 'productDescription' => $product['productDescription']
             ];
 
