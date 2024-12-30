@@ -347,7 +347,7 @@ function deleteCostumer()
 
 function fetchPaymentDataByInvoiceId($id)
 {
-    $sqlQuery = 'SELECT receivedPayments, invoiceGrossAmount FROM invoices WHERE id=?';
+    $sqlQuery = 'SELECT receivedPayments, invoiceGrossAmount, amountToPay FROM invoices WHERE id=?';
     $paramType = 'i';
     $param = [$id];
     $fetchedPaymentData = dataQueryPrepStmt($sqlQuery, $paramType, $param);
@@ -359,6 +359,7 @@ function fetchPaymentDataByInvoiceId($id)
 function createIncomingPayment()
 {
     $paymentData = fetchPaymentDataByInvoiceId($_POST['id']);
+    $amountToPay = $paymentData[0]['amountToPay'] - $_POST['paymentAmount'];
     $paymentData = $paymentData[0]['receivedPayments'];
     $paymentData = json_decode($paymentData, true);
     $paymentToAdd = [
@@ -368,14 +369,16 @@ function createIncomingPayment()
         ]
     ];
 
-
     $paymentData[] = $paymentToAdd;
 
     $paymentData = json_encode($paymentData);
 
-    $sqlQuery = "UPDATE invoices SET receivedPayments=? WHERE id=?";
-    $paramType = 'si';
-    $param = [$paymentData, $_POST['id']];
+
+    
+
+    $sqlQuery = "UPDATE invoices SET receivedPayments=?, amountToPay=? WHERE id=?";
+    $paramType = 'sdi';
+    $param = [$paymentData, $amountToPay, $_POST['id']];
 
     $result = dataQueryPrepStmt($sqlQuery, $paramType, $param);
 

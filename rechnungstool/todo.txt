@@ -26,6 +26,3 @@ Außerdem anstehend:
 - Berechnung, wenn sich Basiszinssatz während des Verzugs ändert für mit und ohne Zahlungeingang
 
 - Was passiert eigentlich, wenn kein Zahlungsziel angegeben ist (Privatkunden)?
-
-
-- amountToPay bei Rechnungen und beim Erfassen von Zahlungseingängen setzen
