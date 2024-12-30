@@ -176,7 +176,7 @@ function getTotalAmountBlock($invoiceData)
         $invoiceData[0]['smallBusinessTax'] == 1 || $invoiceData[0]['reverseCharge'] == 1 
         ?
         <<<totalAmountBlockUntaxed
-        <div class="flex spaceBetween">
+        <div class="flex spaceBetween" id="totalAmountBlock">
             <div></div>
             <div style="width: 40%">
                 <div class="flex spaceBetween"><span>gesamt:</span><span>{invoiceNetAmount} €</span></div>
@@ -188,7 +188,7 @@ function getTotalAmountBlock($invoiceData)
         totalAmountBlockUntaxed
         :
         <<<totalAmountBlockTaxed
-        <div class="flex spaceBetween">
+        <div class="flex spaceBetween" id="totalAmountBlock">
             <div></div>
             <div style="width: 40%">
                 <div class="flex spaceBetween"><span>gesamt netto:</span><span>{invoiceNetAmount} €</span></div>
