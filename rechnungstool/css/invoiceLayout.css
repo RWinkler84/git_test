@@ -149,7 +149,3 @@
         margin: 0 auto;
         z-index: 0;
     }
-
-    #pdfableContainer>*{
-        font-size: var(--font-size-small);
-    }

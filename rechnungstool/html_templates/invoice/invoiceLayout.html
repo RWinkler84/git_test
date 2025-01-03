@@ -113,13 +113,20 @@
         element.innerHTML = source.innerHTML;
         document.querySelector('#pdfable #drucken').style.display = "none";
         document.querySelector('#pdfable #download').style.display = "none";
+        document.querySelectorAll('#pdfable > *').forEach((item) => {
+            console.log(item);
+            item.style.fontSize = "12px";
+        });
 
+        let test = document.querySelectorAll('#pdfable > *');
+        console.log(test);
+        
         elementOffset = source.offsetHeight;
         container.style.marginTop = elementOffset * -1 + "px"; 
 
         //html2pdf-Settings  
         const options = {
-            margin: 0.39,
+            margin: 0.78,
             filename: pdfTitle + '.pdf',
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2 },
@@ -127,7 +134,6 @@
             jsPDF: { unit: 'in', format: 'A4', orientation: 'portrait' }
         };
 
-        console.log(pdfTitle);
         // Promise-based usage:
         html2pdf().set(options).from(element).to('pdf').save();
     });
