@@ -1,5 +1,6 @@
 <div id="invoiceWrapper">
     <button id="drucken">Drucken</button>
+    <button id="download">PDF erzeugen</button>
     <div id="header">
         <div class="flex">
             <div style="flex: 1 1 50%; width: 50px;"></div>
@@ -56,15 +57,13 @@
             </table>
             <div class="divider"></div>
             {totalAmountBlock}
-            <div class="divider"></div>
             {invoiceComment}
-            <div class="divider"></div>
             {smallBusinessTax}
-            <div class="divider"></div>
             {reverseCharge}
 
         </div>
     </div>
+    <div class="divider"></div>
     <div class="divider"></div>
     <!-- payment info -->
     <div id="paymentInfo">
@@ -93,15 +92,43 @@
         </div>
     </div>
 </div>
-
+<div id="pdfableContainer">
+    <div id="pdfable" style="width: 99%"></div>
+</div>
 
 <script>
-    button = document.getElementById('drucken');
-    button.addEventListener('click', function () {
+    let printButton = document.getElementById('drucken');
+    printButton.addEventListener('click', function () {
         window.print();
     });
 
-    document.addEventListener('blur', function () {
-        button.setAttribute('style', 'display: none;')
+
+    let downloadButton = document.getElementById('download');
+    downloadButton.addEventListener('click', () => {
+        const container = document.querySelector('#pdfableContainer');
+        const element = document.querySelector('#pdfable');
+        const source = document.querySelector('#invoiceWrapper');
+        const pdfTitle = document.querySelector('title').innerText;
+
+        element.innerHTML = source.innerHTML;
+        document.querySelector('#pdfable #drucken').style.display = "none";
+        document.querySelector('#pdfable #download').style.display = "none";
+
+        elementOffset = source.offsetHeight;
+        container.style.marginTop = elementOffset * -1 + "px"; 
+
+        //html2pdf-Settings  
+        const options = {
+            margin: 0.39,
+            filename: pdfTitle + '.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            pagebreak: { mode: 'css' },
+            jsPDF: { unit: 'in', format: 'A4', orientation: 'portrait' }
+        };
+
+        console.log(pdfTitle);
+        // Promise-based usage:
+        html2pdf().set(options).from(element).to('pdf').save();
     });
 </script>

@@ -18,6 +18,7 @@ $path = [
 
 
     // einzelne Seiten und Seitenelemente
+    'header' => 'inc/header.php',
     'topMenu' => 'inc/topMenu.php',
     'invoiceView' => 'inc/invoiceView.php',
     'invoiceOverview' => 'inc/invoiceOverview.php',

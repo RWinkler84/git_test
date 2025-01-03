@@ -121,7 +121,6 @@ function getProducts($productJson)
 
     if (isset($productsArray[0])) {
         foreach ($productsArray as $product) {
-            logger($product);
             $placeholders = [
                 'productTitle' => $product['productTitle'],
                 'productPrice' => number_format($product['productPrice'], 2, "."),
@@ -208,19 +207,19 @@ function getTotalAmountBlock($invoiceData)
 
 function smallBusinessTax($status)
 {
-    return $status == 1 ? 'Kein Umsatzsteuerausweis aufgrund Anwendung der Klein­unternehmer­regelung gemäß § 19 UStG.' : '';
+    return $status == 1 ? '<div class="divider"></div>Kein Umsatzsteuerausweis aufgrund Anwendung der Klein­unternehmer­regelung gemäß § 19 UStG.' : '';
 }
 
 
 function reverseCharge($status)
 {
-    return $status == 1 ? 'Der Rechnungsausweis erfolgt ohne Umsatzsteuer, da vorliegend der Wechsel der Steuerschuldnerschaft (Reverse-Charge-Verfahren) greift. Die Umsatzsteuer ist vom Leistungsempfänger anzumelden und abzuführen.' : '';
+    return $status == 1 ? '<div class="divider"></div>Der Rechnungsausweis erfolgt ohne Umsatzsteuer, da vorliegend der Wechsel der Steuerschuldnerschaft (Reverse-Charge-Verfahren) greift. Die Umsatzsteuer ist vom Leistungsempfänger anzumelden und abzuführen.' : '';
 }
 
 
 function getInvoiceComment($comment)
 {
-    return !empty($comment) ? "<b>Anmerkungen:</b><br>" . $comment : '';
+    return !empty($comment) ? "<div class='divider'></div><b>Anmerkungen:</b><br>" . $comment : '';
 }
 
 

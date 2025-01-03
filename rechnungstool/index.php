@@ -10,7 +10,7 @@ require getPath('database');
 
 require getPath('dataqueries');
 
-include_once getPath('headerHTML');
+include_once getPath('header');
 
 include_once getPath('topMenu');
 
