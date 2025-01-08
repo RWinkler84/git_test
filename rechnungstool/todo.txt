@@ -9,6 +9,10 @@ generell:
 - Funktion, die bei der ersten Nutzung nach dem 1.1 und 1.7. um die Eingabe des aktuellen Basiszinses bittet
 
 
+InvoiceForm: 
+
+- Produktinfos bei den Selects anzeigen, damit 
+
 
 invoiceOverview:
 

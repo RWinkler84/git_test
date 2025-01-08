@@ -241,16 +241,18 @@ function fetchSelectedProductData()
 {
     $allSelectedProducts = array_filter($_POST['invoiceData'], 'filterForSelectedProducts', ARRAY_FILTER_USE_KEY);
 
-    for ($i = 0; $i < count($allSelectedProducts); $i++) {
+    foreach($allSelectedProducts AS $product => $id){
+        $selectCounter = explode('_', $product);
+
         $sqlQuery = "SELECT * FROM products WHERE id=?";
         $paramType = 'i';
-        $param = [$allSelectedProducts['productSelect_' . $i]];
+        $param = [$id];
 
         $productsData = dataQueryPrepStmt($sqlQuery, $paramType, $param);
         $productsData = $productsData->fetch_all(MYSQLI_ASSOC);
+        $productsData[0]['amount'] = $_POST['invoiceData']['productAmount_' . $selectCounter[1]];
 
         $selectedProductsData[] = $productsData[0];
-        $selectedProductsData[$i]['amount'] = $_POST['invoiceData']['productAmount_' . $i];
     }
 
     return $selectedProductsData;
@@ -260,7 +262,7 @@ function fetchBaseInterestRate($invoiceDueDate)
 {
     $invoiceDueDate = new DateTime($invoiceDueDate);
     $invoiceDueDate = $invoiceDueDate->format('Y-m-d');
-    
+
     $sqlQuery = 'SELECT * FROM baseInterestRate WHERE date >= ?';
     $paramType = 's';
     $param = [$invoiceDueDate];
@@ -374,7 +376,7 @@ function createIncomingPayment()
     $paymentData = json_encode($paymentData);
 
 
-    
+
 
     $sqlQuery = "UPDATE invoices SET receivedPayments=?, amountToPay=? WHERE id=?";
     $paramType = 'sdi';
@@ -510,7 +512,7 @@ function getPaymentReminderInterest($invoiceDueDate, $costumerType, $invoiceId)
     //Berechnung, wenn keine Teilzahlung gemacht wurde
     if (count($receivedPayments) == 0) {
         $numberOfDaysBetween = $invoiceDueDate->diff($today)->format('%d');
-        
+
         $paymentReminderInterest += $invoiceGrossAmount * $paymentReminderInterestRate / 100 / $numberOfDaysInYear * $numberOfDaysBetween;
         $invoiceGrossAmount += $paymentReminderInterest;
 

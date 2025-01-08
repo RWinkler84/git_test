@@ -32,7 +32,11 @@ function getCostumerOptions($costumer, $allCostumerOptions)
 function getProductOptions($product, $allProductOptions)
 {
     foreach ($product as $item) {
-        $option = "<option name='productSelect' value='" . $item['id'] . "' price='" . $item['productPrice'] . "'>" . $item['productTitle'] . "  -  " . $item['productPrice'] . "€</option>";
+        if (empty($item['productDescription'])) {
+            $option = "<option name='productSelect' value='" . $item['id'] . "' price='" . $item['productPrice'] . "'>" . $item['productTitle'] . "  -  " . $item['productPrice'] . "€</option>";
+        } else {
+            $option = "<option name='productSelect' value='" . $item['id'] . "' price='" . $item['productPrice'] . "' description='" . $item['productDescription'] . "'>" . $item['productTitle'] . "  -  " . $item['productPrice'] . "€</option>";
+        }
         $allProductOptions .= $option;
     };
 

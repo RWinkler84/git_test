@@ -82,20 +82,34 @@ function addProductSelect() {
         result.data = JSON.parse(result.data);
 
         for (let i = 0; i < result.data.length; i++) {
-            newOption = `<option name='productSelect' value='${result.data[i]['id']}' price='${result.data[i]['productPrice']}'>${result.data[i]['productTitle']}  -  ${result.data[i]['productPrice']}€</option>`;
+
+            if (result.data[i]['productDescription'] == '') {
+                newOption = `<option name='productSelect' value='${result.data[i]['id']}' price='${result.data[i]['productPrice']}'>${result.data[i]['productTitle']}  -  ${result.data[i]['productPrice']}€</option>`;
+            } else {
+                newOption = `<option name='productSelect' value='${result.data[i]['id']}' price='${result.data[i]['productPrice']}' description='${result.data[i]['productDescription']}'>${result.data[i]['productTitle']}  -  ${result.data[i]['productPrice']}€</option>`;
+            }
+
             options += newOption;
         }
 
         productCount++;
         const productSelectorNew = `
-        <div class="flex marginTop">
+        <div class="flex marginTop" selectStart>
             <div>
-                <select id="productSelect_${productCount}" name="productSelect_${productCount}">
+                <select id="productSelect_${productCount}" name="productSelect_${productCount}" onchange="getProductDescription(this)">
                     <option value="">-- Bitte ein Produkt auswählen --</option>
                     ${options}     
                 </select>
             </div>
+            <div>
                 <input type="number" id="productAmount_${productCount}" name="productAmount_${productCount}" min="0" placeholder="0" required>
+            </div>
+            <div style="margin-left: 5px">
+                <div class="descriptionContent fakeInput" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; cursor: pointer" onclick="showFullProductDescription(this)"></div>
+                <div class="fullDescriptionContent" onclick="hideFullProductDescription(this)" active="false"></div>
+            </div>
+            <div class="flex" style="margin-left: 5px">
+                <div style="align-self: end; padding-bottom: 3px; cursor: pointer;" onclick="optInProductSelectDeletion(this)" deletes="productSelect_${productCount}">&#128465</div>
             </div>
         </div>
     `
@@ -256,8 +270,6 @@ function createInvoice(event) {
         invoiceData
     };
 
-    console.log(invoiceData);
-
     let response = makeAjaxRequest(data);
     response
         .then(function (result) {
@@ -294,8 +306,6 @@ function salesTaxIdNotSet() {
             $('#modal').html(modalContent);
         });
 
-
-
     return;
 
 }
@@ -320,7 +330,54 @@ function preprocessFormData(formData) {
         let value = formData[i]['value'];
         processedData[key] = value;
     }
+
     return processedData;
+}
+
+
+function getProductDescription(item) {
+    let description = $(item).find(':selected').attr('description');
+
+    if (description) {
+        $(item).closest('.flex').find('.descriptionContent').text(description);
+        $(item).closest('.flex').find('.fullDescriptionContent').text(description).css('display', 'none');
+    } else {
+        $(item).closest('.flex').find('.descriptionContent').text('');
+        $(item).closest('.flex').find('.fullDescriptionContent').text('').css('display', 'none');
+    }
+}
+
+function showFullProductDescription(item) {
+
+    if ($(item).parent().find('.fullDescriptionContent').text()) {
+        $(item).parent().find('.fullDescriptionContent').attr('active', 'true').css({ 'display': 'block', 'position': 'absolute' });
+    }
+}
+
+function hideFullProductDescription(item) {
+    $(item).toggle().attr('active', 'false');
+}
+
+function optInProductSelectDeletion(item) {
+    let id = $(item).attr('deletes');
+    let modalContent = getModalContent('deleteProductSelect', 'requireConfirm', id);
+
+    $('#modal').removeClass('hidden').html(modalContent);
+}
+
+function deleteProductSelect(item) {
+
+    //diese Type-Prüfung wirkt unsinnig, allerdings wird item bei der Weitergabe aus unerfindlichem Grund in ein HTML-Objekt verwandelt, obwohl es sich ursprünglich um einen String handelt.
+    //Sollte sich dieses Verhalten 
+
+    if (typeof item != 'string'){
+        
+        $(item).closest('div[selectstart]').removeClass('marginTop').html('');        
+    } else {
+        $('#productContainer').find('#' + item).closest('div[selectstart]').removeClass('marginTop').html('');
+    }
+
+    closeModal(false);
 }
 
 
@@ -371,7 +428,8 @@ function getModalContent(action, state, data = '') {
         failed: "Da ist etwas schief gelaufen!",
         requireConfirm: {
             deleteCostumer: `Willst du den Kunden ${data} unwiderruflich löschen?`,
-            deleteProduct: `Willst du das Produkt ${data} unwiderruflich löschen?`
+            deleteProduct: `Willst du das Produkt ${data} unwiderruflich löschen?`,
+            deleteProductSelect: 'Willst du die Produktauswahl wirklich löschen?'
         },
         fullfillmentDateInfo: `
         In jeder Rechnung muss ein konkretes Lieferdatum oder ein Lieferzeitraum angegeben werden. Wählst du kein Datum aus, wird dieses
@@ -419,12 +477,14 @@ function getModalContent(action, state, data = '') {
             requireConfirm: {
                 text: {
                     deleteCostumer: 'Löschen',
-                    deleteProduct: 'Löschen'
+                    deleteProduct: 'Löschen',
+                    deleteProductSelect: 'Löschen'
                 },
                 css: 'block',
                 onclick: {
                     deleteCostumer: `deleteCostumer(${data})`,
-                    deleteProduct: `deleteProduct(${data})`
+                    deleteProduct: `deleteProduct(${data})`,
+                    deleteProductSelect: `deleteProductSelect(${data})`
                 }
             },
             info: {
@@ -468,8 +528,6 @@ function getModalContent(action, state, data = '') {
     }
 
     //befüllt die Variablen des Modals abhängig ihres Status
-
-
     modalMessage = message[action];
 
     confirmButtonText = button.confirmButton[state].text;
@@ -586,6 +644,6 @@ $('#paymentTermsCustom').on('change', () => {
         $('#customTermsInput').removeAttr('disabled');
     }
 });
-$('#paymentTermsNone').change(() => {$('#customTermsInput').prop('disabled', true).val('');});
-$('#paymentTerms14').change(() => {$('#customTermsInput').prop('disabled', true).val('');});
-$('#paymentTerms30').change(() => {$('#customTermsInput').prop('disabled', true).val('');});
+$('#paymentTermsNone').change(() => { $('#customTermsInput').prop('disabled', true).val(''); });
+$('#paymentTerms14').change(() => { $('#customTermsInput').prop('disabled', true).val(''); });
+$('#paymentTerms30').change(() => { $('#customTermsInput').prop('disabled', true).val(''); });

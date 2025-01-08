@@ -114,13 +114,9 @@
         document.querySelector('#pdfable #drucken').style.display = "none";
         document.querySelector('#pdfable #download').style.display = "none";
         document.querySelectorAll('#pdfable > *').forEach((item) => {
-            console.log(item);
             item.style.fontSize = "12px";
         });
 
-        let test = document.querySelectorAll('#pdfable > *');
-        console.log(test);
-        
         elementOffset = source.offsetHeight;
         container.style.marginTop = elementOffset * -1 + "px"; 
 
@@ -135,6 +131,8 @@
         };
 
         // Promise-based usage:
-        html2pdf().set(options).from(element).to('pdf').save();
+        html2pdf().set(options).from(element).to('pdf').save().thenExternal(onFulfilled => {
+            element.innerHTML = '';
+        });
     });
 </script>
