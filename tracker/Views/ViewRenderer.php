@@ -7,9 +7,13 @@ class ViewRenderer
 
     public function renderView($view, $placeholders = [])
     {
-        $header = file_get_contents(__DIR__ . '/../views/templates/header.html');
-        $template = file_get_contents(__DIR__ . '/../views/templates/' . $view . '.html');
-        $footer = file_get_contents(__DIR__ . '/../views/templates/footer.html');
+        $header = file_get_contents(__DIR__ . '/../Views/templates/header.html');
+        $template = file_get_contents(__DIR__ . '/../Views/templates/' . $view . '.html');
+        $footer = file_get_contents(__DIR__ . '/../Views/templates/footer.html');
+
+        $topMenu = file_get_contents(__DIR__ . '/../Views/templates/components/topMenu.html');
+
+        $placeholders['topMenu'] = $topMenu;
 
         if (!empty($placeholders)) {
             foreach ($placeholders as $placeholder => $value) {

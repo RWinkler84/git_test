@@ -1,0 +1,26 @@
+<main>
+    <div id="contentWrapper">
+        {topMenu}
+        <div id="tasksWrapper">
+
+            <dialog id="#loginDialog" open>
+                <h2>Erst einloggen, dann gucken!</h2>
+                <form method="POST" action="index.php?c=user&a=login">
+                    <div class="flex doubleGap">
+                        <div class="flex column">
+                            <label for="userName">Nutzername</label>
+                            <input type="text" name="userName" id="userName" placeholder="Nutzernamen eingeben">
+                        </div>
+                        <div class="flex column">
+                            <label for="password">Passwort</label>
+                            <input type="password" name="password" id="password" placeholder="Passwort eingeben">
+                        </div>
+                    </div>
+                    <button type="submit" class="confirmButton" style="display: block; margin-left: auto; margin-right: auto">Einloggen</button>
+                </form> 
+            </dialog>
+
+        </div>
+    </div>
+
+</main>

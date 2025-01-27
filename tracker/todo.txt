@@ -12,3 +12,5 @@ heute erledigt:
 - htmlspecialchars auf Datenbankausgaben implementiert
 
 - task erledigt setzen
+
+- Task löschen

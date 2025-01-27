@@ -2,7 +2,6 @@
 
 namespace Controller;
 
-use model;
 use View\ViewRenderer;
 
 class AbstractController
@@ -39,6 +38,4 @@ class AbstractController
 
     }
 
-
-    protected
 }
