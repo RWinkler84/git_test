@@ -1,0 +1,14 @@
+
+- Tasks löschen (wenn man Owner ist)
+
+Nutzerverwaltung (Anmelden, dann Session)
+
+Tasks filtern
+
+
+
+heute erledigt: 
+
+- htmlspecialchars auf Datenbankausgaben implementiert
+
+- task erledigt setzen

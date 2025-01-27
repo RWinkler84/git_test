@@ -1,0 +1,292 @@
+:root {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 12px;
+    --background-grey: #474F50;
+    --red: #C63957;
+    --lighter-red: #D16179;
+    --green: #30a48b;
+    --lighter-green: #39C6A8;
+    --lightest-green: #71d5bf;
+    --darker-grey: #B8BFBF;
+    --light-grey: #F6F5F5;
+    --dialog-grey: #DEDADA;
+    --light-grey-transparent: #fdfafae6;
+    --violet: #6239C6;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+    /* overflow-x: hidden; */
+    background-color: var(--background-grey);
+}
+
+textarea {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+#headline {
+    position: fixed;
+    top: 2rem;
+    z-index: 10;
+    transform: translate(-2.5vw, 0%);
+    width: 75vw;
+    height: fit-content;
+    padding: 1rem 5rem;
+    background-color: var(--light-grey-transparent);
+    margin-bottom: 2rem;
+    border-radius: 10px;
+}
+
+#headline>h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+#bottomBar {
+    background-color: var(--light-grey-transparent);
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    /* width: 75vw; */
+    /* transform: translate(-2.5vw, 0%); */
+    padding: 1rem 2rem;
+    border-radius: 10px;
+}
+
+#contentWrapper {
+    margin: 0 auto;
+    padding-top: 8rem;
+    width: 70%;
+    height: 100%;
+    min-height: 100vh;
+    background-color: #9A9A9A;
+}
+
+#tasksWrapper {
+    margin: 0 auto;
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.confirmButton,
+.cancelButton {
+    /* border: 1px solid #81b375; */
+    border: none;
+    border-radius: 5px;
+    background-color: var(--green);
+    color: var(--light-grey);
+    padding: 0.5rem 1rem;
+    margin-top: 1rem;
+}
+
+.cancelButton {
+    background-color: var(--red);
+}
+
+.confirmButton:active {
+    background-color: var(--lighter-green);
+}
+
+.cancelButton:active {
+    background-color: var(--lighter-red);
+}
+
+.taskContainer {
+    /* border: 1px solid #97a9b3; */
+    border-radius: 5px;
+    padding: 0 2rem 2rem;
+    width: fit-content;
+    background-color: var(--light-grey);
+    z-index: 4;
+}
+
+.hoch>.topBar {
+    background-color: var(--red);
+}
+
+.normal>.topBar {
+    background-color: var(--green);
+}
+
+.niedrig>.topBar {
+    background-color: var(--lightest-green);
+}
+
+.erledigt {
+    color: rgb(172, 171, 171)
+}
+
+.erledigt>.topBar {
+    background-color: var(--darker-grey);
+}
+
+.erledigtText {}
+
+.bold {
+    font-weight: 600;
+    color: rgb(81, 82, 90);
+}
+
+.erledigt .bold {
+    color: rgb(172, 171, 171)
+}
+
+.flex {
+    display: flex;
+}
+
+.column {
+    flex-direction: column;
+}
+
+.spaceBetween {
+    justify-content: space-between;
+}
+
+.flexEnd {
+    justify-content: flex-end;
+}
+
+.gap {
+    gap: 1rem;
+}
+
+.halfGap {
+    gap: 0.5rem;
+}
+
+.doubleGap {
+    gap: 2rem;
+}
+
+.collapsibleDescription {
+    display: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+
+.divider {
+    display: block;
+    height: 1rem;
+}
+
+.topBar {
+    display: block;
+    height: 1rem;
+    margin: 0 -2rem;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.roundButton {
+    border-radius: 50%;
+    border: none;
+    /* border: 1px solid #81b375; */
+    color: rgb(242, 243, 242);
+    padding: 1rem;
+    font-size: 3rem;
+    z-index: 3;
+}
+
+.roundButtonInnerBox {
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.roundButton.green {
+    background-color: var(--green);
+}
+
+.roundButton.red {
+    background-color: var(--red);
+}
+
+.roundButton.green:active {
+    background-color: var(--lighter-green);
+}
+
+.roundButton.red:active {
+    background-color: var(--lighter-red);
+}
+
+.shadowed {
+    box-shadow: 5px 5px 6px rgba(0, 0, 0, 0.25);
+}
+
+#addTaskButton {
+    position: relative;
+    float: right;
+    /* bottom: 2em;
+    right: 2em; */
+}
+
+#addTaskDialog,
+#deleteTaskDialog {
+    position: fixed;
+    margin: 0 auto;
+    top: 35%;
+    /* transform: translate(0%, -50%); */
+    border-radius: 5px;
+    /* border: solid 1px #97a9b3; */
+    border: none;
+    background-color: var(--dialog-grey);
+    padding: 2.5rem;
+}
+
+#addTaskDialog>.topBar {
+    background-color: var(--violet);
+    margin: -2.5rem -2.5rem 1.5rem;
+}
+
+#taskForm>label {
+    margin-top: 0.5rem;
+}
+
+@media screen and (max-width: 1100px) {
+
+    #contentWrapper,
+    #headline,
+    #bottomBar {
+        width: 100%;
+    }
+
+    #headline,
+    #bottomBar {
+        transform: translate(0%, 0%);
+        border-radius: 0px;
+    }
+
+    #headline {
+        position: sticky;
+        top: 0;
+    }
+
+    #bottomBar {
+        background-color: unset;
+    }
+
+    #contentWrapper {
+        padding-top: 0;
+    }
+
+    @media screen and (max-width: 600px) {
+        #formContent {
+            flex-direction: column;
+        }
+
+    }
+
+
+}

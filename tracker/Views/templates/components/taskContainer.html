@@ -1,0 +1,35 @@
+<div class="taskContainer {taskUrgency}" onclick="toggleFullSize(this)">
+    <div class="topBar"></div>
+    <div taskId="{taskId}">
+        <h2>{taskName}</h2>
+    </div>
+    <div class="flex spaceBetween" style="flex-direction: row;">
+        <div>
+            <div class="flex halfGap">
+                <div class="bold">Wer?</div>
+                <div>{taskOwner}</div>
+            </div>
+            <div class="flex halfGap">
+                <div class="bold">Wann?</div>
+                <div style="text-wrap: nowrap">{taskDueDate}</div>
+            </div>
+            <div class="flex halfGap">
+                <div class="bold">Status:</div>
+                <div>{taskStatus}</div>
+            </div>
+        </div>
+    </div>
+    <div class="collapsibleDescription">
+        <div class="divider"></div>
+        <div>{taskDescription}</div>
+        <div class="divider"></div>
+        <div class="flex flexEnd">
+            <button class="roundButton red" style="font-size: 1.5rem;" onclick="requestDeleteTask(this)">
+                <div class="roundButtonInnerBox">✘</div>
+            </button>
+            <button class="roundButton green" style="font-size: 1.5rem; margin-left: 1rem;" onclick="setTaskDone()">
+                <div class="roundButtonInnerBox">✔</div>
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,227 @@
+<main>
+    <div id="contentWrapper">
+        <div id="headline">
+            <h1>Das gibt es zu tun...</h1>
+        </div>
+        <div id="tasksWrapper">
+            <div id="fullTaskContainer" style="display: none; top: 0px; left: 0px; "></div>
+            {taskList}
+        </div>
+        <div id="bottomBar">
+            <button id="addTaskButton" class="roundButton green" onclick="openNewTaskDialog()">
+                <div class="roundButtonInnerBox">+</div>
+            </button>
+        </div>
+    </div>
+
+    <dialog id="addTaskDialog" class="shadowed">
+        <!-- <div class="topBar dialog"></div> -->
+        <div><button
+                style="float: right; margin-right: -3rem; margin-top: -3rem; border-radius: 50%; background-color: var(--darker-grey); color: var(--light-grey); border: none; padding: 0.5rem;"
+                onclick="closeDialog('newTaskDialog')">
+                <div style="width: 25px; height: 25px; display: flex; align-items: center; justify-content: center;">x
+                </div>
+            </button></div>
+        <h3 style="margin-top: 0;">Es gibt was zu tun?</h3>
+        <form id="taskForm" onsubmit="createNewTask(event)">
+            <div id="formContent" class="flex doubleGap">
+                <div class="flex column">
+                    <label for="taskOwner">Wer?</label>
+                    <select name="taskOwner" required>
+                        <option value="Ralf">Ralf</option>
+                        <option value="Sindy">Sindy</option>
+                        <option value="Sabrina">Sabrina</option>
+                    </select>
+                    <label for="taskName">Was?</label>
+                    <input type="text" name="taskName" id="taskName" required>
+                    <label for="taskDueDate">Wann?</label>
+                    <input type="datetime-local" name="taskDueDate" id="taskDueDate" required>
+                    <label for="taskUrgency">Dringlichkeit</label>
+                    <select name="taskUrgency" id="taskUrgency" required>
+                        <option value="niedrig">niedrig</option>
+                        <option value="normal" selected>normal</option>
+                        <option value="hoch">hoch</option>
+                    </select>
+                </div>
+                <div class="flex column">
+                    <label for="taskDescription">Was genau?</label>
+                    <textarea name="taskDescription" id="taskDescription" style="height: 100%;" cols="30"></textarea>
+                </div>
+            </div>
+            <button type="submit" id="saveNewTaskButton" class="confirmButton" style="float: right;">Speichern</button>
+        </form>
+    </dialog>
+
+    <dialog id="deleteTaskDialog" class="shadowed">
+        <div idOfTaskToDelete></div>
+        Willst du die diese Aufgabe wirklich löschen?
+        <div class="flex spaceBetween">
+            <div></div>
+            <div style="gap: 2rem;">
+                <button type="button" class="cancelButton" onclick="closeDialog('deleteTaskDialog')">Abbrechen</button>
+                <button type="button" class="confirmButton" onclick="deleteTask(this)">Löschen</button>
+            </div>
+        </div>
+    </dialog>
+</main>
+
+<script>
+    function toggleFullSize(item) {
+
+        let fullTaskContainer = document.querySelector('#fullTaskContainer');
+        let clone = item.cloneNode(true);
+        let itemWidth = getItemWidthOrHeight(item, 'width') + 'px';
+        let itemPosition = item.getBoundingClientRect();
+        let headlineHeight = getItemWidthOrHeight(document.querySelector('#headline'), 'height');
+
+        // console.log(window.getComputedStyle(item));
+
+        item.style.width = itemWidth;
+
+        if (item.parentElement.getAttribute('id') === 'tasksWrapper') {
+            // Setup
+            fullTaskContainer.innerHTML = '';
+            document.querySelectorAll('[style*="visibility: hidden"]').forEach(e => e.style.visibility = 'initial');
+            fullTaskContainer.appendChild(clone);
+            collapsible = fullTaskContainer.querySelector('.collapsibleDescription');
+
+            // CSS-Änderungen
+            fullTaskContainer.querySelector('.taskContainer').style.zIndex = 2;
+            fullTaskContainer.style.position = 'absolute';
+            fullTaskContainer.style.top = itemPosition.top + 'px';
+            fullTaskContainer.style.left = itemPosition.left + 'px';
+            fullTaskContainer.style.width = itemWidth;
+            item.style.visibility = 'hidden';
+            fullTaskContainer.style.boxShadow = '5px 5px 11px -3px rgba(0,0,0,0.25)';
+            fullTaskContainer.style.display = 'block';
+            collapsible.style.display = 'block';
+
+            if (collapsible.style.maxHeight) {
+                collapsible.style.maxHeight = null;
+            } else {
+                collapsible.style.maxHeight = collapsible.scrollHeight + 'px';
+            }
+
+        } else {
+
+            // document.querySelectorAll('[style*="visibility: hidden"]').forEach(e => e.style.visibility = 'initial');
+            // fullTaskContainer.innerHTML = '';
+        }
+
+        if (fullTaskContainer.getBoundingClientRect().top != itemPosition.top) {
+            fullTaskContainer.style.translate = `0 ${window.scrollY}px`;
+        }
+    }
+
+    function openNewTaskDialog() {
+        let dialog = document.querySelector('#addTaskDialog');
+
+        if (dialog.hasAttribute('open')) {
+            return;
+        }
+        dialog.setAttribute('open', '');
+    }
+
+    function closeDialog(dialogToClose) {
+
+        let dialog;
+
+        if (dialogToClose == 'newTaskDialog') {
+
+            dialog = document.querySelector('#addTaskDialog');
+
+        } else if (dialogToClose == 'deleteTaskDialog') {
+
+            dialog = document.querySelector('#deleteTaskDialog');
+
+        }
+
+        dialog.removeAttribute('open', '');
+    }
+
+    function getItemWidthOrHeight(item, property = 'width') {
+
+        itemProperty = property == 'width' ? window.getComputedStyle(item).width : window.getComputedStyle(item).height;
+        itemProperty = itemProperty.slice(0, itemProperty.length - 2);
+
+        return Math.ceil(itemProperty);
+    }
+
+    function createNewTask(event) {
+
+        event ? event.preventDefault() : false;
+
+        let form = document.querySelector('#taskForm');
+        let formData = new FormData(form);
+
+        fetch('index.php?a=saveNewTask', {
+            method: 'POST',
+            body: formData
+        })
+            .then((response) => {
+                return response.json()
+            })
+            .then((result) => {
+                if (result.statusCode != 200) {
+                    alert(result.message);
+                } else {
+                    closeDialog('newTaskDialog');
+                    location.reload();
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
+
+    function setTaskDone() {
+
+        let taskId = document.querySelector('#fullTaskContainer').querySelector('[taskId]').getAttribute('taskId');
+        let url = 'index.php?a=setTaskDone';
+        let dataObject = { 'taskId': taskId };
+
+        serverRequest(url, dataObject);
+
+    }
+
+    function requestDeleteTask(item) {
+        let dialog = document.querySelector('#deleteTaskDialog');
+        let taskId = document.querySelector('#fullTaskContainer').querySelector('[taskId]').getAttribute('taskId');
+
+        dialog.querySelector('[idOfTaskToDelete]').setAttribute('idOfTaskToDelete', taskId);
+        dialog.setAttribute('open', '');
+    }
+
+
+    function deleteTask() {
+        let taskId = document.querySelector('#deleteTaskDialog').querySelector('[idOfTaskToDelete]').getAttribute('idOfTaskToDelete');
+        let url = 'index.php?a=deleteTask';
+        let dataObject = { 'taskId': taskId };
+
+        serverRequest(url, dataObject);
+    }
+
+
+    function serverRequest(url, dataObject) {
+
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dataObject)
+        })
+            .then(response => response.json())
+            .then((response) => {
+                console.log(response.statusCode);
+                if (response.statusCode == 200) {
+                    location.reload();
+                } else {
+                    console.log(response);
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
+
+    // TODO: - wenn die Fenstergröße geändert wird und eine Task geöffnet ist, muss deren Position neu berechnet werden, sonst verschiebt sie sich relativ zu den anderen Icons
+</script>
