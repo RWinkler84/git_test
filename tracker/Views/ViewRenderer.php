@@ -7,13 +7,19 @@ class ViewRenderer
 
     public function renderView($view, $placeholders = [])
     {
+        global $user;
+
         $header = file_get_contents(__DIR__ . '/../Views/templates/header.html');
         $template = file_get_contents(__DIR__ . '/../Views/templates/' . $view . '.html');
         $footer = file_get_contents(__DIR__ . '/../Views/templates/footer.html');
 
         $topMenu = file_get_contents(__DIR__ . '/../Views/templates/components/topMenu.html');
 
+
+        // global Placeholders
         $placeholders['topMenu'] = $topMenu;
+        $placeholders['greetings'] = isset($_SESSION['userName']) ? "Hi, {$_SESSION['userName']}! Das gibt es zu tun..." : 'Task Tracker-Login';
+        $placeholders['logout'] = $user->getUserName() != 'Guest' ? '<button id="logoutButton" class="cancelButton " onclick="logout()" style="margin-top: 0;">Ausloggen</button>' : '';
 
         if (!empty($placeholders)) {
             foreach ($placeholders as $placeholder => $value) {

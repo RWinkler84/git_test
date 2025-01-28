@@ -193,7 +193,6 @@ textarea {
     color: rgb(242, 243, 242);
     padding: 1rem;
     font-size: 3rem;
-    z-index: 2;
 }
 
 .roundButtonInnerBox {

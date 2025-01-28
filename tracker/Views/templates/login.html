@@ -3,9 +3,9 @@
         {topMenu}
         <div id="tasksWrapper">
 
-            <dialog id="#loginDialog" open>
+            <dialog id="#loginDialog" style="background-color: var(--light-grey);" open>
                 <h2>Erst einloggen, dann gucken!</h2>
-                <form method="POST" action="index.php?c=user&a=login">
+                <form method="POST" id="loginForm">
                     <div class="flex doubleGap">
                         <div class="flex column">
                             <label for="userName">Nutzername</label>
@@ -16,11 +16,59 @@
                             <input type="password" name="password" id="password" placeholder="Passwort eingeben">
                         </div>
                     </div>
-                    <button type="submit" class="confirmButton" style="display: block; margin-left: auto; margin-right: auto">Einloggen</button>
-                </form> 
+                    <button type="submit" class="confirmButton"
+                        style="display: block; margin-left: auto; margin-right: auto">Einloggen</button>
+                </form>
+            </dialog>
+
+            <dialog id="serverResponseDialog" class="shadowed">
+                <div id="responseText"></div>
+                <button id="confirmResponseButton" class="confirmButton" style="display: block; margin-left: auto; margin-right: auto;">Okay</button>
             </dialog>
 
         </div>
     </div>
 
 </main>
+
+<script>
+    document.addEventListener('submit', submitLoginForm);
+
+    function submitLoginForm(event) {
+        event ? event.preventDefault() : false;
+
+        let formData = new FormData(document.querySelector('#loginForm'));
+
+        fetch('index.php?c=user&a=login', {
+            method: 'POST',
+            body: formData
+        })
+            .then((response) => response.json())
+            .then((response) => {
+                setResponseDialog(response);
+            })
+            .catch((error) => console.log(error));
+    }
+
+
+    function setResponseDialog(response) {
+        let responseTextContainer = document.querySelector('#responseText');
+        let confirmButton = document.querySelector('#confirmResponseButton');
+        let serverResponseDialog = document.querySelector('#serverResponseDialog');
+
+        responseTextContainer.innerText = response.message;
+
+        if (response.statusCode != 200){
+            confirmButton.setAttribute('onclick', 'closeServerResponseDialog()');
+        } else {
+            confirmButton.setAttribute('onclick', 'location.reload()');
+        }
+
+        serverResponseDialog.setAttribute('open','');
+
+    }
+
+    function closeServerResponseDialog(){
+        document.querySelector('#serverResponseDialog').removeAttribute('open');
+    }
+</script>

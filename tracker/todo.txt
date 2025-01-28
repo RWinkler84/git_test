@@ -1,7 +1,7 @@
 
 - Tasks löschen (wenn man Owner ist)
 
-Nutzerverwaltung (Anmelden, dann Session)
+
 
 Tasks filtern
 
@@ -14,3 +14,5 @@ heute erledigt:
 - task erledigt setzen
 
 - Task löschen
+
+- Nutzerverwaltung (Anmelden, dann Session)

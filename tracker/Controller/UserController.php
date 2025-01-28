@@ -7,7 +7,6 @@ use Model\User;
 class UserController extends AbstractController
 {
 
-
     public function loginPage()
     {
 
@@ -16,11 +15,10 @@ class UserController extends AbstractController
 
     public function login()
     {
-            error_log('daten sind da');
         $user = new User;
 
-        if (!isset($_POST['userName']) || !isset($_POST['password'])) {
-            
+        if (empty($_POST['userName']) || empty($_POST['password'])) {
+
             $response = [
                 'statusCode' => 400,
                 'message' => 'Nutzername und Passwort dürfen nicht leer sein.'
@@ -30,9 +28,24 @@ class UserController extends AbstractController
             header('Content-Type: application/json');
 
             echo json_encode($response);
-
         } else {
-            $user->attemptLogin($_POST['userName'], $_POST['password']);
+
+            $response =  $user->attemptLogin($_POST['userName'], $_POST['password']);
+            header('Content-Type: application/json');
+
+            echo json_encode($response);
         }
+    }
+
+
+    public function logout()
+    {
+        session_destroy();
+        header('Content-Type: application/json');
+
+        echo json_encode([
+            'responseCode' => 200,
+            'message' => 'Du wurdest erfolgreich ausgeloggt.'
+        ]);
     }
 }

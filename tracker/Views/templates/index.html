@@ -1,6 +1,6 @@
 <main>
     <div id="contentWrapper">
-            {topMenu}
+        {topMenu}
         <div id="tasksWrapper">
             <div id="fullTaskContainer" style="display: none; top: 0px; left: 0px; "></div>
             {taskList}
@@ -60,6 +60,12 @@
                 <button type="button" class="confirmButton" onclick="deleteTask(this)">Löschen</button>
             </div>
         </div>
+    </dialog>
+
+    <dialog id="serverResponseDialog" class="shadowed">
+        <div id="responseText"></div>
+        <button id="confirmResponseButton" class="confirmButton"
+            style="display: block; margin-left: auto; margin-right: auto;" onclick="location.reload()">Okay</button>
     </dialog>
 </main>
 
@@ -219,6 +225,19 @@
             .catch((error) => {
                 console.log(error);
             })
+    }
+
+
+    function logout() {
+        fetch('index.php?c=user&a=logout', {
+            method: 'POST'
+        })
+            .then(response => response.json())
+            .then((response) => {
+                document.querySelector('#responseText').innerText = response.message;
+                document.querySelector('#serverResponseDialog').setAttribute('open', '');
+            })
+            .catch(error => console.log(error));
     }
 
     // TODO: - wenn die Fenstergröße geändert wird und eine Task geöffnet ist, muss deren Position neu berechnet werden, sonst verschiebt sie sich relativ zu den anderen Icons

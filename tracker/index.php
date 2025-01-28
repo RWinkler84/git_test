@@ -5,7 +5,14 @@ use Controller\TasksController;
 require_once __DIR__ . '/core/loader.php';
 
 session_start();
-if (empty($_SESSION['isLoggedIn']) || !$_SESSION['isLoggedIn']) {
+
+$user = new model\User;
+
+if (isset($_SESSION['isLoggedIn']) && isset($_SESSION['userId'])){
+    $user->createUserById($_SESSION['userId']);
+}
+
+if (!isset($_SESSION['isLoggedIn']) && !isset($_GET['a'])) {
     $_GET['a'] = 'loginPage';
     $_GET['c'] = 'user';
 }
@@ -31,3 +38,4 @@ if (!isset($_GET['a'])) {
 }
 
 $controller->$action();
+
