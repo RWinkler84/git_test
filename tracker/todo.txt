@@ -10,11 +10,15 @@
 
 - Topbar bei Serverrückmeldungen (Login-Seite, weitere?)
 
+- 
+
 
 
 heute erledigt: 
 
 - Task löschen, wenn man Creator ist
+- Fehler in der Erstellung des Global Users entfernt (fehlerhafter Query)
+- Tasks können wieder geöffnet und geschlossen werden
 
 
 

@@ -1,9 +1,9 @@
-<div class="taskContainer {taskStatus}" onclick="toggleFullSize(this)">
-    <div class="topBar {taskUrgency}"></div>
-    <div taskId="{taskId}">
+<div containerStart class="taskContainer {taskStatus}">
+    <div class="topBar {taskUrgency}" onclick="toggleFullSize(this)"></div>
+    <div taskId="{taskId}" onclick="toggleFullSize(this)">
         <h2>{taskName}</h2>
     </div>
-    <div class="flex spaceBetween" style="flex-direction: row;">
+    <div class="flex spaceBetween" style="flex-direction: row;" onclick="toggleFullSize(this)">
         <div>
             <div class="flex halfGap">
                 <div class="bold">Wer?</div>
@@ -20,9 +20,9 @@
         </div>
     </div>
     <div class="collapsibleDescription">
-        <div class="divider"></div>
-        <div>{taskDescription}</div>
-        <div class="divider"></div>
+        <div class="divider" onclick="toggleFullSize(this)"></div>
+        <div onclick="toggleFullSize(this)">{taskDescription}</div>
+        <div class="divider" onclick="toggleFullSize(this)"></div>
         <div class="flex flexEnd">
             <button class="roundButton {deleteButtonActive}" style="font-size: 1.5rem;" {deleteButtonAction}>
                 <div class="roundButtonInnerBox">✘</div>

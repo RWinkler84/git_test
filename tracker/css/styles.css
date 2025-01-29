@@ -34,7 +34,7 @@ textarea {
     position: fixed;
     top: 2rem;
     z-index: 10;
-    transform: translate(-2.5vw, 0%);
+    transform: translate(-3.5vw, 0%);
     width: 75vw;
     height: fit-content;
     padding: 1rem 5rem;
@@ -61,7 +61,7 @@ textarea {
 
 #contentWrapper {
     margin: 0 auto;
-    padding-top: 8rem;
+    padding: 8rem 1rem;
     width: 70%;
     height: 100%;
     min-height: 100vh;
@@ -74,6 +74,10 @@ textarea {
     gap: 2rem;
     flex-wrap: wrap;
     justify-content: space-evenly;
+}
+
+#fullTaskContainer > button {
+    z-index: 2;
 }
 
 .confirmButton,
@@ -111,19 +115,19 @@ textarea {
     color: rgb(172, 171, 171)
 }
 
-.topBar.red {
+.redBackground{
     background-color: var(--red);
 }
 
-.topBar.green {
+.greenBackground {
     background-color: var(--green);
 }
 
-.topBar.lightest-green {
+.lightest-greenBackground {
     background-color: var(--lightest-green);
 }
 
-.topBar.darker-grey {
+.darker-greyBackground {
     background-color: var(--darker-grey);
 }
 
@@ -249,6 +253,7 @@ dialog {
     border: none;
     background-color: var(--dialog-grey);
     padding: 2.5rem;
+    z-index: 9;
 }
 
 #addTaskDialog>.topBar {
@@ -276,7 +281,10 @@ dialog {
 
     #headline {
         position: sticky;
-        top: 0;
+        top: 1.5rem;
+        width: 100vw;
+        margin-left: -1rem;
+        padding: 1rem 2.5rem;
     }
 
     #bottomBar {
@@ -284,7 +292,7 @@ dialog {
     }
 
     #contentWrapper {
-        padding-top: 0;
+        padding-top: 1rem;
     }
 
     @media screen and (max-width: 600px) {
@@ -292,6 +300,9 @@ dialog {
             flex-direction: column;
         }
 
+        #loginFormContent {
+            flex-direction: column;
+        }
     }
 
 

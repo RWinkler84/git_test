@@ -6,8 +6,8 @@
             {taskList}
         </div>
         <div id="bottomBar">
-            <button id="addTaskButton" class="roundButton green" onclick="openNewTaskDialog()">
-                <div class="roundButtonInnerBox">+</div>
+            <button id="addTaskButton" class="roundButton green flex" onclick="openNewTaskDialog()">
+                <div class="roundButtonInnerBox">&#43;</div>
             </button>
         </div>
     </div>
@@ -17,7 +17,7 @@
         <div><button
                 style="float: right; margin-right: -3rem; margin-top: -3rem; border-radius: 50%; background-color: var(--darker-grey); color: var(--light-grey); border: none; padding: 0.5rem;"
                 onclick="closeDialog('newTaskDialog')">
-                <div style="width: 25px; height: 25px; display: flex; align-items: center; justify-content: center;">x
+                <div style="width: 25px; height: 25px; display: flex; align-items: center; justify-content: center;">&#215;
                 </div>
             </button></div>
         <h3 style="margin-top: 0;">Es gibt was zu tun?</h3>
@@ -51,6 +51,7 @@
     </dialog>
 
     <dialog id="deleteTaskDialog" class="shadowed">
+        <div class="dialogTopBar redBackground"></div>
         <div idOfTaskToDelete></div>
         Willst du die diese Aufgabe wirklich löschen?
         <div class="flex spaceBetween">
@@ -71,15 +72,15 @@
 </main>
 
 <script>
-    function toggleFullSize(item) {
-
+    function toggleFullSize(clickedItem) {
+        let item = clickedItem.closest('[containerStart]');
+        console.log(item);
+        
         let fullTaskContainer = document.querySelector('#fullTaskContainer');
         let clone = item.cloneNode(true);
         let itemWidth = getItemWidthOrHeight(item, 'width') + 'px';
         let itemPosition = item.getBoundingClientRect();
         let headlineHeight = getItemWidthOrHeight(document.querySelector('#headline'), 'height');
-
-        // console.log(window.getComputedStyle(item));
 
         item.style.width = itemWidth;
 
@@ -109,8 +110,8 @@
 
         } else {
 
-            // document.querySelectorAll('[style*="visibility: hidden"]').forEach(e => e.style.visibility = 'initial');
-            // fullTaskContainer.innerHTML = '';
+            document.querySelectorAll('[style*="visibility: hidden"]').forEach(e => e.style.visibility = 'initial');
+            fullTaskContainer.innerHTML = '';
         }
 
         if (fullTaskContainer.getBoundingClientRect().top != itemPosition.top) {

@@ -19,7 +19,7 @@ class ViewRenderer
         // global Placeholders
         $placeholders['topMenu'] = $topMenu;
         $placeholders['greetings'] = isset($_SESSION['userName']) ? "Hi, {$user->getUserName()}! Das gibt es zu tun..." : 'Task Tracker-Login';
-        $placeholders['logout'] = $user->getUserName() != 'Guest' ? '<button id="logoutButton" class="cancelButton " onclick="logout()" style="margin-top: 0;">Ausloggen</button>' : '';
+        $placeholders['logout'] = $user->getUserName() != 'Guest' ? '<button id="logoutButton" class="cancelButton " onclick="logout()" style="margin-top: 0;">&#10140;</button>' : '';
 
         if (!empty($placeholders)) {
             foreach ($placeholders as $placeholder => $value) {

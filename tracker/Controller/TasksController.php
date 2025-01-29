@@ -32,19 +32,19 @@ class TasksController extends AbstractController
 
             switch ($task->getTaskUrgency()){
                 case 'hoch':
-                $topBarColor = 'red';
+                $topBarColor = 'redBackground';
                 break;
 
                 case 'normal':
-                $topBarColor = 'green';
+                $topBarColor = 'greenBackground';
                 break;
 
                 case 'niedrig':
-                $topBarColor = 'lightest-green';
+                $topBarColor = 'lightest-greenBackground';
                 break;
 
                 case 'erledigt':
-                $topBarColor = 'darker-grey';
+                $topBarColor = 'darker-greyBackground';
                 break;
             }
 
