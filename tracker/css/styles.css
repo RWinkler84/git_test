@@ -76,10 +76,6 @@ textarea {
     justify-content: space-evenly;
 }
 
-#fullTaskContainer > button {
-    z-index: 2;
-}
-
 .confirmButton,
 .cancelButton {
     /* border: 1px solid #81b375; */

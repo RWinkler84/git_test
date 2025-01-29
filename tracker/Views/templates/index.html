@@ -33,7 +33,9 @@
                     <label for="taskName">Was?</label>
                     <input type="text" name="taskName" id="taskName" required>
                     <label for="taskDueDate">Wann?</label>
-                    <input type="datetime-local" name="taskDueDate" id="taskDueDate" required>
+                    <input type="date" name="taskDueDate" id="taskDueDate" required>
+                    <label for="taskDueTime">Wann genau?</label>
+                    <input type="time" name="taskDueTime" id="taskDueTime">
                     <label for="taskUrgency">Dringlichkeit</label>
                     <select name="taskUrgency" id="taskUrgency" required>
                         <option value="niedrig">niedrig</option>
@@ -237,7 +239,7 @@
             .then(response => response.json())
             .then((response) => {
                 document.querySelector('#responseText').innerText = response.message;
-                document.querySelector('.dialogTopBar').style.backgroundColor = 'var(--green)';
+                document.querySelector('#serverResponseDialog > .dialogTopBar').style.backgroundColor = 'var(--green)';
                 document.querySelector('#serverResponseDialog').setAttribute('open', '');
             })
             .catch(error => console.log(error));

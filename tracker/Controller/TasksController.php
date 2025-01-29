@@ -2,6 +2,7 @@
 
 namespace Controller;
 
+use DateTime;
 use model\Task;
 
 class TasksController extends AbstractController
@@ -17,9 +18,6 @@ class TasksController extends AbstractController
         $taskData = $task->getAllTasks();
 
         $tasks = $this->dataArrayToObjectArray('Task', $taskData);
-        usort($tasks, function ($a, $b) {
-            return $a->getTaskDueDate() < $b->getTaskDueDate();
-        });
 
         foreach ($tasks as $task) {
 
@@ -69,6 +67,7 @@ class TasksController extends AbstractController
         echo $this->html->renderView('index', $placeholder);
     }
 
+
     public function saveNewTask()
     {
 
@@ -90,6 +89,7 @@ class TasksController extends AbstractController
             $task->setTaskOwner($_POST['taskOwner']);
             $task->setTaskName($_POST['taskName']);
             $task->setTaskDueDate($_POST['taskDueDate']);
+            $task->setTaskDueTime($_POST['taskDueTime']);
             $task->setTaskDescription($_POST['taskDescription']);
             $task->setTaskUrgency($_POST['taskUrgency']);
             $task->setTaskStatus('0');

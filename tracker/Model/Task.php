@@ -2,6 +2,8 @@
 
 namespace Model;
 
+use DateTime;
+
 class Task extends AbstractModel
 {
 
@@ -13,12 +15,14 @@ class Task extends AbstractModel
     private $taskDescription = null;
     private $taskCreationDate = null;
     private $taskDueDate = null;
+    private $taskDueTime = null;
     private $taskUrgency = null;
+
 
     public function getAllTasks()
     {
 
-        $queryString = "SELECT * FROM tasks";
+        $queryString = "SELECT * FROM tasks ORDER BY taskDueDate DESC";
 
         $results = $this->db->read($queryString);
         $resultsSanitized = [];
@@ -30,25 +34,23 @@ class Task extends AbstractModel
             }
         }
 
-        return $resultsSanitized;
+        $results = $this->sortTasks($resultsSanitized);
+
+        return $results;
     }
 
-
-
-    public function getTaskById($id) {}
-
-    public function getTasksByOwner($user) {}
 
     public function saveTaskToDatabase()
     {
         global $user;
 
-        $queryString = 'INSERT INTO tasks (taskName, taskCreatorId, taskOwner, taskDueDate, taskDescription, taskUrgency, taskStatus) VALUES (:taskName, :taskCreatorId, :taskOwner, :taskDueDate, :taskDescription, :taskUrgency, :taskStatus)';
+        $queryString = 'INSERT INTO tasks (taskName, taskCreatorId, taskOwner, taskDueDate, taskDueTime, taskDescription, taskUrgency, taskStatus) VALUES (:taskName, :taskCreatorId, :taskOwner, :taskDueDate, :taskDueTime, :taskDescription, :taskUrgency, :taskStatus)';
         $params = [
             'taskName' => $this->taskName,
             'taskCreatorId' => $user->getUserId(),
             'taskOwner' => $this->taskOwner,
             'taskDueDate' => $this->taskDueDate,
+            'taskDueTime' => $this->taskDueTime == '' ? null : $this->taskDueTime,
             'taskDescription' => $this->taskDescription,
             'taskUrgency' => $this->taskUrgency,
             'taskStatus' => $this->taskStatus
@@ -70,7 +72,9 @@ class Task extends AbstractModel
         return $status;
     }
 
-    public function deleteTask() {
+
+    public function deleteTask()
+    {
         $queryString = 'DELETE FROM tasks WHERE id = :id';
         $params = ['id' => $this->getId()];
 
@@ -79,8 +83,37 @@ class Task extends AbstractModel
         return $status;
     }
 
+    public function getTaskById($id) {}
 
-    // SETTER 
+
+    public function getTasksByOwner($user) {}
+
+
+    private function sortTasks($tasksArray)
+    {
+        $openTasks = [];
+        $doneTasks = [];
+
+        // chronologisch neuste nach älteste 
+        // usort($tasksArray, function ($a, $b) {
+        //     return $a['taskDueDate'] < $b['taskDueDate'];
+        // });
+
+        // erledigte nach hinten
+        for ($i = 0; $i < count($tasksArray); $i++){
+
+            if ($tasksArray[$i]['taskStatus'] == 0){
+                $openTasks[] = $tasksArray[$i];
+            } else {
+                $doneTasks[] = $tasksArray[$i];
+            }
+        }
+
+        return array_merge($openTasks, $doneTasks);
+    }
+
+
+   // SETTER 
 
     public function setId($id)
     {
@@ -92,7 +125,7 @@ class Task extends AbstractModel
         $this->taskName = $taskName;
     }
 
-        public function setTaskCreatorId($taskCreatorId)
+    public function setTaskCreatorId($taskCreatorId)
     {
         $this->taskCreatorId = $taskCreatorId;
     }
@@ -120,6 +153,11 @@ class Task extends AbstractModel
     public function setTaskDueDate($taskDueDate)
     {
         $this->taskDueDate = $taskDueDate;
+    }
+
+    public function setTaskDueTime($taskDueTime)
+    {
+        $this->taskDueTime = $taskDueTime;
     }
 
     public function setTaskUrgency($taskUrgency)
@@ -166,8 +204,17 @@ class Task extends AbstractModel
     }
 
     public function getTaskDueDate()
-    {
-        return $this->taskDueDate;
+    {   
+        $taskDueDate = new DateTime($this->taskDueDate);
+
+        return $taskDueDate->format('d.m.y');
+    }
+
+    public function getTaskDueTime()
+    {   
+        $taskDueTime = new DateTime($this->taskDueTime);
+
+        return $taskDueTime->format('H:m');
     }
 
     public function getTaskUrgency()

@@ -1,17 +1,15 @@
 
-
 - Tasks-Filterfunktion einbauen
 
-- Taskliste nach Aktualität sortieren
+- Fälligkeitsuhrzeit in den Tasks anzeigen lassen, falls vorhanden
 
-- Datum in der Taskliste an deutsches Format anpassen
+- Clickfeedback iOS abschalten
 
-- Fälligkeitsuhrzeit angeben
+- Icons korrekt zentrieren (iOS)
 
-- Topbar bei Serverrückmeldungen (Login-Seite, weitere?)
+- Erledigt-Buttons in erledigten Tasks deaktivieren
 
-- 
-
+- Seitenlänge an Task-Container-Länge anpassen, wenn dieser darüber gehen
 
 
 heute erledigt: 
@@ -19,7 +17,10 @@ heute erledigt:
 - Task löschen, wenn man Creator ist
 - Fehler in der Erstellung des Global Users entfernt (fehlerhafter Query)
 - Tasks können wieder geöffnet und geschlossen werden
-
+- Topbar bei Serverrückmeldungen (Login-Seite, Logout, Löschnachfrage)
+- Taskliste nach Aktualität und offen/erledigt sortieren
+- DateTime-Picker durch Date und Time-Picker ersetzt, um mehr Optionen zu bieten
+- Datum in der Taskliste an deutsches Format anpassen
 
 
 
@@ -29,6 +30,5 @@ erledigt:
 - htmlspecialchars auf Datenbankausgaben implementiert
 
 - task erledigt setzen
-
 
 - Nutzerverwaltung (Anmelden, dann Session)

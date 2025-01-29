@@ -64,7 +64,6 @@ class User extends AbstractModel
         $userData = $this->db->read($queryString, $params);
 
         if (!empty($userData)) {
-            error_log(print_r($userData, true));
             $this->userName = $userData[0]['userName'];
             $this->userId = $userData[0]['id'];
             $this->isAdmin = $userData[0]['userRole'] == 'Admin' ? true : false;
