@@ -1,18 +1,30 @@
 
-- Tasks löschen (wenn man Owner ist)
 
+- Tasks-Filterfunktion einbauen
 
+- Taskliste nach Aktualität sortieren
 
-Tasks filtern
+- Datum in der Taskliste an deutsches Format anpassen
+
+- Fälligkeitsuhrzeit angeben
+
+- Topbar bei Serverrückmeldungen (Login-Seite, weitere?)
 
 
 
 heute erledigt: 
 
+- Task löschen, wenn man Creator ist
+
+
+
+
+
+erledigt: 
+
 - htmlspecialchars auf Datenbankausgaben implementiert
 
 - task erledigt setzen
 
-- Task löschen
 
 - Nutzerverwaltung (Anmelden, dann Session)

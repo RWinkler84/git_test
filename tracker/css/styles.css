@@ -107,23 +107,23 @@ textarea {
     background-color: var(--light-grey);
 }
 
-.hoch>.topBar {
-    background-color: var(--red);
-}
-
-.normal>.topBar {
-    background-color: var(--green);
-}
-
-.niedrig>.topBar {
-    background-color: var(--lightest-green);
-}
-
 .erledigt {
     color: rgb(172, 171, 171)
 }
 
-.erledigt>.topBar {
+.topBar.red {
+    background-color: var(--red);
+}
+
+.topBar.green {
+    background-color: var(--green);
+}
+
+.topBar.lightest-green {
+    background-color: var(--lightest-green);
+}
+
+.topBar.darker-grey {
     background-color: var(--darker-grey);
 }
 
@@ -178,12 +178,17 @@ textarea {
     height: 1rem;
 }
 
-.topBar {
+.topBar,
+.dialogTopBar {
     display: block;
     height: 1rem;
     margin: 0 -2rem;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+}
+
+.dialogTopBar {
+    margin: -2.5rem -2.5rem 2.5rem;
 }
 
 .roundButton {
@@ -209,6 +214,10 @@ textarea {
 
 .roundButton.red {
     background-color: var(--red);
+}
+
+.roundButton.inactive {
+    background-color: var(--darker-grey);
 }
 
 .roundButton.green:active {

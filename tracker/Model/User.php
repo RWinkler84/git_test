@@ -58,16 +58,16 @@ class User extends AbstractModel
     public function createUserById($userId)
     {
 
-        $queryString = 'SELECT * FROM users WHERE :id';
+        $queryString = 'SELECT * FROM users WHERE id = :id';
         $params = ['id' => $userId];
 
         $userData = $this->db->read($queryString, $params);
 
         if (!empty($userData)) {
+            error_log(print_r($userData, true));
             $this->userName = $userData[0]['userName'];
             $this->userId = $userData[0]['id'];
             $this->isAdmin = $userData[0]['userRole'] == 'Admin' ? true : false;
-        
         } else {
             return [
                 'responseCode' => 500,
@@ -76,8 +76,16 @@ class User extends AbstractModel
         }
     }
 
-    public function getUserName():string
+
+// GETTER
+    public function getUserName(): string
     {
         return $this->userName;
+    }
+
+
+    public function getUserId(): int
+    {
+        return $this->userId;
     }
 }

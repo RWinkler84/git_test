@@ -7,6 +7,7 @@ require_once __DIR__ . '/core/loader.php';
 session_start();
 
 $user = new model\User;
+    error_log('SessionID-UserId' . $_SESSION['userId']);
 
 if (isset($_SESSION['isLoggedIn']) && isset($_SESSION['userId'])){
     $user->createUserById($_SESSION['userId']);

@@ -63,6 +63,7 @@
     </dialog>
 
     <dialog id="serverResponseDialog" class="shadowed">
+        <div class="dialogTopBar"></div>
         <div id="responseText"></div>
         <button id="confirmResponseButton" class="confirmButton"
             style="display: block; margin-left: auto; margin-right: auto;" onclick="location.reload()">Okay</button>
@@ -235,6 +236,7 @@
             .then(response => response.json())
             .then((response) => {
                 document.querySelector('#responseText').innerText = response.message;
+                document.querySelector('.dialogTopBar').style.backgroundColor = 'var(--green)';
                 document.querySelector('#serverResponseDialog').setAttribute('open', '');
             })
             .catch(error => console.log(error));

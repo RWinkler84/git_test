@@ -21,9 +21,11 @@
                 </form>
             </dialog>
 
-            <dialog id="serverResponseDialog" class="shadowed">
+            <dialog id="serverResponseDialog" class="shadowed" style="translate: 0 10px">
+                <div class="dialogTopBar"></div>
                 <div id="responseText"></div>
-                <button id="confirmResponseButton" class="confirmButton" style="display: block; margin-left: auto; margin-right: auto;">Okay</button>
+                <button id="confirmResponseButton" class="confirmButton"
+                    style="display: block; margin-left: auto; margin-right: auto;">Okay</button>
             </dialog>
 
         </div>
@@ -55,20 +57,23 @@
         let responseTextContainer = document.querySelector('#responseText');
         let confirmButton = document.querySelector('#confirmResponseButton');
         let serverResponseDialog = document.querySelector('#serverResponseDialog');
+        let responseDialogTopBar = document.querySelector('.dialogTopBar');
 
         responseTextContainer.innerText = response.message;
 
-        if (response.statusCode != 200){
+        if (response.statusCode != 200) {
+            responseDialogTopBar.style.backgroundColor = 'var(--red)';
             confirmButton.setAttribute('onclick', 'closeServerResponseDialog()');
         } else {
+            responseDialogTopBar.style.backgroundColor = 'var(--green)';
             confirmButton.setAttribute('onclick', 'location.reload()');
         }
 
-        serverResponseDialog.setAttribute('open','');
+        serverResponseDialog.setAttribute('open', '');
 
     }
 
-    function closeServerResponseDialog(){
+    function closeServerResponseDialog() {
         document.querySelector('#serverResponseDialog').removeAttribute('open');
     }
 </script>

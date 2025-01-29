@@ -7,6 +7,7 @@ class Task extends AbstractModel
 
     private $taskId = null;
     private $taskName = null;
+    private $taskCreatorId = null;
     private $taskOwner = null;
     private $taskStatus;
     private $taskDescription = null;
@@ -40,10 +41,12 @@ class Task extends AbstractModel
 
     public function saveTaskToDatabase()
     {
+        global $user;
 
-        $queryString = 'INSERT INTO tasks (taskName, taskOwner, taskDueDate, taskDescription, taskUrgency, taskStatus) VALUES (:taskName, :taskOwner, :taskDueDate, :taskDescription, :taskUrgency, :taskStatus)';
+        $queryString = 'INSERT INTO tasks (taskName, taskCreatorId, taskOwner, taskDueDate, taskDescription, taskUrgency, taskStatus) VALUES (:taskName, :taskCreatorId, :taskOwner, :taskDueDate, :taskDescription, :taskUrgency, :taskStatus)';
         $params = [
             'taskName' => $this->taskName,
+            'taskCreatorId' => $user->getUserId(),
             'taskOwner' => $this->taskOwner,
             'taskDueDate' => $this->taskDueDate,
             'taskDescription' => $this->taskDescription,
@@ -89,6 +92,11 @@ class Task extends AbstractModel
         $this->taskName = $taskName;
     }
 
+        public function setTaskCreatorId($taskCreatorId)
+    {
+        $this->taskCreatorId = $taskCreatorId;
+    }
+
     public function setTaskOwner($taskOwner)
     {
         $this->taskOwner = $taskOwner;
@@ -130,6 +138,11 @@ class Task extends AbstractModel
     public function getTaskName()
     {
         return $this->taskName;
+    }
+
+    public function getTaskCreatorId()
+    {
+        return $this->taskCreatorId;
     }
 
     public function getTaskOwner()

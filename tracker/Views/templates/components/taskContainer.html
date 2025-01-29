@@ -1,5 +1,5 @@
-<div class="taskContainer {taskUrgency}" onclick="toggleFullSize(this)">
-    <div class="topBar"></div>
+<div class="taskContainer {taskStatus}" onclick="toggleFullSize(this)">
+    <div class="topBar {taskUrgency}"></div>
     <div taskId="{taskId}">
         <h2>{taskName}</h2>
     </div>
@@ -24,7 +24,7 @@
         <div>{taskDescription}</div>
         <div class="divider"></div>
         <div class="flex flexEnd">
-            <button class="roundButton red" style="font-size: 1.5rem;" onclick="requestDeleteTask(this)">
+            <button class="roundButton {deleteButtonActive}" style="font-size: 1.5rem;" {deleteButtonAction}>
                 <div class="roundButtonInnerBox">✘</div>
             </button>
             <button class="roundButton green" style="font-size: 1.5rem; margin-left: 1rem;" onclick="setTaskDone()">

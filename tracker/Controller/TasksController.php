@@ -9,6 +9,7 @@ class TasksController extends AbstractController
 
     public function getTaskList()
     {
+        global $user;
 
         $template = '';
 
@@ -23,10 +24,28 @@ class TasksController extends AbstractController
         foreach ($tasks as $task) {
 
             if ($task->getTaskStatus() == 1) {
-                $task->setTaskUrgency('erledigt');
                 $task->setTaskStatus('erledigt');
+                $task->setTaskUrgency('erledigt');
             } else {
                 $task->setTaskStatus('offen');
+            }
+
+            switch ($task->getTaskUrgency()){
+                case 'hoch':
+                $topBarColor = 'red';
+                break;
+
+                case 'normal':
+                $topBarColor = 'green';
+                break;
+
+                case 'niedrig':
+                $topBarColor = 'lightest-green';
+                break;
+
+                case 'erledigt':
+                $topBarColor = 'darker-grey';
+                break;
             }
 
             $placeholders = [
@@ -36,7 +55,9 @@ class TasksController extends AbstractController
                 'taskDueDate' => $task->getTaskDueDate(),
                 'taskStatus' => $task->getTaskStatus(),
                 'taskDescription' => $task->getTaskDescription(),
-                'taskUrgency' => $task->getTaskUrgency()
+                'taskUrgency' => $topBarColor,
+                'deleteButtonAction' => $user->getUserId() == $task->getTaskCreatorId() ? 'onclick="requestDeleteTask(this)"' : '',
+                'deleteButtonActive' => $user->getUserId() == $task->getTaskCreatorId() ? 'red' : 'inactive'
             ];
 
             $template .= $this->html->renderComponent('taskContainer', $placeholders);
