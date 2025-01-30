@@ -22,7 +22,7 @@ class Task extends AbstractModel
     public function getAllTasks()
     {
 
-        $queryString = "SELECT * FROM tasks ORDER BY taskDueDate DESC";
+        $queryString = "SELECT * FROM tasks ORDER BY taskDueDate ASC";
 
         $results = $this->db->read($queryString);
         $resultsSanitized = [];
@@ -205,9 +205,7 @@ class Task extends AbstractModel
 
     public function getTaskDueDate()
     {   
-        $taskDueDate = new DateTime($this->taskDueDate);
-
-        return $taskDueDate->format('d.m.y');
+        return new DateTime($this->taskDueDate);
     }
 
     public function getTaskDueTime()

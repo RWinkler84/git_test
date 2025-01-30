@@ -12,6 +12,7 @@
     --dialog-grey: #DEDADA;
     --light-grey-transparent: #fdfafae6;
     --violet: #6239C6;
+    --orange: #E68A2E;
 }
 
 * {
@@ -114,6 +115,10 @@ textarea {
 
 .redBackground{
     background-color: var(--red);
+}
+
+.orangeBackground {
+    background-color: var(--orange);
 }
 
 .greenBackground {

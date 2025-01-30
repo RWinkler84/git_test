@@ -2,6 +2,8 @@
 
 namespace View;
 
+use DateTime;
+
 class ViewRenderer
 {
 
@@ -54,9 +56,12 @@ class ViewRenderer
     {
 
         global $user;
+        $today = new DateTime('now');
+        $taskDueDate = '';
         $template = '';
 
         foreach ($tasks as $task) {
+
 
             if ($task->getTaskStatus() == 1) {
                 $task->setTaskStatus('erledigt');
@@ -93,7 +98,7 @@ class ViewRenderer
                 $deleteButtonActive = 'inactive';
             }
 
-            if ($task->getTaskStatus() == 'erledigt'){
+            if ($task->getTaskStatus() == 'erledigt') {
                 $setDoneButtonAction = '';
                 $setDoneButtonActive = 'inactive';
             } else {
@@ -102,7 +107,7 @@ class ViewRenderer
             }
 
             // sets time block, if task has date and time
-            if ($task->getTaskDueTime() != ''){
+            if ($task->getTaskDueTime() != '') {
                 $taskDueTimeBlock = "
                 <div class='flex halfGap'>
                     <div class='bold'>Um?</div>
@@ -112,11 +117,24 @@ class ViewRenderer
                 $taskDueTimeBlock = '';
             }
 
+            //sets Reminder Dot, if task is due today or tomorrow
+            $taskDueDate = $task->getTaskDueDate();
+
+            if ($task->getTaskStatus() === 'erledigt') {
+                $reminderDotColor = '';
+            } elseif ($taskDueDate < $today) {
+                $reminderDotColor = 'redBackground';
+            } elseif ($taskDueDate->diff($today)->days <= 1) {
+                $reminderDotColor = 'orangeBackground';
+            } else {
+                $reminderDotColor = '';
+            }
+
             $placeholders = [
                 'taskId' => $task->getId(),
                 'taskName' => $task->getTaskName(),
                 'taskOwner' => $task->getTaskOwner(),
-                'taskDueDate' => $task->getTaskDueDate(),
+                'taskDueDate' => $taskDueDate->format('d.m.y'),
                 'taskDueTimeBlock' => $taskDueTimeBlock,
                 'taskStatus' => $task->getTaskStatus(),
                 'taskDescription' => $task->getTaskDescription(),
@@ -124,7 +142,8 @@ class ViewRenderer
                 'deleteButtonAction' => $deleteButtonAction,
                 'deleteButtonActive' => $deleteButtonActive,
                 'setDoneButtonAction' => $setDoneButtonAction,
-                'setDoneButtonActive' => $setDoneButtonActive
+                'setDoneButtonActive' => $setDoneButtonActive,
+                'reminderDotColor' => $reminderDotColor
             ];
 
             $template .= $this->renderComponent('taskContainer', $placeholders);

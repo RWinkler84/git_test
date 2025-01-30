@@ -1,3 +1,4 @@
+- Tasks markieren, die fällig sind (gelb für heute, rot für Datum überschritten?)
 
 - Tasks-Filterfunktion einbauen
 

@@ -3,7 +3,7 @@
     <div taskId="{taskId}" onclick="toggleFullSize(this)">
         <h2>{taskName}</h2>
     </div>
-    <div class="flex spaceBetween" style="flex-direction: row;" onclick="toggleFullSize(this)">
+    <div class="flex spaceBetween doubleGap" style="flex-direction: row;" onclick="toggleFullSize(this)">
         <div>
             <div class="flex halfGap">
                 <div class="bold">Wer?</div>
@@ -19,6 +19,7 @@
                 <div>{taskStatus}</div>
             </div>
         </div>
+    <div style="align-self: self-end;"><div class="{reminderDotColor}" style="border-radius: 50%; padding: 0.5rem;"></div></div> 
     </div>
     <div class="collapsibleDescription">
         <div class="divider" onclick="toggleFullSize(this)"></div>
