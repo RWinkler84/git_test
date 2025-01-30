@@ -33,7 +33,8 @@ class ViewRenderer
         return $pageHTML;
     }
 
-        public function renderComponent($component, $placeholders = [])
+
+    public function renderComponent($component, $placeholders = [])
     {
         $template = file_get_contents(__DIR__ . '/../views/templates/components/' . $component . '.html');
 
@@ -45,5 +46,72 @@ class ViewRenderer
         }
 
         return $template;
+    }
+
+
+
+    public function renderTaskList($tasks)
+    {
+
+        global $user;
+        $template = '';
+
+        foreach ($tasks as $task) {
+
+            if ($task->getTaskStatus() == 1) {
+                $task->setTaskStatus('erledigt');
+                $task->setTaskUrgency('erledigt');
+            } else {
+                $task->setTaskStatus('offen');
+            }
+
+            // decide the color of the tasks top bar depending on urgency
+            switch ($task->getTaskUrgency()) {
+                case 'hoch':
+                    $topBarColor = 'redBackground';
+                    break;
+
+                case 'normal':
+                    $topBarColor = 'greenBackground';
+                    break;
+
+                case 'niedrig':
+                    $topBarColor = 'lightest-greenBackground';
+                    break;
+
+                case 'erledigt':
+                    $topBarColor = 'darker-greyBackground';
+                    break;
+            }
+
+            // sets whether the delete and set done buttons are active
+
+
+
+            $placeholders = [
+                'taskId' => $task->getId(),
+                'taskName' => $task->getTaskName(),
+                'taskOwner' => $task->getTaskOwner(),
+                'taskDueDate' => $task->getTaskDueDate(),
+                'taskStatus' => $task->getTaskStatus(),
+                'taskDescription' => $task->getTaskDescription(),
+                'taskUrgency' => $topBarColor,
+                'deleteButtonAction' => $user->getUserId() == $task->getTaskCreatorId() ? 'onclick="requestDeleteTask(this)"' : '',
+                'deleteButtonActive' => $user->getUserId() == $task->getTaskCreatorId() ? 'red' : 'inactive'
+            ];
+
+            $template .= $this->renderComponent('taskContainer', $placeholders);
+        }
+
+        $placeholder = ['taskList' => $template];
+
+
+        echo $this->renderView('index', $placeholder);
+    }
+
+
+    public function renderLoginPage()
+    {
+        echo $this->renderView('login');
     }
 }

@@ -9,8 +9,7 @@ class UserController extends AbstractController
 
     public function loginPage()
     {
-
-        echo $this->html->renderView('login');
+        $this->renderer->renderLoginPage();
     }
 
     public function login()

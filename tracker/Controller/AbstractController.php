@@ -7,12 +7,12 @@ use View\ViewRenderer;
 class AbstractController
 {
 
-    protected $html;
+    protected $renderer;
 
 
     public function __construct()
     {
-        $this->html = new ViewRenderer;
+        $this->renderer = new ViewRenderer;
     }
 
     

@@ -2,7 +2,6 @@
 
 namespace Controller;
 
-use DateTime;
 use model\Task;
 
 class TasksController extends AbstractController
@@ -10,61 +9,14 @@ class TasksController extends AbstractController
 
     public function getTaskList()
     {
-        global $user;
-
-        $template = '';
 
         $task = new Task;
         $taskData = $task->getAllTasks();
 
         $tasks = $this->dataArrayToObjectArray('Task', $taskData);
 
-        foreach ($tasks as $task) {
-
-            if ($task->getTaskStatus() == 1) {
-                $task->setTaskStatus('erledigt');
-                $task->setTaskUrgency('erledigt');
-            } else {
-                $task->setTaskStatus('offen');
-            }
-
-            switch ($task->getTaskUrgency()){
-                case 'hoch':
-                $topBarColor = 'redBackground';
-                break;
-
-                case 'normal':
-                $topBarColor = 'greenBackground';
-                break;
-
-                case 'niedrig':
-                $topBarColor = 'lightest-greenBackground';
-                break;
-
-                case 'erledigt':
-                $topBarColor = 'darker-greyBackground';
-                break;
-            }
-
-            $placeholders = [
-                'taskId' => $task->getId(),
-                'taskName' => $task->getTaskName(),
-                'taskOwner' => $task->getTaskOwner(),
-                'taskDueDate' => $task->getTaskDueDate(),
-                'taskStatus' => $task->getTaskStatus(),
-                'taskDescription' => $task->getTaskDescription(),
-                'taskUrgency' => $topBarColor,
-                'deleteButtonAction' => $user->getUserId() == $task->getTaskCreatorId() ? 'onclick="requestDeleteTask(this)"' : '',
-                'deleteButtonActive' => $user->getUserId() == $task->getTaskCreatorId() ? 'red' : 'inactive'
-            ];
-
-            $template .= $this->html->renderComponent('taskContainer', $placeholders);
-        }
-
-        $placeholder = ['taskList' => $template];
-
-
-        echo $this->html->renderView('index', $placeholder);
+        
+        $this->renderer->renderTaskList($tasks);
     }
 
 

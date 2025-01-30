@@ -14,6 +14,13 @@
 
 heute erledigt: 
 
+
+
+
+
+
+erledigt: 
+
 - Task löschen, wenn man Creator ist
 - Fehler in der Erstellung des Global Users entfernt (fehlerhafter Query)
 - Tasks können wieder geöffnet und geschlossen werden
@@ -23,12 +30,6 @@ heute erledigt:
 - Datum in der Taskliste an deutsches Format anpassen
 
 
-
-
-erledigt: 
-
 - htmlspecialchars auf Datenbankausgaben implementiert
-
 - task erledigt setzen
-
 - Nutzerverwaltung (Anmelden, dann Session)
