@@ -1,4 +1,3 @@
-- Tasks markieren, die fällig sind (gelb für heute, rot für Datum überschritten?)
 
 - Tasks-Filterfunktion einbauen
 
@@ -16,6 +15,8 @@ heute erledigt:
 - Erledigt-Buttons in erledigten Tasks deaktivieren
 - verhindern, dass Tasks unberechtigt gelöscht werden (Manipulation des DOM in den DevTools)
 - Fälligkeitsuhrzeit in den Tasks anzeigen lassen, falls vorhanden
+- Tasks markieren, die fällig sind (gelb für heute, rot für Datum überschritten?)
+- Bug beim Erstellen von Task-Instanzen gefixt, die dafür gesorgt haben, dass die Rechtekontrolle nicht korrekt funktioniert hat
 
 
 erledigt: 

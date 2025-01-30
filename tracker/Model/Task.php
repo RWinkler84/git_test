@@ -83,6 +83,34 @@ class Task extends AbstractModel
         return $status;
     }
 
+
+    public function createTaskById($taskId)
+    {
+
+        $queryString = 'SELECT * FROM tasks WHERE id = :id';
+        $params = ['id' => $taskId];
+
+        $taskData = $this->db->read($queryString, $params);
+
+        if (!empty($taskData)) {
+            $this->taskId = $taskData[0]['id'];
+            $this->taskName = $taskData[0]['taskName'];
+            $this->taskCreatorId = $taskData[0]['taskCreatorId'];
+            $this->taskOwner = $taskData[0]['taskOwner'];
+            $this->taskStatus = $taskData[0]['taskStatus'];
+            $this->taskDescription = $taskData[0]['taskDescription'];
+            $this->taskCreationDate = $taskData[0]['taskCreationDate'];
+            $this->taskDueDate = $taskData[0]['taskDueDate'];
+            $this->taskDueTime = $taskData[0]['taskDueTime'];
+            $this->taskUrgency = $taskData[0]['taskUrgency'];
+        } else {
+            return [
+                'responseCode' => 500,
+                'message' => 'Task nicht gefunden'
+            ];
+        }
+    }
+
     public function getTaskById($id) {}
 
 
@@ -100,9 +128,9 @@ class Task extends AbstractModel
         // });
 
         // erledigte nach hinten
-        for ($i = 0; $i < count($tasksArray); $i++){
+        for ($i = 0; $i < count($tasksArray); $i++) {
 
-            if ($tasksArray[$i]['taskStatus'] == 0){
+            if ($tasksArray[$i]['taskStatus'] == 0) {
                 $openTasks[] = $tasksArray[$i];
             } else {
                 $doneTasks[] = $tasksArray[$i];
@@ -113,7 +141,7 @@ class Task extends AbstractModel
     }
 
 
-   // SETTER 
+    // SETTER 
 
     public function setId($id)
     {
@@ -204,13 +232,13 @@ class Task extends AbstractModel
     }
 
     public function getTaskDueDate()
-    {   
+    {
         return new DateTime($this->taskDueDate);
     }
 
     public function getTaskDueTime()
-    {   
-        if ($this->taskDueTime == ''){
+    {
+        if ($this->taskDueTime == '') {
 
             return '';
         }

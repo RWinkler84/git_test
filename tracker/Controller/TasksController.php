@@ -74,10 +74,16 @@ class TasksController extends AbstractController
         global $user;
         $data = json_decode(file_get_contents('php://input'), true);
 
+        // error_log(is_numeric($data['taskId']));
+
         if (is_numeric($data['taskId'])) {
             $task = new Task;
-            $task->setId($data['taskId']);
+            $task->createTaskById($data['taskId']);
         }
+
+        error_log('user-id: ' . $user->getUserId());
+        error_log('creatorId: ' . $task->getTaskCreatorId());
+        error_log('task: ' . print_r($task, true));
 
         if ($user->getUserId() == $task->getTaskCreatorId() || $user->getUserRole() == 'Admin') {
 
