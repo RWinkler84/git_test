@@ -1,22 +1,20 @@
 
 - Tasks-Filterfunktion einbauen
 
-- Fälligkeitsuhrzeit in den Tasks anzeigen lassen, falls vorhanden
-
 - Clickfeedback iOS abschalten
 
 - Icons korrekt zentrieren (iOS)
 
-- Erledigt-Buttons in erledigten Tasks deaktivieren
 
 - Seitenlänge an Task-Container-Länge anpassen, wenn dieser darüber gehen
 
 
 heute erledigt: 
 
-
-
-
+- Funktionen zum Belegen der Platzhalter aus den Controllern in die RenderView.php ausgelagert
+- Erledigt-Buttons in erledigten Tasks deaktivieren
+- verhindern, dass Tasks unberechtigt gelöscht werden (Manipulation des DOM in den DevTools)
+- Fälligkeitsuhrzeit in den Tasks anzeigen lassen, falls vorhanden
 
 
 erledigt: 

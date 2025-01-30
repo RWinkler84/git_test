@@ -1,4 +1,4 @@
-<div containerStart class="taskContainer {taskStatus}">
+<div containerStart class="taskContainer {taskStatus}" style="overflow: visible">
     <div class="topBar {taskUrgency}" onclick="toggleFullSize(this)"></div>
     <div taskId="{taskId}" onclick="toggleFullSize(this)">
         <h2>{taskName}</h2>
@@ -13,6 +13,7 @@
                 <div class="bold">Wann?</div>
                 <div style="text-wrap: nowrap">{taskDueDate}</div>
             </div>
+            {taskDueTimeBlock}
             <div class="flex halfGap">
                 <div class="bold">Status:</div>
                 <div>{taskStatus}</div>
@@ -23,11 +24,12 @@
         <div class="divider" onclick="toggleFullSize(this)"></div>
         <div onclick="toggleFullSize(this)">{taskDescription}</div>
         <div class="divider" onclick="toggleFullSize(this)"></div>
-        <div class="flex flexEnd" style="overflow: visible;">
-            <button class="roundButton {deleteButtonActive}" style="font-size: 1.5rem;" {deleteButtonAction}>
+        <div class="flex flexEnd">
+            <button class="roundButton {deleteButtonActive}" style="font-size: 1.5rem;" onclick="{deleteButtonAction}">
                 <div class="roundButtonInnerBox">✘</div>
             </button>
-            <button class="roundButton green" style="font-size: 1.5rem; margin-left: 1rem;" onclick="setTaskDone()">
+            <button class="roundButton {setDoneButtonActive}" style="font-size: 1.5rem; margin-left: 1rem;"
+                onclick="{setDoneButtonAction}">
                 <div class="roundButtonInnerBox">✔</div>
             </button>
         </div>

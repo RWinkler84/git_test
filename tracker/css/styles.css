@@ -101,9 +101,10 @@ textarea {
 
 .taskContainer {
     /* border: 1px solid #97a9b3; */
+    min-width: 160px;
     border-radius: 5px;
     padding: 0 2rem 2rem;
-    width: fit-content;
+
     background-color: var(--light-grey);
 }
 

@@ -25,7 +25,7 @@
             <div id="formContent" class="flex doubleGap">
                 <div class="flex column">
                     <label for="taskOwner">Wer?</label>
-                    <select name="taskOwner" required>
+                    <select id="taskOwner" name="taskOwner" required>
                         <option value="Ralf">Ralf</option>
                         <option value="Sindy">Sindy</option>
                         <option value="Sabrina">Sabrina</option>
@@ -76,7 +76,6 @@
 <script>
     function toggleFullSize(clickedItem) {
         let item = clickedItem.closest('[containerStart]');
-        console.log(item);
         
         let fullTaskContainer = document.querySelector('#fullTaskContainer');
         let clone = item.cloneNode(true);

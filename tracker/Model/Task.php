@@ -212,9 +212,14 @@ class Task extends AbstractModel
 
     public function getTaskDueTime()
     {   
+        if ($this->taskDueTime == ''){
+
+            return '';
+        }
+
         $taskDueTime = new DateTime($this->taskDueTime);
 
-        return $taskDueTime->format('H:m');
+        return $taskDueTime->format('H:i');
     }
 
     public function getTaskUrgency()

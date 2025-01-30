@@ -85,19 +85,46 @@ class ViewRenderer
             }
 
             // sets whether the delete and set done buttons are active
+            if ($user->getUserId() == $task->getTaskCreatorId() || $user->getUserRole() == 'Admin') {
+                $deleteButtonAction = 'requestDeleteTask(this)';
+                $deleteButtonActive = 'red';
+            } else {
+                $deleteButtonAction = '';
+                $deleteButtonActive = 'inactive';
+            }
 
+            if ($task->getTaskStatus() == 'erledigt'){
+                $setDoneButtonAction = '';
+                $setDoneButtonActive = 'inactive';
+            } else {
+                $setDoneButtonAction = 'setTaskDone()';
+                $setDoneButtonActive = 'green';
+            }
 
+            // sets time block, if task has date and time
+            if ($task->getTaskDueTime() != ''){
+                $taskDueTimeBlock = "
+                <div class='flex halfGap'>
+                    <div class='bold'>Um?</div>
+                    <div style='text-wrap: nowrap'>{$task->getTaskDueTime()}</div>
+                </div>";
+            } else {
+                $taskDueTimeBlock = '';
+            }
 
             $placeholders = [
                 'taskId' => $task->getId(),
                 'taskName' => $task->getTaskName(),
                 'taskOwner' => $task->getTaskOwner(),
                 'taskDueDate' => $task->getTaskDueDate(),
+                'taskDueTimeBlock' => $taskDueTimeBlock,
                 'taskStatus' => $task->getTaskStatus(),
                 'taskDescription' => $task->getTaskDescription(),
                 'taskUrgency' => $topBarColor,
-                'deleteButtonAction' => $user->getUserId() == $task->getTaskCreatorId() ? 'onclick="requestDeleteTask(this)"' : '',
-                'deleteButtonActive' => $user->getUserId() == $task->getTaskCreatorId() ? 'red' : 'inactive'
+                'deleteButtonAction' => $deleteButtonAction,
+                'deleteButtonActive' => $deleteButtonActive,
+                'setDoneButtonAction' => $setDoneButtonAction,
+                'setDoneButtonActive' => $setDoneButtonActive
             ];
 
             $template .= $this->renderComponent('taskContainer', $placeholders);

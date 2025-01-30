@@ -15,7 +15,7 @@ class TasksController extends AbstractController
 
         $tasks = $this->dataArrayToObjectArray('Task', $taskData);
 
-        
+
         $this->renderer->renderTaskList($tasks);
     }
 
@@ -71,16 +71,24 @@ class TasksController extends AbstractController
 
     public function deleteTask()
     {
+        global $user;
         $data = json_decode(file_get_contents('php://input'), true);
 
         if (is_numeric($data['taskId'])) {
             $task = new Task;
-
             $task->setId($data['taskId']);
+        }
+
+        if ($user->getUserId() == $task->getTaskCreatorId() || $user->getUserRole() == 'Admin') {
 
             $response = $task->deleteTask();
 
             echo json_encode($response);
+        } else {
+            echo json_encode([
+                'statusCode' => 300,
+                'message' => 'Hör auf zu cheaten!'
+            ]);
         }
     }
 }

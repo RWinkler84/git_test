@@ -7,7 +7,7 @@ class User extends AbstractModel
 
     private ?int $userId = null;
     private ?string $userName = 'Guest';
-    private bool $isAdmin = false;
+    private ?string $userRole = null;
 
 
     public function attemptLogin($userName, $userPassword)
@@ -66,7 +66,7 @@ class User extends AbstractModel
         if (!empty($userData)) {
             $this->userName = $userData[0]['userName'];
             $this->userId = $userData[0]['id'];
-            $this->isAdmin = $userData[0]['userRole'] == 'Admin' ? true : false;
+            $this->userRole = $userData[0]['userRole'];
         } else {
             return [
                 'responseCode' => 500,
@@ -76,7 +76,7 @@ class User extends AbstractModel
     }
 
 
-// GETTER
+    // GETTER
     public function getUserName(): string
     {
         return $this->userName;
@@ -86,5 +86,10 @@ class User extends AbstractModel
     public function getUserId(): int
     {
         return $this->userId;
+    }
+
+    public function getUserRole()
+    {
+        return $this->userRole;
     }
 }
