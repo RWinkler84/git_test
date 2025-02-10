@@ -74,9 +74,10 @@
 
 <script>
     function toggleFullSize(clickedItem, event) {
-        event.stopPropagation();
-        let item = clickedItem.closest('[containerStart]');
 
+        event.stopPropagation();
+
+        let item = clickedItem.closest('[containerStart]');
         let fullTaskContainer = document.querySelector('#fullTaskContainer');
         let clone = item.cloneNode(true);
         let itemWidth = getItemWidthOrHeight(item, 'width') + 'px';
@@ -103,12 +104,8 @@
             fullTaskContainer.style.display = 'block';
             collapsible.style.display = 'block';
 
-            if (collapsible.style.maxHeight) {
-                // collapsible.style.maxHeight = null;
-            } else {
-                collapsible.style.maxHeight = collapsible.scrollHeight + 'px';
-                console.log(collapsible.style.maxHeight);
-            }
+            collapsible.style.maxHeight = collapsible.scrollHeight + 'px';
+            console.log(collapsible.style.maxHeight);
         } else {
             document.querySelectorAll('[style*="visibility: hidden"]').forEach(e => e.style.visibility = 'initial');
             fullTaskContainer.innerHTML = '';
@@ -119,15 +116,16 @@
         }
     }
 
-    function closeFullTaskContainer(event){
-        console.log(event);
-        if (document.querySelector('#fullTaskContainer').innerHTML != ""){
+    function closeFullTaskContainer(event) {
+
+        if (document.querySelector('#fullTaskContainer').innerHTML != "") {
             document.querySelector('#fullTaskContainer').innerHTML = '';
             document.querySelectorAll('[style*="visibility: hidden"]').forEach(e => e.style.visibility = 'initial');
         }
     }
 
     function openNewTaskDialog() {
+
         let dialog = document.querySelector('#addTaskDialog');
 
         if (dialog.hasAttribute('open')) {
@@ -142,13 +140,9 @@
         let dialog;
 
         if (dialogToClose == 'newTaskDialog') {
-
             dialog = document.querySelector('#addTaskDialog');
-
         } else if (dialogToClose == 'deleteTaskDialog') {
-
             dialog = document.querySelector('#deleteTaskDialog');
-
         }
 
         dialog.removeAttribute('open', '');
@@ -157,7 +151,7 @@
 
     function getItemWidthOrHeight(item, property = 'width') {
 
-        itemProperty = property == 'width' ? window.getComputedStyle(item).width : window.getComputedStyle(item).height;
+        let itemProperty = property == 'width' ? window.getComputedStyle(item).width : window.getComputedStyle(item).height;
         itemProperty = itemProperty.slice(0, itemProperty.length - 2);
 
         return Math.ceil(itemProperty);
@@ -217,6 +211,7 @@
 
 
     function deleteTask() {
+
         let taskId = document.querySelector('#deleteTaskDialog').querySelector('[idOfTaskToDelete]').getAttribute('idOfTaskToDelete');
         let url = 'index.php?a=deleteTask';
         let dataObject = { 'taskId': taskId };
@@ -248,6 +243,7 @@
 
 
     function logout() {
+
         fetch('index.php?c=user&a=logout', {
             method: 'POST'
         })
@@ -260,70 +256,111 @@
             .catch(error => console.log(error));
     }
 
+    // filtering functionality
+    document.querySelector('.topmenuButton'), addEventListener('click', (e) => {
 
-    function changeTaskSelection() {
-
-        let selectByUserValue = document.querySelector('#selectByUser').value;
-        let selectByTimeValue = document.querySelector('#selectByTime').value;
+        let clickedButton = e.target;
         let allTaskContainers = contentWrapper.querySelectorAll('.taskContainer');
+
+        let buttonAll = document.querySelector('#filterOptionAll');
+        let buttonMine = document.querySelector('#filterOptionMine');
+        let buttonToday = document.querySelector('#filterOptionToday');
+        let buttonTomorrow = document.querySelector('#filterOptionTomorrow');
 
         //sets all TaskContainers to initial value before filtering
         allTaskContainers.forEach(task => {
             task.style.display = 'flex';
         })
 
-        if (selectByUserValue != 'all') {
-            filterTasksByUser(selectByUserValue, allTaskContainers);
+        //checks, if the clicked button was already active and deactivates it, also removes event to prevent reactivation in switch
+        if (clickedButton.hasAttribute('activated') && clickedButton != buttonAll) {
+
+            if (clickedButton == buttonMine) {
+                buttonAll.setAttribute('activated', '');
+            }
+
+            clickedButton.removeAttribute('activated');
+            clickedButton = null;
+
         }
 
-        if (selectByTimeValue != 'all') {
-            filterTasksByTime(selectByTimeValue, allTaskContainers);
-        }
-    }
+        switch (clickedButton) {
+            case buttonAll:
+                clickedButton.setAttribute('activated', '');
+                buttonMine.removeAttribute('activated');
+                break;
 
-    function filterTasksByUser(selectValue, allTaskContainers) {
+            case buttonMine:
+                clickedButton.setAttribute('activated', '');
+                buttonAll.removeAttribute('activated');
+                break;
+
+            case buttonToday:
+                clickedButton.setAttribute('activated', '');
+                buttonTomorrow.removeAttribute('activated');
+                break;
+
+            case buttonTomorrow:
+                clickedButton.setAttribute('activated', '');
+                buttonToday.removeAttribute('activated');
+                break;
+        }
+
+
+        if (buttonMine.hasAttribute('activated')) {
+            console.log('drin');
+            filterTasksByUser(allTaskContainers);
+        }
+
+        if (buttonToday.hasAttribute('activated') || buttonTomorrow.hasAttribute('activated')) {
+            filterTasksByTime(allTaskContainers);
+        }
+    });
+
+
+    function filterTasksByUser(allTaskContainers) {
 
         let userName = document.querySelector('#userName').innerText;
 
         allTaskContainers.forEach(task => {
+            let taskOwner = task.querySelector('[taskOwner]').getAttribute('taskOwner');
 
-        let taskOwner = task.querySelector('[taskOwner]').getAttribute('taskOwner');
-           
             if (taskOwner != userName) {
                 task.style.display = 'none';
             };
         });
     }
 
-    function filterTasksByTime(selectValue, allTaskContainers) {
+
+    function filterTasksByTime(allTaskContainers) {
 
         let today = new Date;
 
-        switch (selectValue) {
-            case 'today':
-                allTaskContainers.forEach(item => {
+        if (document.querySelector('#filterOptionToday').hasAttribute('activated')) {
+            allTaskContainers.forEach(item => {
+                let taskDueDate = new Date(item.querySelector('[taskDueDate]').getAttribute('taskDueDate'));
 
-                    let taskDueDate = new Date(item.querySelector('[taskDueDate]').getAttribute('taskDueDate'));
+                if (today.toDateString() != taskDueDate.toDateString()) {
+                    item.style.display = 'none';
+                };
+            });
 
-                    if (today.toDateString() != taskDueDate.toDateString()) {
-                        item.style.display = 'none';
-                    };
-                });
-                break;
+            return;
+        }
 
-            case 'tomorrow':
-                allTaskContainers.forEach(item => {
+        if (document.querySelector('#filterOptionTomorrow').hasAttribute('activated')) {
+            allTaskContainers.forEach(item => {
+                let taskDueDate = new Date(item.querySelector('[taskDueDate]').getAttribute('taskDueDate'));
+                let tomorrow = new Date();
 
-                    let taskDueDate = new Date(item.querySelector('[taskDueDate]').getAttribute('taskDueDate'));
-                    let tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
 
-                    tomorrow.setDate(tomorrow.getDate() + 1);
+                if (tomorrow.toDateString() != taskDueDate.toDateString()) {
+                    item.style.display = 'none';
+                };
+            });
 
-                    if (tomorrow.toDateString() != taskDueDate.toDateString()) {
-                        item.style.display = 'none';
-                    };
-                });
-                break;
+            return;
         }
     }
 

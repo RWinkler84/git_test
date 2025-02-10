@@ -51,21 +51,6 @@ textarea {
     font-size: 1.5rem;
 }
 
-
-.topMenuSelect {
-    background-color: var(--light-grey-transparent);
-    padding: 0.5rem 2rem;
-    width: fit-content;
-    border-radius: 5px;
-    height: 2rem;
-    overflow: hidden;
-}
-
-.topMenuOption {
-    /* font-weight: bold; */
-}
-
-
 #bottomBar {
     background-color: var(--light-grey-transparent);
     position: fixed;
@@ -96,7 +81,8 @@ textarea {
 }
 
 .confirmButton,
-.cancelButton {
+.cancelButton,
+.topMenuButton {
     /* border: 1px solid #81b375; */
     border: none;
     border-radius: 5px;
@@ -110,7 +96,17 @@ textarea {
     background-color: var(--red);
 }
 
-.confirmButton:active {
+.topMenuButton {
+    margin-top: 0;
+    background-color: var(--darker-grey);
+}
+
+.topMenuButton[activated] {
+    background-color: var(--green);
+}
+
+.confirmButton:active,
+.topMenuButton[activated]:active {
     background-color: var(--lighter-green);
 }
 
@@ -118,10 +114,14 @@ textarea {
     background-color: var(--lighter-red);
 }
 
+.topMenuButton:active {
+    background-color: var(--dialog-grey);
+}
+
 .taskContainer {
-    min-width: 160px;
+    min-width: 200px;
+    padding: 0 3rem 2rem;
     border-radius: 5px;
-    padding: 0 2rem 2rem;
     display: flex;
     flex-direction: column;
     background-color: var(--light-grey);
@@ -205,7 +205,7 @@ textarea {
 .topBar,
 .dialogTopBar {
     height: 1rem;
-    margin: 0 -2rem;
+    margin: 0 -3rem;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }

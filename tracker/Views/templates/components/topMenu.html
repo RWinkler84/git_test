@@ -1,7 +1,7 @@
 <div id="topMenu" class="flex column">
     <div class="headline flex spaceBetween doubleGap">
         <h1>{greetings}</h1>
-        <div class="flex gap" style="translate: 3.5vw 0vw">
+        <!-- <div class="flex gap" style="translate: 3.5vw 0vw">
             Wer?
             <select id="selectByUser" onchange="changeTaskSelection(this)">
                 <option value="all" selected>Alle</option>
@@ -13,8 +13,14 @@
                 <option value="today">heute</option>
                 <option value="tomorrow">morgen</option>
             </select>
+        </div> -->
+        <div class="flex gap" style="margin-left: auto;">
+            <button id="filterOptionAll" class="topMenuButton" activated>alle</button>
+            <button id="filterOptionMine" class="topMenuButton">meine</button>
+            <button id="filterOptionToday" class="topMenuButton">heute</button>
+            <button id="filterOptionTomorrow" class="topMenuButton">morgen</button>
         </div>
-        <div style="align-self: center;">{logout}</div>
+        <div>{logout}</div>
     </div>
 
 </div>
