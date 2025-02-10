@@ -23,7 +23,7 @@ html,
 body {
     width: 100%;
     min-height: 100%;
-    /* overflow-x: hidden; */
+    overflow-x: hidden;
     background-color: var(--background-grey);
 }
 
@@ -31,23 +31,40 @@ textarea {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-#headline {
+#topMenu {
     position: fixed;
     top: 2rem;
     z-index: 10;
     transform: translate(-3.5vw, 0%);
     width: 75vw;
-    height: fit-content;
+}
+
+#topMenu>.headline {
     padding: 1rem 5rem;
     background-color: var(--light-grey-transparent);
     margin-bottom: 2rem;
     border-radius: 10px;
 }
 
-#headline>h1 {
+#topMenu>.headline>h1 {
     margin: 0;
     font-size: 1.5rem;
 }
+
+
+.topMenuSelect {
+    background-color: var(--light-grey-transparent);
+    padding: 0.5rem 2rem;
+    width: fit-content;
+    border-radius: 5px;
+    height: 2rem;
+    overflow: hidden;
+}
+
+.topMenuOption {
+    /* font-weight: bold; */
+}
+
 
 #bottomBar {
     background-color: var(--light-grey-transparent);
@@ -67,6 +84,7 @@ textarea {
     height: 100%;
     min-height: 100vh;
     background-color: #9A9A9A;
+    z-index: 2;
 }
 
 #tasksWrapper {
@@ -101,19 +119,20 @@ textarea {
 }
 
 .taskContainer {
-    /* border: 1px solid #97a9b3; */
     min-width: 160px;
     border-radius: 5px;
     padding: 0 2rem 2rem;
-
+    display: flex;
+    flex-direction: column;
     background-color: var(--light-grey);
+    transition: all 0.5s ease-in;
 }
 
 .erledigt {
     color: rgb(172, 171, 171)
 }
 
-.redBackground{
+.redBackground {
     background-color: var(--red);
 }
 
@@ -180,13 +199,11 @@ textarea {
 }
 
 .divider {
-    display: block;
     height: 1rem;
 }
 
 .topBar,
 .dialogTopBar {
-    display: block;
     height: 1rem;
     margin: 0 -2rem;
     border-top-left-radius: 5px;
@@ -241,17 +258,13 @@ textarea {
 #addTaskButton {
     position: relative;
     float: right;
-    /* bottom: 2em;
-    right: 2em; */
 }
 
 dialog {
     position: fixed;
     margin: 0 auto;
     top: 35%;
-    /* transform: translate(0%, -50%); */
     border-radius: 5px;
-    /* border: solid 1px #97a9b3; */
     border: none;
     background-color: var(--dialog-grey);
     padding: 2.5rem;
@@ -275,18 +288,20 @@ dialog {
         width: 100%;
     }
 
-    #headline,
+    #topMenu,
     #bottomBar {
         transform: translate(0%, 0%);
         border-radius: 0px;
     }
 
-    #headline {
+
+    #topMenu>.headline {
         position: sticky;
         top: 1.5rem;
         width: 100vw;
         margin-left: -1rem;
         padding: 1rem 2.5rem;
+        border-radius: 0;
     }
 
     #bottomBar {

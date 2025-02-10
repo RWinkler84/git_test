@@ -1,8 +1,8 @@
 <main>
-    <div id="contentWrapper">
+    <div id="contentWrapper" onclick="closeFullTaskContainer(event)">
         {topMenu}
         <div id="tasksWrapper">
-            <div id="fullTaskContainer" style="display: none; top: 0px; left: 0px; "></div>
+            <div id="fullTaskContainer" style="display: none; top: 0px; left: 0px;"></div>
             {taskList}
         </div>
         <div id="bottomBar">
@@ -17,7 +17,8 @@
         <div><button
                 style="float: right; margin-right: -3rem; margin-top: -3rem; border-radius: 50%; background-color: var(--darker-grey); color: var(--light-grey); border: none; padding: 0.5rem;"
                 onclick="closeDialog('newTaskDialog')">
-                <div style="width: 25px; height: 25px; display: flex; align-items: center; justify-content: center;">&#215;
+                <div style="width: 25px; height: 25px; display: flex; align-items: center; justify-content: center;">
+                    &#215;
                 </div>
             </button></div>
         <h3 style="margin-top: 0;">Es gibt was zu tun?</h3>
@@ -26,9 +27,7 @@
                 <div class="flex column">
                     <label for="taskOwner">Wer?</label>
                     <select id="taskOwner" name="taskOwner" required>
-                        <option value="Ralf">Ralf</option>
-                        <option value="Sindy">Sindy</option>
-                        <option value="Sabrina">Sabrina</option>
+                        {allUserSelect}
                     </select>
                     <label for="taskName">Was?</label>
                     <input type="text" name="taskName" id="taskName" required>
@@ -74,14 +73,15 @@
 </main>
 
 <script>
-    function toggleFullSize(clickedItem) {
+    function toggleFullSize(clickedItem, event) {
+        event.cancelBubble = true;
         let item = clickedItem.closest('[containerStart]');
-        
+
         let fullTaskContainer = document.querySelector('#fullTaskContainer');
         let clone = item.cloneNode(true);
         let itemWidth = getItemWidthOrHeight(item, 'width') + 'px';
         let itemPosition = item.getBoundingClientRect();
-        let headlineHeight = getItemWidthOrHeight(document.querySelector('#headline'), 'height');
+        let headlineHeight = getItemWidthOrHeight(document.querySelector('#topMenu'), 'height');
 
         item.style.width = itemWidth;
 
@@ -104,19 +104,26 @@
             collapsible.style.display = 'block';
 
             if (collapsible.style.maxHeight) {
-                collapsible.style.maxHeight = null;
+                // collapsible.style.maxHeight = null;
             } else {
                 collapsible.style.maxHeight = collapsible.scrollHeight + 'px';
+                console.log(collapsible.style.maxHeight);
             }
-
         } else {
-
             document.querySelectorAll('[style*="visibility: hidden"]').forEach(e => e.style.visibility = 'initial');
             fullTaskContainer.innerHTML = '';
         }
 
         if (fullTaskContainer.getBoundingClientRect().top != itemPosition.top) {
             fullTaskContainer.style.translate = `0 ${window.scrollY}px`;
+        }
+    }
+
+    function closeFullTaskContainer(event){
+        console.log(event);
+        if (document.querySelector('#fullTaskContainer').innerHTML != ""){
+            document.querySelector('#fullTaskContainer').innerHTML = '';
+            document.querySelectorAll('[style*="visibility: hidden"]').forEach(e => e.style.visibility = 'initial');
         }
     }
 
@@ -128,6 +135,7 @@
         }
         dialog.setAttribute('open', '');
     }
+
 
     function closeDialog(dialogToClose) {
 
@@ -146,6 +154,7 @@
         dialog.removeAttribute('open', '');
     }
 
+
     function getItemWidthOrHeight(item, property = 'width') {
 
         itemProperty = property == 'width' ? window.getComputedStyle(item).width : window.getComputedStyle(item).height;
@@ -153,6 +162,7 @@
 
         return Math.ceil(itemProperty);
     }
+
 
     function createNewTask(event) {
 
@@ -181,17 +191,23 @@
             })
     }
 
-    function setTaskDone() {
+
+    function setTaskDone(event) {
+
+        event.cancelBubble = true;
 
         let taskId = document.querySelector('#fullTaskContainer').querySelector('[taskId]').getAttribute('taskId');
         let url = 'index.php?a=setTaskDone';
         let dataObject = { 'taskId': taskId };
 
         serverRequest(url, dataObject);
-
     }
 
-    function requestDeleteTask(item) {
+
+    function requestDeleteTask(item, event) {
+
+        event.cancelBubble = true;
+
         let dialog = document.querySelector('#deleteTaskDialog');
         let taskId = document.querySelector('#fullTaskContainer').querySelector('[taskId]').getAttribute('taskId');
 
@@ -242,6 +258,73 @@
                 document.querySelector('#serverResponseDialog').setAttribute('open', '');
             })
             .catch(error => console.log(error));
+    }
+
+
+    function changeTaskSelection() {
+
+        let selectByUserValue = document.querySelector('#selectByUser').value;
+        let selectByTimeValue = document.querySelector('#selectByTime').value;
+        let allTaskContainers = contentWrapper.querySelectorAll('.taskContainer');
+
+        //sets all TaskContainers to initial value before filtering
+        allTaskContainers.forEach(task => {
+            task.style.display = 'flex';
+        })
+
+        if (selectByUserValue != 'all') {
+            filterTasksByUser(selectByUserValue, allTaskContainers);
+        }
+
+        if (selectByTimeValue != 'all') {
+            filterTasksByTime(selectByTimeValue, allTaskContainers);
+        }
+    }
+
+    function filterTasksByUser(selectValue, allTaskContainers) {
+
+        let userName = document.querySelector('#userName').innerText;
+
+        allTaskContainers.forEach(task => {
+
+        let taskOwner = task.querySelector('[taskOwner]').getAttribute('taskOwner');
+           
+            if (taskOwner != userName) {
+                task.style.display = 'none';
+            };
+        });
+    }
+
+    function filterTasksByTime(selectValue, allTaskContainers) {
+
+        let today = new Date;
+
+        switch (selectValue) {
+            case 'today':
+                allTaskContainers.forEach(item => {
+
+                    let taskDueDate = new Date(item.querySelector('[taskDueDate]').getAttribute('taskDueDate'));
+
+                    if (today.toDateString() != taskDueDate.toDateString()) {
+                        item.style.display = 'none';
+                    };
+                });
+                break;
+
+            case 'tomorrow':
+                allTaskContainers.forEach(item => {
+
+                    let taskDueDate = new Date(item.querySelector('[taskDueDate]').getAttribute('taskDueDate'));
+                    let tomorrow = new Date();
+
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+
+                    if (tomorrow.toDateString() != taskDueDate.toDateString()) {
+                        item.style.display = 'none';
+                    };
+                });
+                break;
+        }
     }
 
     // TODO: - wenn die Fenstergröße geändert wird und eine Task geöffnet ist, muss deren Position neu berechnet werden, sonst verschiebt sie sich relativ zu den anderen Icons

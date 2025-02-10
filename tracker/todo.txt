@@ -1,26 +1,38 @@
+(- überfällige und heute Tasks optisch von späteren trennen)
 
-- Tasks-Filterfunktion einbauen
+- Tasks-Filterfunktion erweitern, so dass immer die Werte beider Selects ausgelesen werden
+
+- Icon integrieren, das zeigt, wenn eine Task aufklappbar ist
 
 - Clickfeedback iOS abschalten
 
 - Icons korrekt zentrieren (iOS)
-
 
 - Seitenlänge an Task-Container-Länge anpassen, wenn dieser darüber gehen
 
 
 heute erledigt: 
 
+- Filterfunktion grundlegend angelegt
+
+
+erledigt: 
+
+
+31.01.2025
+- Sortierung verfeinert: Task mit fester Ablaufzeit werden vor solchen mit Ablauftag angezeigt
+- der ReminderDot steht jetzt neben dem Task-Titel, sieht besser aus
+
+30.01.2025
 - Funktionen zum Belegen der Platzhalter aus den Controllern in die RenderView.php ausgelagert
 - Erledigt-Buttons in erledigten Tasks deaktivieren
 - verhindern, dass Tasks unberechtigt gelöscht werden (Manipulation des DOM in den DevTools)
 - Fälligkeitsuhrzeit in den Tasks anzeigen lassen, falls vorhanden
 - Tasks markieren, die fällig sind (gelb für heute, rot für Datum überschritten?)
 - Bug beim Erstellen von Task-Instanzen gefixt, die dafür gesorgt haben, dass die Rechtekontrolle nicht korrekt funktioniert hat
+- fixed: Tasks, die am gleichen Tag fällig sind, bekommen einen roten Button, sollten aber orange sein.
 
-
-erledigt: 
-
+29.01.2025
 - Task löschen, wenn man Creator ist
 - Fehler in der Erstellung des Global Users entfernt (fehlerhafter Query)
 - Tasks können wieder geöffnet und geschlossen werden

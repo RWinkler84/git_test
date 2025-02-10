@@ -1,3 +1,20 @@
-        <div id="headline" class="flex spaceBetween doubleGap">
-            <h1>{greetings}</h1><div style="align-self: center;">{logout}</div>
+<div id="topMenu" class="flex column">
+    <div class="headline flex spaceBetween doubleGap">
+        <h1>{greetings}</h1>
+        <div class="flex gap" style="translate: 3.5vw 0vw">
+            Wer?
+            <select id="selectByUser" onchange="changeTaskSelection(this)">
+                <option value="all" selected>Alle</option>
+                <option value="mine">Meine</option>
+            </select>
+            Wann?
+            <select id="selectByTime" onchange="changeTaskSelection(this)">
+                <option value="all" selected>jeder Tag</option>
+                <option value="today">heute</option>
+                <option value="tomorrow">morgen</option>
+            </select>
         </div>
+        <div style="align-self: center;">{logout}</div>
+    </div>
+
+</div>

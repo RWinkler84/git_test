@@ -3,6 +3,7 @@
 namespace View;
 
 use DateTime;
+use Controller\UserController;
 
 class ViewRenderer
 {
@@ -20,7 +21,7 @@ class ViewRenderer
 
         // global Placeholders
         $placeholders['topMenu'] = $topMenu;
-        $placeholders['greetings'] = isset($_SESSION['userName']) ? "Hi, {$user->getUserName()}! Das gibt es zu tun..." : 'Task Tracker-Login';
+        $placeholders['greetings'] = isset($_SESSION['userName']) ? "Hi, <span id='userName'>{$user->getUserName()}</span>! Das gibt es zu tun..." : 'Task Tracker-Login';
         $placeholders['logout'] = $user->getUserName() != 'Guest' ? '<button id="logoutButton" class="cancelButton " onclick="logout()" style="margin-top: 0;">&#10140;</button>' : '';
 
         if (!empty($placeholders)) {
@@ -56,12 +57,11 @@ class ViewRenderer
     {
 
         global $user;
-        $today = new DateTime('now');
         $taskDueDate = '';
         $template = '';
+        $allUsersSelect = $this->getAllUsersSelect();
 
         foreach ($tasks as $task) {
-
 
             if ($task->getTaskStatus() == 1) {
                 $task->setTaskStatus('erledigt');
@@ -91,7 +91,7 @@ class ViewRenderer
 
             // sets whether the delete and set done buttons are active
             if ($user->getUserId() == $task->getTaskCreatorId() || $user->getUserRole() == 'Admin') {
-                $deleteButtonAction = 'requestDeleteTask(this)';
+                $deleteButtonAction = 'requestDeleteTask(this, event)';
                 $deleteButtonActive = 'red';
             } else {
                 $deleteButtonAction = '';
@@ -102,7 +102,7 @@ class ViewRenderer
                 $setDoneButtonAction = '';
                 $setDoneButtonActive = 'inactive';
             } else {
-                $setDoneButtonAction = 'setTaskDone()';
+                $setDoneButtonAction = 'setTaskDone(event)';
                 $setDoneButtonActive = 'green';
             }
 
@@ -111,30 +111,21 @@ class ViewRenderer
                 $taskDueTimeBlock = "
                 <div class='flex halfGap'>
                     <div class='bold'>Um?</div>
-                    <div style='text-wrap: nowrap'>{$task->getTaskDueTime()}</div>
+                    <div style='text-wrap: nowrap'>{$task->getTaskDueTime()->format('H:i')}</div>
                 </div>";
             } else {
                 $taskDueTimeBlock = '';
             }
 
             //sets Reminder Dot, if task is due today or tomorrow
-            $taskDueDate = $task->getTaskDueDate();
-
-            if ($task->getTaskStatus() === 'erledigt') {
-                $reminderDotColor = '';
-            } elseif ($taskDueDate < $today) {
-                $reminderDotColor = 'redBackground';
-            } elseif ($taskDueDate->diff($today)->days <= 1) {
-                $reminderDotColor = 'orangeBackground';
-            } else {
-                $reminderDotColor = '';
-            }
+            $reminderDot = $this->setReminderDot($task);
 
             $placeholders = [
                 'taskId' => $task->getId(),
                 'taskName' => $task->getTaskName(),
                 'taskOwner' => $task->getTaskOwner(),
-                'taskDueDate' => $taskDueDate->format('d.m.y'),
+                'taskDueDate' => $task->getTaskDueDate()->format('d.m.y'),
+                'taskDueDateString' =>$task->getTaskDueDate()->format('Y-m-d'),
                 'taskDueTimeBlock' => $taskDueTimeBlock,
                 'taskStatus' => $task->getTaskStatus(),
                 'taskDescription' => $task->getTaskDescription(),
@@ -143,13 +134,16 @@ class ViewRenderer
                 'deleteButtonActive' => $deleteButtonActive,
                 'setDoneButtonAction' => $setDoneButtonAction,
                 'setDoneButtonActive' => $setDoneButtonActive,
-                'reminderDotColor' => $reminderDotColor
+                'reminderDot' => $reminderDot,
             ];
 
             $template .= $this->renderComponent('taskContainer', $placeholders);
         }
 
-        $placeholder = ['taskList' => $template];
+        $placeholder = [
+            'taskList' => $template,
+            'allUserSelect' => $allUsersSelect       
+        ];
 
 
         echo $this->renderView('index', $placeholder);
@@ -159,5 +153,69 @@ class ViewRenderer
     public function renderLoginPage()
     {
         echo $this->renderView('login');
+    }
+
+
+    private function setReminderDot($task)
+    {
+        $reminderDotColor = $this->setReminderDotColor($task);
+
+        if ($reminderDotColor != '') {
+
+            return "<div style='align-self: center'><div class='{$reminderDotColor}'style='border-radius: 50%; padding: 0.5rem; margin-left: 1rem;'></div></div>";
+        }
+
+        return '';
+    }
+
+
+    private function setReminderDotColor($task)
+    {
+        $now = new DateTime('now');
+        $taskDueDate = $task->getTaskDueDate()->modify('23:59:59');
+
+        // is a specific time set, add it to the date 
+        $task->getTaskDueTime() != '' ? $taskDueDate->modify($task->getTaskDueTime()->format('H:i')) : false;
+
+        if ($task->getTaskStatus() === 'erledigt') {
+            return '';
+        }
+
+        //is dueDate passed and was on a different day than today?
+        if ($taskDueDate < $now && $taskDueDate->format('d.m.y') != $now->format('d.m.y')) {
+            return 'redBackground';
+        }
+
+        error_log(print_r($taskDueDate->diff($now)->h, true));
+        //is dueTime less than six hours away?
+        if ($taskDueDate > $now && $taskDueDate->diff($now)->d < 1 && $taskDueDate->diff($now)->h < 6) {
+            return 'orangeBackground';
+        }
+
+        //is dueDate today?
+        if ($taskDueDate->format('d.m.y') == $now->format('d.m.y')) {
+
+            // is a time set on the same day and has already passed?
+            if ($task->getTaskDueTime() != '' && $task->getTaskDueTime() < $now) {
+                return 'redBackground';
+            }
+
+            return 'greenBackground';
+        }
+
+        //nothing fits, dueDate is way ahead?
+        return $reminderDotColor = '';
+    }
+
+    private function getAllUsersSelect()
+    {
+        $allUsers = UserController::getAllUserData();
+        $options = '';
+ 
+        foreach ($allUsers as $user){
+            $options .= "<option value='{$user['userName']}'>{$user['userName']}</option>";
+        }
+
+        return $options;
     }
 }

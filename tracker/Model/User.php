@@ -46,7 +46,7 @@ class User extends AbstractModel
         return false;
     }
 
-    private function getAllUserData(): array
+    public function getAllUserData(): array
     {
         $queryString = 'SELECT * FROM users';
 

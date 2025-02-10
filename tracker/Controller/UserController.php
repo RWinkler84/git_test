@@ -47,4 +47,12 @@ class UserController extends AbstractController
             'message' => 'Du wurdest erfolgreich ausgeloggt.'
         ]);
     }
+
+    public static function getAllUserData(){
+
+        $user = new User;
+
+        return $user->getAllUserData();
+
+    }
 }

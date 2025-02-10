@@ -122,12 +122,18 @@ class Task extends AbstractModel
         $openTasks = [];
         $doneTasks = [];
 
-        // chronologisch neuste nach älteste 
-        // usort($tasksArray, function ($a, $b) {
-        //     return $a['taskDueDate'] < $b['taskDueDate'];
-        // });
+        // chronologically sorted while taking to account whether due time is set or not
+        usort($tasksArray, function($a, $b){
+            $taskDueDateA = new DateTime ($a['taskDueDate']);
+            $taskDueDateB = new DateTime ($b['taskDueDate']);
 
-        // erledigte nach hinten
+            $a['taskDueTime'] != '' ? $taskDueDateA->modify($a['taskDueTime']) : $taskDueDateA->modify('23:59:59');
+            $b['taskDueTime'] != '' ? $taskDueDateB->modify($b['taskDueTime']) : $taskDueDateB->modify('23:59:59');
+
+            return $taskDueDateA > $taskDueDateB;
+        });
+        
+        // already finished tasks go to the back
         for ($i = 0; $i < count($tasksArray); $i++) {
 
             if ($tasksArray[$i]['taskStatus'] == 0) {
@@ -243,9 +249,7 @@ class Task extends AbstractModel
             return '';
         }
 
-        $taskDueTime = new DateTime($this->taskDueTime);
-
-        return $taskDueTime->format('H:i');
+        return $taskDueTime = new DateTime($this->taskDueTime);
     }
 
     public function getTaskUrgency()
