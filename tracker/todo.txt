@@ -13,11 +13,14 @@
 
 heute erledigt: 
 
-- Filterfunktion grundlegend angelegt
+- Filterfunktion verbessert, so dass immer beide Auswahlfelder berücksichtigt werden
+- fullSizeContainer können jetzt auch über den ContentWrapper geschlossen werden. eventPropagation() machts möglich
 
 
 erledigt: 
 
+07.02.2025
+- Filterfunktion grundlegend angelegt
 
 31.01.2025
 - Sortierung verfeinert: Task mit fester Ablaufzeit werden vor solchen mit Ablauftag angezeigt

@@ -74,7 +74,7 @@
 
 <script>
     function toggleFullSize(clickedItem, event) {
-        event.cancelBubble = true;
+        event.stopPropagation();
         let item = clickedItem.closest('[containerStart]');
 
         let fullTaskContainer = document.querySelector('#fullTaskContainer');
@@ -194,7 +194,7 @@
 
     function setTaskDone(event) {
 
-        event.cancelBubble = true;
+        event.stopPropagation();
 
         let taskId = document.querySelector('#fullTaskContainer').querySelector('[taskId]').getAttribute('taskId');
         let url = 'index.php?a=setTaskDone';
@@ -206,7 +206,7 @@
 
     function requestDeleteTask(item, event) {
 
-        event.cancelBubble = true;
+        event.stopPropagation();
 
         let dialog = document.querySelector('#deleteTaskDialog');
         let taskId = document.querySelector('#fullTaskContainer').querySelector('[taskId]').getAttribute('taskId');
