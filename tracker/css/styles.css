@@ -37,12 +37,12 @@ textarea {
     z-index: 10;
     transform: translate(-3.5vw, 0%);
     width: 75vw;
+    background-color: var(--light-grey-transparent);
+    border-radius: 10px;
 }
 
 #topMenu>.headline {
     padding: 1rem 5rem;
-    background-color: var(--light-grey-transparent);
-    margin-bottom: 2rem;
     border-radius: 10px;
 }
 
@@ -51,13 +51,16 @@ textarea {
     font-size: 1.5rem;
 }
 
+#responsiveMenu {
+    display: none;
+    padding: 0 2.5rem 1rem;
+}
+
 #bottomBar {
     background-color: var(--light-grey-transparent);
     position: fixed;
     bottom: 2rem;
     right: 2rem;
-    /* width: 75vw; */
-    /* transform: translate(-2.5vw, 0%); */
     padding: 1rem 2rem;
     border-radius: 10px;
 }
@@ -82,8 +85,10 @@ textarea {
 
 .confirmButton,
 .cancelButton,
-.topMenuButton {
-    /* border: 1px solid #81b375; */
+.filterMenuButton,
+.responsiveMenuButton,
+.responsiveFilterMenuButton,
+#expandResponsiveMenuButton {
     border: none;
     border-radius: 5px;
     background-color: var(--green);
@@ -96,17 +101,23 @@ textarea {
     background-color: var(--red);
 }
 
-.topMenuButton {
+.filterMenuButton,
+.responsiveMenuButton,
+.responsiveFilterMenuButton,
+#expandResponsiveMenuButton {
     margin-top: 0;
     background-color: var(--darker-grey);
 }
 
-.topMenuButton[activated] {
+
+.filterMenuButton[activated],
+.responsiveFilterMenuButton[activated] {
     background-color: var(--green);
 }
 
 .confirmButton:active,
-.topMenuButton[activated]:active {
+.filterMenuButton[activated]:active,
+.responsiveFilterMenuButton[activated]:active {
     background-color: var(--lighter-green);
 }
 
@@ -114,7 +125,8 @@ textarea {
     background-color: var(--lighter-red);
 }
 
-.topMenuButton:active {
+.filterMenuButton:active,
+#expandResponsiveMenuButton:active {
     background-color: var(--dialog-grey);
 }
 
@@ -217,7 +229,6 @@ textarea {
 .roundButton {
     border-radius: 50%;
     border: none;
-    /* border: 1px solid #81b375; */
     color: rgb(242, 243, 242);
     padding: 1rem;
     font-size: 3rem;
@@ -260,6 +271,14 @@ textarea {
     float: right;
 }
 
+#expandResponsiveMenuButton {
+    display: none;
+}
+
+#responsiveLogoutButton {
+    display: none;
+}
+
 dialog {
     position: fixed;
     margin: 0 auto;
@@ -284,22 +303,16 @@ dialog {
 
     #contentWrapper,
     #headline,
-    #bottomBar {
+    #bottomBar,
+    #topMenu {
         width: 100%;
+        border-radius: 0;
     }
-
-    #topMenu,
-    #bottomBar {
-        transform: translate(0%, 0%);
-        border-radius: 0px;
-    }
-
 
     #topMenu>.headline {
         position: sticky;
         top: 1.5rem;
-        width: 100vw;
-        margin-left: -1rem;
+        width: 100%;
         padding: 1rem 2.5rem;
         border-radius: 0;
     }
@@ -309,7 +322,44 @@ dialog {
     }
 
     #contentWrapper {
-        padding-top: 1rem;
+        padding-top: 8rem;
+    }
+
+    @media screen and (max-width: 750px) {
+        #topMenu>.headline {
+            gap: 0;
+        }
+        
+        #filterMenu {
+            gap: 0;
+        }
+
+        #responsiveMenu {
+            width: 100%;
+        }
+
+        .filterOptionWrapper {
+            display: flex;
+        }
+
+        #logoutButton {
+            display: none;
+        }
+
+        #expandResponsiveMenuButton {
+            display: block;
+        }
+
+        #responsiveLogoutButton {
+            display: initial;
+            flex-grow: 1;
+            background-color: var(--red);
+        }
+
+        .filterMenuButton {
+            display: none;
+        }
+
     }
 
     @media screen and (max-width: 600px) {

@@ -22,7 +22,8 @@ class ViewRenderer
         // global Placeholders
         $placeholders['topMenu'] = $topMenu;
         $placeholders['greetings'] = isset($_SESSION['userName']) ? "Hi, <span id='userName'>{$user->getUserName()}</span>! Das gibt es zu tun..." : 'Task Tracker-Login';
-        $placeholders['logout'] = $user->getUserName() != 'Guest' ? '<button id="logoutButton" class="cancelButton " onclick="logout()" style="margin-top: 0;">&#10140;</button>' : '';
+        $placeholders['filterMenu'] = $user->getUserName() == 'Guest' ? '' : $this->setFilterMenu();
+        $placeholders['logout'] = $user->getUserName() == 'Guest' ? '' : '<button id="logoutButton" class="cancelButton " onclick="logout()" style="margin-top: 0;">&#10140;</button>';
 
         if (!empty($placeholders)) {
             foreach ($placeholders as $placeholder => $value) {
@@ -217,5 +218,17 @@ class ViewRenderer
         }
 
         return $options;
+    }
+
+    private function setFilterMenu() {
+        return '
+        <div id="filterMenu" class="flex gap" style="margin-left: auto;">
+            <div style="margin-left: auto;"><button id="expandResponsiveMenuButton" open="false">&#9660;</button></div>
+            <div class="filterOptionWrapper"><button id="filterOptionAll" class="filterMenuButton" activated>alle</button></div>
+            <div class="filterOptionWrapper"><button id="filterOptionMine" class="filterMenuButton">meine</button></div>
+            <div class="filterOptionWrapper"><button id="filterOptionToday" class="filterMenuButton">heute</button></div>
+            <div class="filterOptionWrapper"><button id="filterOptionTomorrow" class="filterMenuButton">morgen</button></div>
+        </div>
+        ';
     }
 }

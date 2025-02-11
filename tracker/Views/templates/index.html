@@ -73,6 +73,14 @@
 </main>
 
 <script>
+    document.querySelectorAll('.filterMenuButton').forEach(button => button.addEventListener('click', (e) => filterTasks(e)));
+    document.querySelectorAll('.responsiveFilterMenuButton').forEach(button => button.addEventListener('click', (e) => filterTasks(e)));
+    document.querySelector('#expandResponsiveMenuButton').addEventListener('click', toggleResponsiveFilterMenu);
+
+    window.addEventListener('resize', () => {
+        hideResponsiveMenu();
+    });
+
     function toggleFullSize(clickedItem, event) {
 
         event.stopPropagation();
@@ -134,7 +142,6 @@
         dialog.setAttribute('open', '');
     }
 
-
     function closeDialog(dialogToClose) {
 
         let dialog;
@@ -148,7 +155,6 @@
         dialog.removeAttribute('open', '');
     }
 
-
     function getItemWidthOrHeight(item, property = 'width') {
 
         let itemProperty = property == 'width' ? window.getComputedStyle(item).width : window.getComputedStyle(item).height;
@@ -156,7 +162,6 @@
 
         return Math.ceil(itemProperty);
     }
-
 
     function createNewTask(event) {
 
@@ -185,7 +190,6 @@
             })
     }
 
-
     function setTaskDone(event) {
 
         event.stopPropagation();
@@ -196,7 +200,6 @@
 
         serverRequest(url, dataObject);
     }
-
 
     function requestDeleteTask(item, event) {
 
@@ -209,7 +212,6 @@
         dialog.setAttribute('open', '');
     }
 
-
     function deleteTask() {
 
         let taskId = document.querySelector('#deleteTaskDialog').querySelector('[idOfTaskToDelete]').getAttribute('idOfTaskToDelete');
@@ -218,7 +220,6 @@
 
         serverRequest(url, dataObject);
     }
-
 
     function serverRequest(url, dataObject) {
 
@@ -241,7 +242,6 @@
             })
     }
 
-
     function logout() {
 
         fetch('index.php?c=user&a=logout', {
@@ -257,15 +257,23 @@
     }
 
     // filtering functionality
-    document.querySelector('.topmenuButton'), addEventListener('click', (e) => {
+    function filterTasks(e) {
 
         let clickedButton = e.target;
+        let clickedButtonResponsiveTwin = getClickedButtonResponsiveTwin(clickedButton);
         let allTaskContainers = contentWrapper.querySelectorAll('.taskContainer');
 
+        //filter options on big screens
         let buttonAll = document.querySelector('#filterOptionAll');
         let buttonMine = document.querySelector('#filterOptionMine');
         let buttonToday = document.querySelector('#filterOptionToday');
         let buttonTomorrow = document.querySelector('#filterOptionTomorrow');
+
+        //filter options in mobile
+        let responsiveButtonAll = document.querySelector('#responsiveFilterOptionAll');
+        let responsiveButtonMine = document.querySelector('#responsiveFilterOptionMine');
+        let responsiveButtonToday = document.querySelector('#responsiveFilterOptionToday');
+        let responsiveButtonTomorrow = document.querySelector('#responsiveFilterOptionTomorrow');
 
         //sets all TaskContainers to initial value before filtering
         allTaskContainers.forEach(task => {
@@ -273,50 +281,67 @@
         })
 
         //checks, if the clicked button was already active and deactivates it, also removes event to prevent reactivation in switch
-        if (clickedButton.hasAttribute('activated') && clickedButton != buttonAll) {
+        if (clickedButton.hasAttribute('activated') && clickedButton != buttonAll && clickedButton != responsiveButtonAll) {
 
-            if (clickedButton == buttonMine) {
+            if (clickedButton == buttonMine || clickedButton == responsiveButtonMine) {
                 buttonAll.setAttribute('activated', '');
+                responsiveButtonAll.setAttribute('activated', '');
             }
 
             clickedButton.removeAttribute('activated');
+            clickedButtonResponsiveTwin.removeAttribute('activated');
             clickedButton = null;
-
+            clickedButtonResponsiveTwin = null;
         }
 
+        //button behavior depending on which button is clicked, originals and responsives are coupled
         switch (clickedButton) {
             case buttonAll:
+            case responsiveButtonAll:
                 clickedButton.setAttribute('activated', '');
                 buttonMine.removeAttribute('activated');
+
+                clickedButtonResponsiveTwin.setAttribute('activated', '');
+                responsiveButtonMine.removeAttribute('activated');
                 break;
 
             case buttonMine:
+            case responsiveButtonMine:
                 clickedButton.setAttribute('activated', '');
                 buttonAll.removeAttribute('activated');
+
+                clickedButtonResponsiveTwin.setAttribute('activated', '');
+                responsiveButtonAll.removeAttribute('activated');
                 break;
 
             case buttonToday:
+            case responsiveButtonToday:
                 clickedButton.setAttribute('activated', '');
                 buttonTomorrow.removeAttribute('activated');
+
+                clickedButtonResponsiveTwin.setAttribute('activated', '');
+                responsiveButtonTomorrow.removeAttribute('activated');
                 break;
 
             case buttonTomorrow:
+            case responsiveButtonTomorrow:
                 clickedButton.setAttribute('activated', '');
                 buttonToday.removeAttribute('activated');
+
+                clickedButtonResponsiveTwin.setAttribute('activated', '');
+                responsiveButtonToday.removeAttribute('activated');
                 break;
         }
 
 
         if (buttonMine.hasAttribute('activated')) {
-            console.log('drin');
             filterTasksByUser(allTaskContainers);
         }
 
         if (buttonToday.hasAttribute('activated') || buttonTomorrow.hasAttribute('activated')) {
             filterTasksByTime(allTaskContainers);
         }
-    });
-
+    }
 
     function filterTasksByUser(allTaskContainers) {
 
@@ -330,7 +355,6 @@
             };
         });
     }
-
 
     function filterTasksByTime(allTaskContainers) {
 
@@ -361,6 +385,46 @@
             });
 
             return;
+        }
+    }
+
+    function toggleResponsiveFilterMenu() {
+        let expandButton = document.querySelector('#expandResponsiveMenuButton');
+
+        if (expandButton.getAttribute('open') == 'true') {
+            expandButton.setAttribute('open', 'false');
+            expandButton.innerHTML = '&#9660;'
+            document.querySelector('#responsiveMenu').style.display = 'none';
+
+        } else {
+            expandButton.setAttribute('open', 'true');
+            expandButton.innerHTML = '&#9650;'
+            document.querySelector('#responsiveMenu').style.display = 'flex';
+        }
+    }
+
+    function getClickedButtonResponsiveTwin(clickedButton) {
+
+        //where original Buttons clicked?
+        if (clickedButton.getAttribute('id').includes('filter')) {
+
+            return document.querySelector('#' + clickedButton.getAttribute('id').replace('filter', 'responsiveFilter'));
+        }
+
+        //where responsive buttons clicked?
+        if (clickedButton.getAttribute('id').includes('Filter')) {
+
+            return document.querySelector('#' + clickedButton.getAttribute('id').replace('responsiveFilter', 'filter'));
+        }
+    }
+
+    function hideResponsiveMenu() {
+        let expandButton = document.querySelector('#expandResponsiveMenuButton');
+
+        if (window.innerWidth > 750) {
+            expandButton.setAttribute('open', 'false');
+            expandButton.innerHTML = '&#9660;'
+            document.querySelector('#responsiveMenu').style.display = 'none';
         }
     }
 

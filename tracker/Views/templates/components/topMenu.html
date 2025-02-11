@@ -1,26 +1,19 @@
 <div id="topMenu" class="flex column">
     <div class="headline flex spaceBetween doubleGap">
         <h1>{greetings}</h1>
-        <!-- <div class="flex gap" style="translate: 3.5vw 0vw">
-            Wer?
-            <select id="selectByUser" onchange="changeTaskSelection(this)">
-                <option value="all" selected>Alle</option>
-                <option value="mine">Meine</option>
-            </select>
-            Wann?
-            <select id="selectByTime" onchange="changeTaskSelection(this)">
-                <option value="all" selected>jeder Tag</option>
-                <option value="today">heute</option>
-                <option value="tomorrow">morgen</option>
-            </select>
-        </div> -->
-        <div class="flex gap" style="margin-left: auto;">
-            <button id="filterOptionAll" class="topMenuButton" activated>alle</button>
-            <button id="filterOptionMine" class="topMenuButton">meine</button>
-            <button id="filterOptionToday" class="topMenuButton">heute</button>
-            <button id="filterOptionTomorrow" class="topMenuButton">morgen</button>
-        </div>
+        {filterMenu}
         <div>{logout}</div>
     </div>
-
+    <div id="responsiveMenu" class="doubleGap flexEnd">
+        <div class="flex gap" style="flex-wrap: wrap;">
+            <div class="filterOptionWrapper"><button id="responsiveFilterOptionAll" class="responsiveFilterMenuButton" activated>alle</button></div>
+            <div class="filterOptionWrapper"><button id="responsiveFilterOptionMine" class="responsiveFilterMenuButton">meine</button></div>
+            <div class="filterOptionWrapper"><button id="responsiveFilterOptionToday" class="responsiveFilterMenuButton">heute</button></div>
+            <div class="filterOptionWrapper"><button id="responsiveFilterOptionTomorrow" class="responsiveFilterMenuButton">morgen</button></div>
+        </div>
+        <div>
+            <div class="filterOptionWrapper"><button id="responsiveLogoutButton"
+                    class="cancelButton responsiveMenuButton" onclick="logout()" style="margin-top: 0;">➜</button></div>
+        </div>
+    </div>
 </div>

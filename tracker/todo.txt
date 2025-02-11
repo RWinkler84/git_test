@@ -1,7 +1,3 @@
-(- überfällige und heute Tasks optisch von späteren trennen)
-
-- Tasks-Filterfunktion erweitern, so dass immer die Werte beider Selects ausgelesen werden
-
 - Icon integrieren, das zeigt, wenn eine Task aufklappbar ist
 
 - Clickfeedback iOS abschalten
@@ -10,14 +6,20 @@
 
 - Seitenlänge an Task-Container-Länge anpassen, wenn dieser darüber gehen
 
+- Taskansicht mit Spalten für heute, überfällige und später und erledigte
+
 
 heute erledigt: 
 
-- Filterfunktion verbessert, so dass immer beide Auswahlfelder berücksichtigt werden
-- fullSizeContainer können jetzt auch über den ContentWrapper geschlossen werden. eventPropagation() machts möglich
+
 
 
 erledigt: 
+
+10.02.2025
+- Filterfunktion verbessert, so dass immer beide Auswahlfelder berücksichtigt werden
+- fullSizeContainer können jetzt auch über den ContentWrapper geschlossen werden. eventPropagation() machts möglich
+- Filterfunktion finalisiert, keine selects mehr, sondern aktivierbare Buttons
 
 07.02.2025
 - Filterfunktion grundlegend angelegt
