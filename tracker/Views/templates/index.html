@@ -81,16 +81,16 @@
         hideResponsiveMenu();
     });
 
-    function toggleFullSize(clickedItem, event) {
+    function toggleFullSize(item, event) {
 
         event.stopPropagation();
 
-        let item = clickedItem.closest('[containerStart]');
         let fullTaskContainer = document.querySelector('#fullTaskContainer');
         let clone = item.cloneNode(true);
         let itemWidth = getItemWidthOrHeight(item, 'width') + 'px';
         let itemPosition = item.getBoundingClientRect();
         let headlineHeight = getItemWidthOrHeight(document.querySelector('#topMenu'), 'height');
+        let scrollHeightModifier = 0;
 
         item.style.width = itemWidth;
 
@@ -108,19 +108,33 @@
             fullTaskContainer.style.left = itemPosition.left + 'px';
             fullTaskContainer.style.width = itemWidth;
             item.style.visibility = 'hidden';
+
+            if (fullTaskContainer.querySelector('#collapsableIndicator')){
+                fullTaskContainer.querySelector('#collapsableIndicator').innerHTML = '&#9650';
+            }
+
+            //make container visible
             fullTaskContainer.style.boxShadow = '5px 5px 11px -3px rgba(0,0,0,0.25)';
             fullTaskContainer.style.display = 'block';
             collapsible.style.display = 'block';
 
             collapsible.style.maxHeight = collapsible.scrollHeight + 'px';
-            console.log(collapsible.style.maxHeight);
         } else {
             document.querySelectorAll('[style*="visibility: hidden"]').forEach(e => e.style.visibility = 'initial');
             fullTaskContainer.innerHTML = '';
         }
 
+        //position correction, if necessary
         if (fullTaskContainer.getBoundingClientRect().top != itemPosition.top) {
-            fullTaskContainer.style.translate = `0 ${window.scrollY}px`;
+            console.log(window.scrollY);
+            fullTaskContainer.style.translate= `0 ${window.scrollY}px`;
+            // fullTaskContainer.style.transform = `translateY(1000px)`;
+        }
+
+        if (fullTaskContainer.getBoundingClientRect().left != itemPosition.left){
+            let offset = fullTaskContainer.getBoundingClientRect().left - itemPosition.left;
+            offset *= -1;
+            fullTaskContainer.style.transform = `translateX(${offset}px)`;
         }
     }
 

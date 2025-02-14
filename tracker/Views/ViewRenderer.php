@@ -118,6 +118,16 @@ class ViewRenderer
                 $taskDueTimeBlock = '';
             }
 
+            //checks, if task has a description and sets an indicator if true
+            if ($task->getTaskDescription() != ''){
+                $collapsableIndicator = '    
+                    <div class="divider flex" style="margin-top: auto; justify-content: center;">
+                        <div id="collapsableIndicator" style="box-sizing: content-box; font-size: 10px">&#9660;</div>    
+                    </div>';
+            } else {
+                $collapsableIndicator = '';
+            }
+
             //sets Reminder Dot, if task is due today or tomorrow
             $reminderDot = $this->setReminderDot($task);
 
@@ -128,6 +138,7 @@ class ViewRenderer
                 'taskDueDate' => $task->getTaskDueDate()->format('d.m.y'),
                 'taskDueDateString' =>$task->getTaskDueDate()->format('Y-m-d'),
                 'taskDueTimeBlock' => $taskDueTimeBlock,
+                'collapsableIndicator' => $collapsableIndicator,
                 'taskStatus' => $task->getTaskStatus(),
                 'taskDescription' => $task->getTaskDescription(),
                 'taskUrgency' => $topBarColor,

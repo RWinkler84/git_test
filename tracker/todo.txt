@@ -1,4 +1,3 @@
-- Icon integrieren, das zeigt, wenn eine Task aufklappbar ist
 
 - Clickfeedback iOS abschalten
 
@@ -11,6 +10,8 @@
 
 heute erledigt: 
 
+- neuer Bug, der FulltaskContainer nach links verschoben hat, gefixt
+- Icon integrieren, das zeigt, wenn eine Task aufklappbar ist
 
 
 

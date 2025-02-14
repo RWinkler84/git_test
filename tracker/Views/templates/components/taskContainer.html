@@ -1,6 +1,6 @@
-<div containerStart class="taskContainer {taskStatus}" style="overflow: visible" onclick="toggleFullSize(this, event)">
+<div class="taskContainer {taskStatus}" style="overflow: visible" onclick="toggleFullSize(this, event)">
     <div class="topBar {taskUrgency}"></div>
-    <div taskId="{taskId}" taskOwner="{taskOwner}" taskDueDate="{taskDueDateString}"class="flex spaceBetween">
+    <div taskId="{taskId}" taskOwner="{taskOwner}" taskDueDate="{taskDueDateString}" class="flex spaceBetween">
         <h2>{taskName}</h2>{reminderDot}
     </div>
     <div class="flex spaceBetween doubleGap" style="flex-direction: row;">
@@ -16,11 +16,11 @@
             {taskDueTimeBlock}
         </div>
     </div>
-    <div class="divider flex spaceBetween" style="margin-top: auto;">
-        <div></div>
-        
+    <div class="divider flex">
     </div>
+
     <div class="collapsibleDescription">
+    <div class="divider"></div>
         <div>{taskDescription}</div>
         <div class="divider"></div>
         <div class="flex flexEnd">
@@ -32,5 +32,7 @@
                 <div class="roundButtonInnerBox">✔</div>
             </button>
         </div>
+    <div class="divider flex"></div>
     </div>
+            {collapsableIndicator}
 </div>

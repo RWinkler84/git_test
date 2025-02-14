@@ -329,7 +329,7 @@ dialog {
         #topMenu>.headline {
             gap: 0;
         }
-        
+
         #filterMenu {
             gap: 0;
         }
@@ -372,5 +372,14 @@ dialog {
         }
     }
 
+    @media screen and (max-width: 600px) {
+        #tasksWrapper {
+            gap: 1rem;
+        }
 
+        .taskContainer {
+            width: 100%;
+            padding: 0 3rem 1rem;
+        }
+    }
 }
